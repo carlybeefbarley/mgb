@@ -142,6 +142,12 @@ Meteor.methods({
     check(assetId, String)
     attemptUpdate(classroomId, { $addToSet: { assignmentAssetIds: assetId } })
   },
+  'Classroom.removeAssignmentAsset'(classroomId, assetId) {
+    checkIsLoggedInAndNotSuspended()
+    check(classroomId, String)
+    check(assetId, String)
+    attemptUpdate(classroomId, { $pull: { assignmentAssetIds: assetId } })
+  },
   'Classroom.removeTeacher'(classroomId, teacherId) {
     checkIsLoggedInAndNotSuspended()
     check(classroomId, String)

@@ -6,10 +6,12 @@ import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import moment from 'moment'
+import { isUserTeacher } from '/imports/schemas/roles'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
     currUser: PropTypes.object,
+    classroomId: PropTypes.string,
     assignmentAssets: PropTypes.array,
     showProjectCreateButtons: PropTypes.bool,
     showPastDue: PropTypes.bool,
@@ -128,6 +130,16 @@ export default class AssignmentsList extends React.Component {
     Meteor.call('Projects.create', data)
   }
 
+  handleRemoveAssignment = assignmentAsset => {
+    const { classroomId } = this.props
+
+    Meteor.call('Classroom.addAssignmentAsset', classroomId, assignmentAsset._id, (err, success) => {
+      if (err) {
+        console.log('Failed to remove assignment: ', err.reason)
+      }
+    })
+  }
+
   renderListItems = viewAssets => {
     if (!viewAssets) {
       return <Spinner />
@@ -142,7 +154,7 @@ export default class AssignmentsList extends React.Component {
         </List.Item>
       )
     }
-    const { currUserProjects, showProjectCreateButtons } = this.props
+    const { currUser, currUserProjects, showProjectCreateButtons, editListMode } = this.props
 
     return _.map(viewAssets, assignmentAsset => {
       const isPastDue = this.assignmentIsPastDue(assignmentAsset)
@@ -154,6 +166,12 @@ export default class AssignmentsList extends React.Component {
 
       return (
         <List.Item key={assignmentAsset.name}>
+          {isUserTeacher(currUser) &&
+          editListMode && (
+            <span>
+              <Icon name="remove" onClick={() => this.handleRemoveAssignment(assignmentAsset)} />
+            </span>
+          )}
           {showProjectCreateButtons ? (
             <List.Icon fitted size="small" style={{ minWidth: '1.5em', ...verticalAlignSty }}>
               {project && <WorkState isAssignment iconOnly size="small" workState={project.workState} />}
@@ -191,7 +209,6 @@ export default class AssignmentsList extends React.Component {
 
   render() {
     const { assignmentAssets } = this.props
-    console.log(assignmentAssets)
 
     let list = this.filterAssetList(assignmentAssets)
     list = this.sortAssetsByDate(list)

@@ -1,6 +1,6 @@
 /* global Accounts */
 import { Users, Sysvars } from '/imports/schemas'
-import { roleSuperAdmin } from '/imports/schemas/roles'
+import { roleSuperAdmin, roleTeacher } from '/imports/schemas/roles'
 
 export function createUsers() {
   console.log('Creating global admin user from fixtures.js')
@@ -9,6 +9,13 @@ export function createUsers() {
       name: 'SuperAdmin',
       email: 'super@admin.com',
       roles: roleSuperAdmin,
+      teamId: '!system',
+      teamName: '!system',
+    },
+    {
+      name: 'Teacher',
+      email: 'teacher@classroom.com',
+      roles: roleTeacher,
       teamId: '!system',
       teamName: '!system',
     },

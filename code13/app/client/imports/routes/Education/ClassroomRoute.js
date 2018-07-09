@@ -27,6 +27,12 @@ const cellStyle = {
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
 class TeacherClassroomView extends React.Component {
+  state = { editListMode: false }
+
+  toggleEditListMode = () => {
+    this.setState({ editListMode: !this.state.editListMode })
+  }
+
   classroomHasStudents = () => {
     const { students, assignments } = this.props
     return students && students.length > 0 && assignments && assignments.length > 0
@@ -151,6 +157,7 @@ class TeacherClassroomView extends React.Component {
 
   render() {
     const { currUser, assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
+    const { editListMode } = this.state
 
     const containerStyle = {
       overflowY: 'auto',
@@ -234,9 +241,16 @@ class TeacherClassroomView extends React.Component {
                   <Header as="h3" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
-                    <AssignmentsList assignmentAssets={assignments} showUpcoming showNoDueDate />
+                    <AssignmentsList
+                      classroomId={classroom._id}
+                      editListMode={editListMode}
+                      assignmentAssets={assignments}
+                      showUpcoming
+                      showNoDueDate
+                    />
                   </div>
                   <Divider />
+                  <Button active={editListMode} content="Toggle Edit" onClick={this.toggleEditListMode} />
                   <ClassroomAddAssignmentModal classroom={classroom} />
                 </div>
               </Segment>

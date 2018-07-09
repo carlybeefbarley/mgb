@@ -326,7 +326,7 @@ class ClassroomAddStudentModal extends React.Component {
         open={isOpen}
         onClose={() => this.toggleIsOpen()}
         onOpen={() => this.toggleIsOpen()}
-        trigger={<Button color="yellow" floated="right" icon="envelope" content="Invite New Students" />}
+        trigger={<Button color="yellow" floated="right" icon="envelope" content="Enroll New Students" />}
       >
         <Modal.Header>Add Students</Modal.Header>
         <Modal.Content>{this.renderUserList()}</Modal.Content>

@@ -81,6 +81,13 @@ Meteor.methods({
     attemptUpdate(classroomId, { $set: { avatarAssetId } })
   },
 
+  'Classroom.setAvatar'(classroomId, avatar) {
+    check(classroomId, String)
+    check(avatar, String)
+    checkIsLoggedInAndNotSuspended()
+    attemptUpdate(classroomId, { $set: { avatar } })
+  },
+
   'Classroom.create'(name, description = 'No Description', teacherIds = [], studentIds = []) {
     checkIsLoggedInAndNotSuspended()
     check(name, String)

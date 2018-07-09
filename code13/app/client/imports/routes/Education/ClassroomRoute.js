@@ -156,7 +156,7 @@ class TeacherClassroomView extends React.Component {
       overflowY: 'auto',
     }
 
-    const { avatar } = currUser && currUser.profile
+    const { avatar } = classroom
 
     const titleStyle = {
       fontSize: '2em',
@@ -221,7 +221,7 @@ class TeacherClassroomView extends React.Component {
                   <List style={infoStyle}>
                     <List.Item>
                       <List.Content onClick={toggleChat}>
-                        <Button icon="chat" color="blue" content="Class Chat" />
+                        <Button icon="chat" color="blue" content="Classroom Chat" />
                       </List.Content>
                     </List.Item>
                   </List>
@@ -285,13 +285,12 @@ class StudentClassroomView extends React.Component {
       return <Spinner loadingMsg="Loading Classroom..." />
     }
 
+    const { avatar } = classroom
     const channelName = makeChannelName({ scopeGroupName: 'Classroom', scopeId: classroom._id })
     const containerStyle = {
       overflowY: 'auto',
       overflowX: 'hidden',
     }
-
-    const { avatar } = currUser && currUser.profile
 
     const titleStyle = {
       fontSize: '2em',
@@ -335,7 +334,7 @@ class StudentClassroomView extends React.Component {
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <Button icon="chat" color="blue" content="Class Chat" />
+                      <Button icon="chat" color="blue" content="Classroom Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
@@ -431,9 +430,7 @@ class Classroom extends React.Component {
 
 export default createContainer(props => {
   const userId = Meteor.user()._id
-  const handleAvatarChange = newUrl => {
-    Meteor.call('User.updateProfile', userId, { 'profile.avatar': newUrl })
-  }
+
   const { classroomId } = props.params
   // Subscribe to the classroom at params.classroomId
   const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', classroomId)
@@ -486,6 +483,10 @@ export default createContainer(props => {
       })
       studentProjects = studentProjectsCursor.fetch()
     }
+  }
+
+  const handleAvatarChange = newUrl => {
+    Meteor.call('Classroom.setAvatar', classroom._id, newUrl)
   }
 
   const returnProps = {

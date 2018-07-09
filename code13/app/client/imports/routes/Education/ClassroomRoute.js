@@ -326,7 +326,7 @@ class StudentClassroomView extends React.Component {
     }
 
     const titleStyle = {
-      fontSize: '2em',
+      fontSize: '1.6em',
       textAlign: 'center',
     }
 
@@ -340,6 +340,13 @@ class StudentClassroomView extends React.Component {
       fontSize: '2.5em',
       textAlign: 'center',
     }
+
+    const rowStyle = {
+      minHeight: '23em',
+      maxHeight: '23em',
+      marginBottom: '2em',
+    }
+
     return (
       <div style={containerStyle}>
         <Header as="h1" content="Student Classroom Dashboard" style={headerStyle} />
@@ -347,7 +354,7 @@ class StudentClassroomView extends React.Component {
         <Grid columns={16} padded stackable>
           <Grid.Row>
             <Grid.Column width={5}>
-              <Segment raised color="blue">
+              <Segment raised color="blue" style={rowStyle}>
                 <Header style={titleStyle} as="h1" content={classroom && classroom.name} />
 
                 {/* Change avatar for classroom later  */}
@@ -375,7 +382,7 @@ class StudentClassroomView extends React.Component {
             </Grid.Column>
 
             <Grid.Column width={8}>
-              <Segment raised color="green">
+              <Segment raised color="green" style={rowStyle}>
                 <Header as="h2" content="About this Class" />
                 <Segment>
                   <ReactQuill

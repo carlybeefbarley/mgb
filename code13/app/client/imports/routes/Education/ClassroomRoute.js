@@ -36,6 +36,14 @@ class TeacherClassroomView extends React.Component {
   renderAssignmentTable = () => {
     const { assignments, students } = this.props
 
+    const _nowrapStyle = {
+      display: 'flex',
+      clear: 'both',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+    }
+
     if (!this.classroomHasStudents()) {
       return (
         <Segment>
@@ -45,16 +53,32 @@ class TeacherClassroomView extends React.Component {
     }
 
     return (
-      <Table celled striped>
-        <Table.Header>
-          <Table.Row key={'row_root'}>
-            <Table.HeaderCell colSpan="1" key={'column_root'} />
-            {/* Top left spacer cell to fill out table. */}
-            {this.renderTableAssignmentHeaderCells(assignments)}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{this.renderStudentRows()}</Table.Body>
-      </Table>
+      <div style={_nowrapStyle}>
+        <Table celled striped>
+          <Table.Header>
+            <Table.Row key={'row_root'}>
+              <Table.HeaderCell colSpan="1" key={'column_root'} />
+              {/* Top left spacer cell to fill out table. */}
+              {this.renderTableAssignmentHeaderCells(assignments)}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{this.renderStudentRows()}</Table.Body>
+          {/* <Table.Footer>
+          <Menu floated="right" pagination>
+            <Menu.Item as="a" icon>
+              <Icon name="chevron left" />
+            </Menu.Item>
+            <Menu.Item as="a">1</Menu.Item>
+            <Menu.Item as="a">2</Menu.Item>
+            <Menu.Item as="a">3</Menu.Item>
+            <Menu.Item as="a">4</Menu.Item>
+            <Menu.Item as="a" icon>
+              <Icon name="chevron right" />
+            </Menu.Item>
+          </Menu>
+        </Table.Footer> */}
+        </Table>
+      </div>
     )
   }
 
@@ -191,6 +215,14 @@ class TeacherClassroomView extends React.Component {
       minHeight: '14em',
     }
 
+    const _nowrapStyle = {
+      display: 'flex',
+      clear: 'both',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+    }
+
     return (
       <div style={containerStyle}>
         {/* Floating doesn't seem to work unless I include columns - Hudson */}
@@ -252,8 +284,9 @@ class TeacherClassroomView extends React.Component {
                     as="h3"
                     content="Student Assignment Progress"
                   />
-
-                  <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+                  <div style={_nowrapStyle}>
+                    <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+                  </div>
                 </div>
               </Segment>
 

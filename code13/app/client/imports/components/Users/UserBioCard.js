@@ -64,6 +64,7 @@ class UserBioCard extends React.Component {
           )}
         </Header>
         <div>
+          {/* TODO: find a way to just havew the bio be scrollable, not the whole segment */}
           {canEdit &&
           editing && (
             <TextArea

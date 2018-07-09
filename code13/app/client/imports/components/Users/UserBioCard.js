@@ -42,13 +42,19 @@ class UserBioCard extends React.Component {
   render() {
     const { user, canEdit } = this.props
     const { editing, bio } = this.state
+
+    const rowStyle = {
+      minHeight: '20em',
+      maxHeight: '20em',
+      marginBottom: '2em',
+    }
     return (
-      <Segment raised color="yellow">
+      <Segment raised color="green" style={rowStyle}>
         <Header as="h2">
           {canEdit ? 'About You' : `About ${user.username}`}
           {canEdit && (
             <Button
-              color="yellow"
+              color="green"
               content={editing ? 'Save' : 'Edit'}
               floated="right"
               onClick={this.handleToggleEdit}

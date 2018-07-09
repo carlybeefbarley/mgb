@@ -47,7 +47,9 @@ class UserBioCard extends React.Component {
       minHeight: '20em',
       maxHeight: '20em',
       marginBottom: '2em',
+      overflowY: 'auto',
     }
+
     return (
       <Segment raised color="green" style={rowStyle}>
         <Header as="h2">
@@ -61,17 +63,18 @@ class UserBioCard extends React.Component {
             />
           )}
         </Header>
-        {canEdit &&
-        editing && (
-          <TextArea
-            style={{ width: '100%' }}
-            value={bio}
-            placeholder={user.profile.bio}
-            onChange={this.handleBioChange}
-          />
-        )}
-        {!editing && <Segment content={bio} />}
-
+        <div>
+          {canEdit &&
+          editing && (
+            <TextArea
+              style={{ width: '100%', height: '15em' }}
+              value={bio}
+              placeholder={user.profile.bio}
+              onChange={this.handleBioChange}
+            />
+          )}
+          {!editing && <Segment content={bio} />}
+        </div>
         <Divider hidden />
       </Segment>
     )

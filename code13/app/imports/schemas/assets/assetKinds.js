@@ -5,6 +5,7 @@
 //   There are some more handy manipulators defined in assets.js such as AssetKindKeysALL etc
 
 import { roleSuperAdmin } from '/imports/schemas/roles'
+import SpecialGlobals from '/imports/SpecialGlobals'
 
 // .icon is as defined in http://semantic-ui.com/elements/icon.html
 // color is a standard semantic color list
@@ -26,7 +27,7 @@ export const AssetKinds = {
   graphic: {
     name: 'Graphic',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['graphic'],
     longName: 'Graphic',
     icon: 'image',
     color: 'orange',
@@ -38,7 +39,7 @@ export const AssetKinds = {
   actor: {
     name: 'Actor',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['actor'],
     longName: 'Actor',
     icon: 'child',
     color: 'teal',
@@ -50,7 +51,7 @@ export const AssetKinds = {
   actormap: {
     name: 'ActorMap',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['actormap'],
     longName: 'Map using Actors - makes games without coding',
     icon: 'map',
     color: 'blue',
@@ -62,7 +63,7 @@ export const AssetKinds = {
   map: {
     name: 'Map',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['map'],
     longName: 'Game Level Map (TMX style for game coding)',
     icon: 'map outline',
     color: 'olive',
@@ -115,7 +116,7 @@ export const AssetKinds = {
   sound: {
     name: 'Sound',
     selfPlural: true,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['sound'],
     longName: 'Sound',
     icon: 'volume up',
     color: 'pink',
@@ -127,7 +128,7 @@ export const AssetKinds = {
   music: {
     name: 'Music',
     selfPlural: true,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['music'],
     longName: 'Music',
     icon: 'music',
     color: 'blue',
@@ -138,7 +139,7 @@ export const AssetKinds = {
   code: {
     name: 'Code',
     selfPlural: true,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['code'],
     longName: 'Code Script',
     icon: 'code',
     color: 'green',
@@ -150,7 +151,7 @@ export const AssetKinds = {
   game: {
     name: 'GameConfig',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['game'],
     longName: 'Game definition',
     icon: 'gamepad',
     color: 'brown',
@@ -162,7 +163,7 @@ export const AssetKinds = {
   tutorial: {
     name: 'Tutorial',
     selfPlural: false,
-    disable: false,
+    disable: SpecialGlobals.disabledAssets['tutorial'],
     longName: 'Tutorial definition',
     icon: 'student',
     color: 'black',

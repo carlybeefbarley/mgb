@@ -19,6 +19,8 @@ import { isSameUser } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
+
+import { AnnouncementBanner } from '/client/imports/components/Home/AnnouncementBanner'
 import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import NavBar from '/client/imports/components/Nav/NavBar'
 import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
@@ -361,6 +363,7 @@ class AppUI extends Component {
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
+    const announcement = ''
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -387,7 +390,7 @@ class AppUI extends Component {
       right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
       height: '100vh',
-      overflow: isGuest || isHocRoute ? 'hidden' : undefined,
+      overflow: isGuest || isHocRoute ? 'hidden' : 'auto',
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 
@@ -463,6 +466,7 @@ class AppUI extends Component {
         <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
           <SupportedBrowsersContainer />
           {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+          {announcement && <AnnouncementBanner text={announcement} />}
           {!hideHeaders && (
             <NavPanel
               currUser={currUser}
@@ -486,7 +490,6 @@ class AppUI extends Component {
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
             />
           )}
-
           {currUser &&
           currUser.suIsBanned && (
             <Message

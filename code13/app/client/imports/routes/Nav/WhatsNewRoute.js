@@ -6,7 +6,7 @@ import Footer from '/client/imports/components/Footer/Footer'
 import mgbReleaseInfo, { olderHistoryPath } from '/imports/mgbReleaseInfo'
 import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
-import { Segment, Container, Header, List, Message, Item, Grid, Icon } from 'semantic-ui-react'
+import { Segment, Container, Header, List, Message, Item, Grid, Icon, Label } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
 
 const _releaseStateSymbols = {
@@ -43,12 +43,18 @@ const WhatsNewRoute = React.createClass({
     return {
       releaseIdx: 0, // Index into mgbReleaseInfo[] for currently viewed release
       olderHistoryJsonResult: null, // Will be the data loaded from ${olderHistoryPath} once loaded
+      limit: 5, // Only allow 5 info releases to show at once
     }
+  },
+
+  onLoadMore() {
+    this.setState({
+      limit: this.state.limit + 5,
+    })
   },
 
   getCombinedReleaseInfo() {
     const { olderHistoryJsonResult } = this.state
-
     return olderHistoryJsonResult
       ? _.concat(mgbReleaseInfo.releases, olderHistoryJsonResult.releases)
       : mgbReleaseInfo.releases
@@ -91,15 +97,18 @@ const WhatsNewRoute = React.createClass({
   },
 
   render() {
+    var { releases } = this.props
     return (
       <div>
         <Segment basic>
           <Container>
-            <Header as="h1" icon="gift" content="What's New" />
-            <AboutHeader />
-            <p>
-              See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
-            </p>
+            <Header as="h1">
+              <Icon name="newspaper" size="huge" />
+              <Header.Content>
+                What's New
+                <Header.Subheader color="grey">The Latest Features and Improvements at MGB</Header.Subheader>
+              </Header.Content>
+            </Header>
             {this.renderNews()}
           </Container>
         </Segment>
@@ -120,33 +129,50 @@ const WhatsNewRoute = React.createClass({
     const ago = moment(new Date(release.timestamp)).fromNow()
 
     return (
-      <Grid columns={2} padded relaxed divided className="equal height">
-        <Grid.Column>
-          <Header as="h2" content="MGB updates" />
-          <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>{this.renderNewsMgbVersionsColumn()}</div>
-        </Grid.Column>
-        <Grid.Column>
-          <Header as="h2">
-            Changes in v{release.id.ver}
-            <Header.Subheader>
-              <ReleaseId releaseId={release.id} />&emsp;{ago}
-            </Header.Subheader>
-          </Header>
-          {release.summary && <Message info icon="bullhorn" content={release.summary} />}
-          {this.renderNewsReleaseChangesColumn()}
-        </Grid.Column>
-      </Grid>
+      <Container>
+        <AboutHeader />
+        <p>
+          See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
+        </p>
+        <Grid columns={2} padded relaxed divided className="equal height">
+          <Grid.Column width={7}>
+            <Segment color="grey" raised>
+              <Header as="h2">
+                <Label color="blue" ribbon>
+                  Changes in v{release.id.ver}
+                </Label>
+                <Header.Subheader>
+                  <ReleaseId releaseId={release.id} />&emsp;{ago}
+                </Header.Subheader>
+              </Header>
+              {release.summary && <Message info icon="bullhorn" content={release.summary} />}
+              {this.renderNewsReleaseChangesColumn()}
+            </Segment>
+          </Grid.Column>
+          <Grid.Column width={9}>
+            <Header as="h2" content="MGB updates" />
+            <Segment color="grey" raised>
+              <div style={{ maxHeight: '800px', overflowY: 'scroll' }}>
+                {this.renderNewsMgbVersionsColumn()}
+                <a href="#" onClick={this.onLoadMore}>
+                  <Icon name="history" style={{ margin: 0 }} /> Load More
+                </a>
+              </div>
+            </Segment>
+          </Grid.Column>
+        </Grid>
+      </Container>
     )
   },
 
-  /** This is the left column. Uses React's state.releaseIdx */
+  /** This is the right column. Uses React's state.releaseIdx */
   renderNewsMgbVersionsColumn() {
     const releases = this.getCombinedReleaseInfo()
     const activeReleaseIdx = this.state.releaseIdx
 
     return (
       <Item.Group link>
-        {releases.map((release, idx) => {
+        {releases.slice(0, this.state.limit).map((release, idx) => {
           const sty = {
             backgroundColor: `rgba(0,0,0, ${activeReleaseIdx === idx ? 0.08 : 0})`,
             padding: '6px',
@@ -155,11 +181,12 @@ const WhatsNewRoute = React.createClass({
           return (
             <Item key={release.timestamp} style={sty} onClick={this.handleReleaseClicked.bind(this, idx)}>
               <Item.Content>
-                <Item.Header>
+                <Header color="blue">
                   v{release.id.ver}&nbsp;&nbsp;&nbsp;<small>
                     <ReleaseId releaseId={release.id} />
                   </small>
-                </Item.Header>
+                </Header>
+
                 <Item.Meta>{ago}</Item.Meta>
                 <Item.Description>
                   <List>
@@ -177,7 +204,7 @@ const WhatsNewRoute = React.createClass({
     )
   },
 
-  /** This is the right column. Uses React's state.releaseIdx */
+  /** This is the left column. Uses React's state.releaseIdx */
   renderNewsReleaseChangesColumn() {
     const { releaseIdx } = this.state
     const release = this.getCombinedReleaseInfo()[releaseIdx]

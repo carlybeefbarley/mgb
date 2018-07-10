@@ -15,6 +15,36 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Thursday May 24 2018 15:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.6',
+        state: 'Beta',
+        iteration: '5024',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Beginning of ActorMap Phaseout',
+          changeSummary:
+            'Beginning of phasing out ActorMap assets from the site. Added a warning in the announcement banner.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Fix asset history link',
+          changeSummary: 'Fixed an issue with asset history items routing incorrectly',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Friday May 04 2018 09:00:00 GMT-0800 (PST)',
 
       id: {

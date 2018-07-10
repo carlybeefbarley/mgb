@@ -5,9 +5,10 @@ import QLink from '../QLink'
 const UserLink = ({ u }) => <QLink to={`/u/${u}`}>@{u}</QLink>
 
 const AboutHeader = () => (
-  <Segment raised padded>
+  <Segment raised padded color="yellow">
     <Header>
       MyGameBuilder is now in public BETA
+      <br />
       <Header.Subheader>
         Actively developed by <UserLink u="dgolds" />
         {', '}
@@ -17,13 +18,15 @@ const AboutHeader = () => (
         {', '}
         <UserLink u="Bouhm" />
         {', '}
+        <UserLink u="ccoms" />
+        {', '}
         <UserLink u="leah" />
         {' and '}
         <UserLink u="levithomason" />
       </Header.Subheader>
     </Header>
     <p>
-      Welcome to MyGameBuilder!
+      <b>Welcome to MyGameBuilder!</b>
       <br />
       If you have thoughts, comments or feedback let us know using the{' '}
       <QLink query={{ _fp: 'chat' }}>

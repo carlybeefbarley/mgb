@@ -103,7 +103,7 @@ const getNavPanels = (currUser, showAll) => {
             jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
             explainClickAction: "What's New",
             to: '/whats-new',
-            icon: { name: 'gift' },
+            icon: { name: 'newspaper' },
             content: "What's New",
           },
           {

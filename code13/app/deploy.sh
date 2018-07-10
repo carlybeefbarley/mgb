@@ -13,11 +13,6 @@ usage() {
   # ----------------------------------------
   sh assert-pristine-git.sh
 
-if [ "$deploy_env" != "staging" ] && [ "$deploy_env" != "production" ] && [ "$deploy_env" != "aie" ]; then
-  echo "Bad deploy environment: \"$deploy_env\""
-  usage
-  exit 1
-fi
 
   if [ "$deploy_env" != "staging" ] && [ "$deploy_env" != "production" ] && [ "$deploy_env" != "aie" ]; then
     echo "Bad deploy environment: \"$deploy_env\""
@@ -25,13 +20,11 @@ fi
     exit 1
   fi
 
-if [ "$deploy_env" = "staging" ]; then
-  subdomain="staging"
-elif [ "$deploy_env" = "production" ]; then
-  subdomain="v2"
-elif [ "$deploy_env" = "aie" ]; then
-  subdomain="aie"
-fi
+  # ----------------------------------------
+  # Create settings.json
+  # ----------------------------------------
+  source_settings_filename="settings.json"
+  generated_settings_filename="settings.$deploy_env.generated.json"
 
   if [ "$deploy_env" = "staging" ]; then
     subdomain="staging"

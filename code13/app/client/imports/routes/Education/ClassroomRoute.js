@@ -1,31 +1,21 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon, Button, Divider } from 'semantic-ui-react'
-import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
+import { Grid } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
-import Spinner from '../../components/Nav/Spinner'
-import ReactQuill from 'react-quill'
-import AssignmentsList from '/client/imports/components/Education/AssignmentsList'
-import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import StudentListGET from '/client/imports/components/Education/StudentListGET'
+import Spinner from '/client/imports/components/Nav/Spinner'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
-import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
-import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
-import QLink from '/client/imports/routes/QLink'
-import { doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
+import ClassroomTeacherView from '/client/imports/components/Education/Classroom/ClassroomTeacherView'
+import ClassroomStudentView from '/client/imports/components/Education/Classroom/ClassroomStudentView'
 
-const cellStyle = {
-  textAlign: 'center',
-}
 /**
  * This file renders two different views depending on if the user is a teacher or a student of a given classroom.
  * Student/Teacher identity is resolved in the createContainer HOC.
  *
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
+<<<<<<< HEAD
 class TeacherClassroomView extends React.Component {
   classroomHasStudents = () => {
     const { students, assignments } = this.props
@@ -411,6 +401,8 @@ class StudentClassroomView extends React.Component {
     )
   }
 }
+=======
+>>>>>>> ae75c7eeb0c5fd4fe196b92d81460eb0b4d180a7
 
 class Classroom extends React.Component {
   state = { chatIsOpen: true }
@@ -443,9 +435,9 @@ class Classroom extends React.Component {
           </Grid.Column>
           <Grid.Column width={13}>
             {isTeacher ? (
-              <TeacherClassroomView {...this.props} toggleChat={this.toggleChat} />
+              <ClassroomTeacherView {...this.props} toggleChat={this.toggleChat} />
             ) : (
-              <StudentClassroomView {...this.props} toggleChat={this.toggleChat} />
+              <ClassroomStudentView {...this.props} toggleChat={this.toggleChat} />
             )}
           </Grid.Column>
         </Grid>

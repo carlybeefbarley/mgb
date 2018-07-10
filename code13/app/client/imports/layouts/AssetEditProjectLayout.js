@@ -120,6 +120,8 @@ export default class AssetEditProjectContainer extends React.Component {
     const renderedProjectsList = this.renderProjectsList(currUserProjects)
     // Set the default name/option for the projects dropdown list
     const projectName = assetStore.project() || __NO_PROJECT__
+    console.log(projectName)
+    console.log(typeof projectName)
     const dropDownCurrentProjectName = _.find(renderedProjectsList, { text: projectName })
       ? _.find(renderedProjectsList, { text: projectName }).text
       : __NO_PROJECT__

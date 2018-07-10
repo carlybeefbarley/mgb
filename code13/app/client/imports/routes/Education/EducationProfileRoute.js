@@ -64,61 +64,69 @@ class StudentProfile extends React.Component {
     const ParagraphStyle = {
       fontSize: '1.1em',
     }
+
+    const rowStyle = {
+      minHeight: '20em',
+      maxHeight: '20em',
+      marginBottom: '2em',
+    }
     return (
       <Grid columns={16} padded style={containerStyle}>
         <Grid.Column width={3} />
         <Grid.Column width={10}>
-          <Header as="h1" content={user && user.username} style={headerStyle} />
-          <Grid.Row>
-            <Grid.Column width={5}>
-              <Segment raised color="blue">
-                <List>
-                  <List.Item>
-                    <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
-                  </List.Item>
-                  <List.Item>
-                    <QLink to={`/user/${currUser.username}/classroom/${classroom._id}`}>
-                      <List.Content style={SchoolNameStyle}>{classroom && classroom.name}</List.Content>
-                    </QLink>
-                  </List.Item>
-                  <List.Item>
-                    <List.Content style={SchoolNameStyle}>Academy of Interactive Entertainment</List.Content>
-                  </List.Item>
-                </List>
+          <Header as="h1" content={`${user && user.username}'s Profile`} style={headerStyle} />
+          <Grid columns={16}>
+            <Grid.Row>
+              <Grid.Column width={5}>
+                <Segment raised color="blue" style={rowStyle}>
+                  <List>
+                    <List.Item>
+                      <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
+                    </List.Item>
+                    <List.Item>
+                      <QLink to={`/user/${currUser.username}/classroom/${classroom._id}`}>
+                        <List.Content style={SchoolNameStyle}>{classroom && classroom.name}</List.Content>
+                      </QLink>
+                    </List.Item>
+                    <List.Item>
+                      <List.Content style={SchoolNameStyle}>AIE</List.Content>
+                    </List.Item>
+                  </List>
 
-                {/* Change avatar for classroom later  */}
-                <ImageShowOrChange
-                  id="mgbjr-profile-avatar"
-                  maxHeight="11em"
-                  maxWidth="auto"
-                  imageSrc={avatar}
-                  header="User Avatar"
-                  canEdit={canEdit}
-                  canLinkToSrc={canEdit}
-                  handleChange={url => handleAvatarChange(url)}
-                />
-                <List>
-                  <List.Item>
-                    <List.Content style={ChatFontStyle}>
-                      {/* <List.Icon name="chat" color="blue" />Student Chat */}
-                    </List.Content>
-                  </List.Item>
-                </List>
-              </Segment>
-            </Grid.Column>
+                  {/* Change avatar for classroom later  */}
+                  <ImageShowOrChange
+                    id="mgbjr-profile-avatar"
+                    maxHeight="11em"
+                    maxWidth="auto"
+                    imageSrc={avatar}
+                    header="User Avatar"
+                    canEdit={canEdit}
+                    canLinkToSrc={canEdit}
+                    handleChange={url => handleAvatarChange(url)}
+                  />
+                  <List>
+                    <List.Item>
+                      <List.Content style={ChatFontStyle}>
+                        {/* <List.Icon name="chat" color="blue" />Student Chat */}
+                      </List.Content>
+                    </List.Item>
+                  </List>
+                </Segment>
+              </Grid.Column>
 
-            <Grid.Column width={11}>
-              <UserBioCard {...this.props} canEdit={canEdit} />
-            </Grid.Column>
-          </Grid.Row>
+              <Grid.Column width={11}>
+                <UserBioCard {...this.props} canEdit={canEdit} />
+              </Grid.Column>
+            </Grid.Row>
 
-          <Grid.Row>
-            <Grid.Column width={16}>
-              <Segment raised color="yellow">
-                <UserProfileGamesList user={currUser} currUser={currUser} />
-              </Segment>
-            </Grid.Column>
-          </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <Segment raised color="yellow">
+                  <UserProfileGamesList user={currUser} currUser={currUser} />
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+          </Grid>
         </Grid.Column>
         <Grid.Column width={3} />
       </Grid>

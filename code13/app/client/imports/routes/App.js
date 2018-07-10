@@ -299,7 +299,8 @@ class AppUI extends Component {
       $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of
       // AdBlocks etc
       $script.setAttribute('onload', doTrack)
-      document.currentScript.parentNode.insertBefore($script, document.currentScript)
+      document.currentScript &&
+        document.currentScript.parentNode.insertBefore($script, document.currentScript)
     }
   }
 

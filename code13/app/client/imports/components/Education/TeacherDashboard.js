@@ -102,16 +102,7 @@ class TeacherDashboard extends React.Component {
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>
-            <Segment raised color="green" style={rowStyle}>
-              <div>
-                <Header as="h2" content="Your Classrooms" />
-                <div style={listStyle}>
-                  <List relaxed content={this.renderClassesList()} />
-                </div>
-                <Divider />
-                <ClassroomCreateNewModal {...this.props} />
-              </div>
-            </Segment>
+            <UserBioCard {...this.props} user={currUser} canEdit />
           </Grid.Column>
         </Grid.Row>
 
@@ -130,7 +121,16 @@ class TeacherDashboard extends React.Component {
         <Grid.Row>
           <Grid.Column width={3} />
           <Grid.Column width={10}>
-            <UserBioCard {...this.props} user={currUser} canEdit />
+            <Segment raised color="yellow" style={rowStyle}>
+              <div>
+                <Header as="h2" content="Your Classrooms" />
+                <div style={listStyle}>
+                  <List relaxed content={this.renderClassesList()} />
+                </div>
+                <Divider />
+                <ClassroomCreateNewModal {...this.props} />
+              </div>
+            </Segment>
           </Grid.Column>
         </Grid.Row>
       </Grid>

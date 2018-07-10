@@ -1,25 +1,14 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
-import { Grid, Header, Segment, List, Table, Icon, Button, Divider } from 'semantic-ui-react'
-import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
-import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
+import { Grid } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
-import Spinner from '../../components/Nav/Spinner'
-import ReactQuill from 'react-quill'
-import AssignmentsList from '/client/imports/components/Education/AssignmentsList'
-import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import StudentListGET from '/client/imports/components/Education/StudentListGET'
+import Spinner from '/client/imports/components/Nav/Spinner'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
-import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
-import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
-import QLink from '/client/imports/routes/QLink'
-import { doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
+import ClassroomTeacherView from '/client/imports/components/Education/Classroom/ClassroomTeacherView'
+import ClassroomStudentView from '/client/imports/components/Education/Classroom/ClassroomStudentView'
 
-const cellStyle = {
-  textAlign: 'center',
-}
 /**
  * This file renders two different views depending on if the user is a teacher or a student of a given classroom.
  * Student/Teacher identity is resolved in the createContainer HOC.
@@ -42,6 +31,14 @@ class TeacherClassroomView extends React.Component {
   renderAssignmentTable = () => {
     const { assignments, students } = this.props
 
+    const _nowrapStyle = {
+      display: 'flex',
+      clear: 'both',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+    }
+
     if (!this.classroomHasStudents()) {
       return (
         <Segment>
@@ -51,16 +48,18 @@ class TeacherClassroomView extends React.Component {
     }
 
     return (
-      <Table celled striped>
-        <Table.Header>
-          <Table.Row key={'row_root'}>
-            <Table.HeaderCell colSpan="1" key={'column_root'} />
-            {/* Top left spacer cell to fill out table. */}
-            {this.renderTableAssignmentHeaderCells(assignments)}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{this.renderStudentRows()}</Table.Body>
-      </Table>
+      <div style={_nowrapStyle}>
+        <Table celled striped>
+          <Table.Header>
+            <Table.Row key={'row_root'}>
+              <Table.HeaderCell colSpan="1" key={'column_root'} />
+              {/* Top left spacer cell to fill out table. */}
+              {this.renderTableAssignmentHeaderCells(assignments)}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{this.renderStudentRows()}</Table.Body>
+        </Table>
+      </div>
     )
   }
 
@@ -163,7 +162,7 @@ class TeacherClassroomView extends React.Component {
       overflowY: 'auto',
     }
 
-    const { avatar } = currUser && currUser.profile
+    const { avatar } = classroom
 
     const titleStyle = {
       fontSize: '2em',
@@ -198,6 +197,14 @@ class TeacherClassroomView extends React.Component {
       minHeight: '14em',
     }
 
+    const _nowrapStyle = {
+      display: 'flex',
+      clear: 'both',
+      flexWrap: 'nowrap',
+      overflowX: 'auto',
+      overflowY: 'hidden',
+    }
+
     return (
       <div style={containerStyle}>
         {/* Floating doesn't seem to work unless I include columns - Hudson */}
@@ -228,7 +235,7 @@ class TeacherClassroomView extends React.Component {
                   <List style={infoStyle}>
                     <List.Item>
                       <List.Content onClick={toggleChat}>
-                        <Button icon="chat" color="blue" content="Class Chat" />
+                        <Button icon="chat" color="blue" content="Classroom Chat" />
                       </List.Content>
                     </List.Item>
                   </List>
@@ -266,8 +273,9 @@ class TeacherClassroomView extends React.Component {
                     as="h3"
                     content="Student Assignment Progress"
                   />
-
-                  <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+                  <div style={_nowrapStyle}>
+                    <Grid.Row>{this.renderAssignmentTable()}</Grid.Row>
+                  </div>
                 </div>
               </Segment>
 
@@ -299,16 +307,15 @@ class StudentClassroomView extends React.Component {
       return <Spinner loadingMsg="Loading Classroom..." />
     }
 
+    const { avatar } = classroom
     const channelName = makeChannelName({ scopeGroupName: 'Classroom', scopeId: classroom._id })
     const containerStyle = {
       overflowY: 'auto',
       overflowX: 'hidden',
     }
 
-    const { avatar } = currUser && currUser.profile
-
     const titleStyle = {
-      fontSize: '2em',
+      fontSize: '1.6em',
       textAlign: 'center',
     }
 
@@ -322,6 +329,13 @@ class StudentClassroomView extends React.Component {
       fontSize: '2.5em',
       textAlign: 'center',
     }
+
+    const rowStyle = {
+      minHeight: '23em',
+      maxHeight: '23em',
+      marginBottom: '2em',
+    }
+
     return (
       <div style={containerStyle}>
         <Header as="h1" content="Student Classroom Dashboard" style={headerStyle} />
@@ -329,7 +343,7 @@ class StudentClassroomView extends React.Component {
         <Grid columns={16} padded stackable>
           <Grid.Row>
             <Grid.Column width={5}>
-              <Segment raised color="blue">
+              <Segment raised color="blue" style={rowStyle}>
                 <Header style={titleStyle} as="h1" content={classroom && classroom.name} />
 
                 {/* Change avatar for classroom later  */}
@@ -349,7 +363,7 @@ class StudentClassroomView extends React.Component {
                   </List.Item>
                   <List.Item>
                     <List.Content onClick={toggleChat}>
-                      <Button icon="chat" color="blue" content="Class Chat" />
+                      <Button icon="chat" color="blue" content="Classroom Chat" />
                     </List.Content>
                   </List.Item>
                 </List>
@@ -357,7 +371,7 @@ class StudentClassroomView extends React.Component {
             </Grid.Column>
 
             <Grid.Column width={8}>
-              <Segment raised color="green">
+              <Segment raised color="green" style={rowStyle}>
                 <Header as="h2" content="About this Class" />
                 <Segment>
                   <ReactQuill
@@ -432,9 +446,9 @@ class Classroom extends React.Component {
           </Grid.Column>
           <Grid.Column width={13}>
             {isTeacher ? (
-              <TeacherClassroomView {...this.props} toggleChat={this.toggleChat} />
+              <ClassroomTeacherView {...this.props} toggleChat={this.toggleChat} />
             ) : (
-              <StudentClassroomView {...this.props} toggleChat={this.toggleChat} />
+              <ClassroomStudentView {...this.props} toggleChat={this.toggleChat} />
             )}
           </Grid.Column>
         </Grid>
@@ -445,9 +459,7 @@ class Classroom extends React.Component {
 
 export default createContainer(props => {
   const userId = Meteor.user()._id
-  const handleAvatarChange = newUrl => {
-    Meteor.call('User.updateProfile', userId, { 'profile.avatar': newUrl })
-  }
+
   const { classroomId } = props.params
   // Subscribe to the classroom at params.classroomId
   const handleForClassroom = Meteor.subscribe('classrooms.oneClassroom', classroomId)
@@ -500,6 +512,10 @@ export default createContainer(props => {
       })
       studentProjects = studentProjectsCursor.fetch()
     }
+  }
+
+  const handleAvatarChange = newUrl => {
+    Meteor.call('Classroom.setAvatar', classroom._id, newUrl)
   }
 
   const returnProps = {

@@ -42,30 +42,40 @@ class UserBioCard extends React.Component {
   render() {
     const { user, canEdit } = this.props
     const { editing, bio } = this.state
+
+    const rowStyle = {
+      minHeight: '20em',
+      maxHeight: '20em',
+      marginBottom: '2em',
+      overflowY: 'auto',
+    }
+
     return (
-      <Segment raised color="yellow">
+      <Segment raised color="green" style={rowStyle}>
         <Header as="h2">
           {canEdit ? 'About You' : `About ${user.username}`}
           {canEdit && (
             <Button
-              color="yellow"
+              color="green"
               content={editing ? 'Save' : 'Edit'}
               floated="right"
               onClick={this.handleToggleEdit}
             />
           )}
         </Header>
-        {canEdit &&
-        editing && (
-          <TextArea
-            style={{ width: '100%' }}
-            value={bio}
-            placeholder={user.profile.bio}
-            onChange={this.handleBioChange}
-          />
-        )}
-        {!editing && <Segment content={bio} />}
-
+        <div>
+          {/* TODO: find a way to just havew the bio be scrollable, not the whole segment */}
+          {canEdit &&
+          editing && (
+            <TextArea
+              style={{ width: '100%', height: '15em' }}
+              value={bio}
+              placeholder={user.profile.bio}
+              onChange={this.handleBioChange}
+            />
+          )}
+          {!editing && <Segment content={bio} />}
+        </div>
         <Divider hidden />
       </Segment>
     )

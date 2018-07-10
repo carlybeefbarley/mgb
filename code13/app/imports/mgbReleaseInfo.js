@@ -38,15 +38,13 @@ const mgbReleaseInfo = {
         {
           type: 'improvement',
           changeName: 'Project Switcher',
-          changeSummary:
-            'Ability to switch projects and related assets more easily',
+          changeSummary: 'Ability to switch projects and related assets more easily',
           otherUrls: [],
         },
         {
           type: 'improvement',
           changeName: 'New Project Dashboard',
-          changeSummary:
-            'New project dashboard with assets view, activity, and more',
+          changeSummary: 'New project dashboard with assets view, activity, and more',
           otherUrls: [],
         },
         {

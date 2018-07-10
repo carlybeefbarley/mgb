@@ -31,6 +31,23 @@ export function canUserEditAssetIfUnlocked(asset, projects, user) {
   return _.findIndex(projects, p => isSameUserId(p.ownerId, asset.ownerId) && _.includes(apn, p.name)) > -1
 }
 
+/**
+ * This checks if the user can VIEW (in edit mode) this asset
+ * @export
+ * @param { Asset } asset - partial asset only required - {_id, ownerId, projectNames}
+ * @param { [Projects] } projects - user projects - partial project only required - {name, ownerId}
+ * @param { Meteor.User } user - the user wishing to view the asset
+ */
+export function canUserViewAsset(asset, projects, user) {
+  if (!user || !asset) return false
+  if (asset.suFlagId || asset.suIsBanned === true) return false
+  if (isSameUserId(asset.ownerId, user._id) || isUserSuperAdmin(user)) return true // Owner and admin can always View
+
+  // Is Asset a member of any of user's projects?
+  const apn = asset.projectNames // Shorthand
+  return _.findIndex(projects, p => isSameUserId(p.ownerId, asset.ownerId) && _.includes(apn, p.name)) > -1
+}
+
 export function isUserSuperAdmin(user) {
   return doesUserHaveRole(user, roleSuperAdmin)
 }
@@ -43,5 +60,5 @@ export function isUserModerator(user) {
   // For now, enable a specific API so we can start using this
   // access check.
   // TODO@dgolds implement a way to assign moderators
-  return isUserSuperAdmin(user, roleSuperAdmin)
+  return isUserSuperAdmin(user) || isUserTeacher(user)
 }

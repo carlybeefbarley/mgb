@@ -1,0 +1,20 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Meteor: Chrome",
+      "url": "http://localhost:3000",
+      "webRoot": "${workspaceFolder}/code13/app/"
+    }
+    {
+        "type": "chrome",
+        "request": "attach",
+        "name": "Attach to Chrome",
+        "port": 9222,
+        "webRoot": "${workspaceFolder}/code13/app/"
+    }
+  ],
+  "compounds": []
+}

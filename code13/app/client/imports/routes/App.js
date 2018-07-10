@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React, { Component } from 'react'
 import { browserHistory } from 'react-router'
 import Helmet from 'react-helmet'
-import { Message } from 'semantic-ui-react'
+import { Button, Dropdown, Grid, Header, Icon, Message, Segment } from 'semantic-ui-react'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -21,10 +21,13 @@ import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { projectMakeSelector, defaultProjectSorter } from '/imports/schemas/projects'
 
 import { AnnouncementBanner } from '/client/imports/components/Home/AnnouncementBanner'
+import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import NavBar from '/client/imports/components/Nav/NavBar'
+import RelatedAssets from '/client/imports/components/Nav/RelatedAssets'
 import NavPanel from '/client/imports/components/SidePanels/NavPanel'
 import FlexPanel from '/client/imports/components/SidePanels/FlexPanel'
 import NetworkStatusMsg from '/client/imports/routes/Nav/NetworkStatusMsg'
+import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import mgbReleaseInfo from '/imports/mgbReleaseInfo'
 
 import urlMaker from './urlMaker'
@@ -42,6 +45,7 @@ import { NotificationContainer } from 'react-notifications'
 import { InitHotjar } from '/client/imports/helpers/hotjar.js'
 import SupportedBrowsersContainer from '../components/SupportedBrowsers/SupportedBrowsersContainer'
 import VerifyBanner from '/client/imports/components/Users/VerifyBanner'
+import { _NO_PROJECT_PROJNAME } from '../components/Assets/ProjectSelector'
 
 let G_localSettings = new ReactiveDict()
 
@@ -86,16 +90,20 @@ class AppUI extends Component {
   }
 
   getChildContext() {
-    // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See https://github.com/facebook/react/issues/2517
+    // Note React (as of Aug2016) has a bug where shouldComponentUpdate() can prevent a contextValue update. See
+    // https://github.com/facebook/react/issues/2517
     return {
       urlLocation: this.props.location,
-      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout the component tree as props
-      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the component tree as props
+      settings: this.props.settings, // We pass Settings in context since it will be a huge pain to pass it throughout
+      // the component tree as props
+      skills: this.props.skills, // We pass Skills in context since it will be a huge pain to pass it throughout the
+      // component tree as props
     }
   }
 
   state = {
-    hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the Navbar, so doing it here */
+    hideHeaders: false, // Show/Hide NavPanel & Some other UI (like Asset Edit Header). This is a bit slow to do in the
+    // Navbar, so doing it here */
     // read/unread Chat status. Gathered up here since it used across app, especially for notifications and lists
     chatChannelTimestamps: null, // as defined by Chats.getLastMessageTimestamps RPC
     hazUnreadChats: [], // will contain Array of channel names with unread chats
@@ -117,6 +125,7 @@ class AppUI extends Component {
       kind: null, // null or a string which is a one of assets:AssetKindKeys
       canEdit: false, // true or false. True iff editing an Asset _and_ user has edit permission
       projectNames: [], // Empty array, or array of strings for project names as described in assets.js
+      ownerName: '', // The asset.dn_ownerName, human readable name of the asset owner's profile
     },
   }
 
@@ -137,12 +146,14 @@ class AppUI extends Component {
   componentDidUpdate(prevProps, prevState) {
     const pagepath = getPagepathFromProps(this.props)
 
-    // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on every page update
+    // Fire Completion Tags for the Joyride/Tutorial system. Make sure we only fire when the path has changed, not on
+    // every page update
     const newRouterPath = `mgbjr-CT-app-router-path-${pagepath}` // e.g. /u/:username
     if (newRouterPath !== this._priorRouterPath) joyrideStore.completeTag(newRouterPath)
     this._priorRouterPath = newRouterPath
 
-    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}` // e.g. /u/dgolds   -- will exclude search/query params
+    const newLocationPath = `mgbjr-CT-app-location-path-${this.props.location.pathname}` // e.g. /u/dgolds   -- will
+    // exclude search/query params
     if (newLocationPath !== this._priorLocationPath) joyrideStore.completeTag(newLocationPath)
     this._priorLocationPath = newLocationPath
   }
@@ -235,15 +246,19 @@ class AppUI extends Component {
     Meteor.call('Chats.getLastMessageTimestamps', chanArray, (error, chatChannelTimestamps) => {
       if (error) console.log('unable to invoke Chats.getLastMessageTimestamps()', error)
       else {
-        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and state.chatChannelTimestamps)
+        // 2. Now process that list for easy consumption (and store results in state.hazUnreadChats and
+        // state.chatChannelTimestamps)
         let hazUnreadChats = []
         _.each(chatChannelTimestamps, cct => {
           const channelName = cct._id
           const lastReadByUser = getLastReadTimestampForChannel(settings, channelName)
           const channelObj = parseChannelName(channelName)
           cct._hazUnreads = Boolean(
-            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) || // Non-global chat groups that user has access to but has not looked at
-              (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime()), // Any chat channel user has looked at but has more recent messages
+            (channelObj && channelObj.scopeGroupName !== 'Global' && !lastReadByUser) || // Non-global chat groups that user has
+              // access to but has not looked at
+              (lastReadByUser && cct.lastCreatedAt.getTime() > lastReadByUser.getTime()), // Any chat channel user has
+            // looked at but has more
+            // recent messages
           )
           if (cct._hazUnreads) hazUnreadChats.push(channelName)
         })
@@ -281,9 +296,11 @@ class AppUI extends Component {
       console.log('[tjfallback]') // so it's easier to know when this is happening
 
       const $script = document.createElement('script')
-      $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of AdBlocks etc
+      $script.setAttribute('src', makeCDNLink('/lib/t-r-a-c-k-e-r.js')) // fallback to local version because of
+      // AdBlocks etc
       $script.setAttribute('onload', doTrack)
-      document.currentScript.parentNode.insertBefore($script, document.currentScript)
+      document.currentScript &&
+        document.currentScript.parentNode.insertBefore($script, document.currentScript)
     }
   }
 
@@ -347,8 +364,7 @@ class AppUI extends Component {
     const { query } = this.props.location
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
-    const announcement =
-      'Non-code (Actor/ActorMap) assets will soon be phased out. Further use of these assets is discouraged. Please ask a moderator for more info.'
+    const announcement = ''
     if (!loading) this.configureTrackJs()
 
     // The Flex Panel is for communications and common quick searches in a right hand margin
@@ -374,9 +390,8 @@ class AppUI extends Component {
       left: 0,
       right: `${isGuest || isHocRoute ? 0 : flexPanelWidth}`,
       marginBottom: '0px',
-      minHeight: '100vh',
-      overflow: isGuest || isHocRoute ? 'hidden' : undefined,
-      overflowY: !isGuest && !isHocRoute ? 'scroll' : undefined,
+      height: '100vh',
+      overflow: isGuest || isHocRoute ? 'hidden' : 'auto',
       WebkitOverflowScrolling: 'touch', // only works with overflowY: scroll (not auto)
     }
 
@@ -390,6 +405,36 @@ class AppUI extends Component {
       params.assetId &&
       _.includes(hazUnreadChats, makeChannelName({ scopeGroupName: 'Asset', scopeId: params.assetId }))
 
+    const projectName = [params.projectName, _.get(location, 'query.project')]
+      .concat(currentlyEditingAssetInfo.projectNames)
+      .filter(
+        name =>
+          // remove falsey values
+          !!name &&
+          // there is a weird case where the query param for "no project" is actually ?project=_
+          // make sure we don't show that in the breadcrumb :/ fix that someday...
+          name !== _NO_PROJECT_PROJNAME,
+      )[0]
+
+    const routeComponent =
+      !loading &&
+      this.props.children &&
+      React.cloneElement(this.props.children, {
+        // Make below props available to all routes.
+        user,
+        currUser,
+        hideHeaders,
+        currentlyEditingAssetInfo,
+        currUserProjects,
+        hazUnreadAssetChat,
+        ownsProfile,
+        isSuperAdmin,
+        availableWidth: mainAreaAvailableWidth,
+        handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
+        isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off
+        // toolbars/headings etc as appropriate
+      })
+
     return (
       <div>
         <Helmet
@@ -398,86 +443,73 @@ class AppUI extends Component {
           meta={[{ name: 'My Game Builder', content: 'MyGameBuilder' }]}
         />
         <JoyrideRootHelper currUser={currUser} />
-        <div>
+        {!isGuest &&
+        !isHocRoute && (
+          <FlexPanel
+            fpIsFooter={!!responsive.data.footerTabMajorNav}
+            currUser={currUser}
+            chatChannelTimestamps={chatChannelTimestamps}
+            hazUnreadChats={hazUnreadChats}
+            requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
+            currUserProjects={currUserProjects}
+            user={user}
+            selectedViewTag={flexPanelQueryValue}
+            handleFlexPanelToggle={this.handleFlexPanelToggle}
+            flexPanelWidth={flexPanelWidth}
+            flexPanelIsVisible={showFlexPanel}
+            isSuperAdmin={isSuperAdmin}
+            currentlyEditingAssetInfo={currentlyEditingAssetInfo}
+            fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
+            fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
+          />
+        )}
+
+        <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
+          <SupportedBrowsersContainer />
+          {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
+          {announcement && <AnnouncementBanner text={announcement} />}
+          {!hideHeaders && (
+            <NavPanel
+              currUser={currUser}
+              navPanelAvailableWidth={mainAreaAvailableWidth}
+              activity={this.props.activity}
+              hazUnreadActivities={hazUnreadActivities}
+            />
+          )}
           {!isGuest &&
           !isHocRoute && (
-            <FlexPanel
-              fpIsFooter={!!responsive.data.footerTabMajorNav}
+            <NavBar
               currUser={currUser}
-              chatChannelTimestamps={chatChannelTimestamps}
-              hazUnreadChats={hazUnreadChats}
-              requestChatChannelTimestampsNow={this.requestChatChannelTimestampsNow}
-              currUserProjects={currUserProjects}
               user={user}
-              selectedViewTag={flexPanelQueryValue}
-              handleFlexPanelToggle={this.handleFlexPanelToggle}
+              location={this.props.location}
+              name={this.props.routes[1].name}
+              params={this.props.params}
               flexPanelWidth={flexPanelWidth}
-              flexPanelIsVisible={showFlexPanel}
-              isSuperAdmin={isSuperAdmin}
+              hideHeaders={hideHeaders}
+              onToggleHeaders={this.handleHideHeadersToggle}
+              sysvars={sysvars}
               currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
-              fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
+            />
+          )}
+          {currUser &&
+          currUser.suIsBanned && (
+            <Message
+              error
+              icon="ban"
+              header="Your Account has been suspended by an Admin"
+              list={[
+                'You may not edit Assets or Projects',
+                'You may not send Chat messages',
+                'Check your email for details',
+              ]}
             />
           )}
 
-          <div style={mainPanelOuterDivSty} id="mgb-jr-main-container">
-            <SupportedBrowsersContainer />
-            {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
-            {announcement && <AnnouncementBanner text={announcement} />}
-            {!hideHeaders && (
-              <NavPanel
-                currUser={currUser}
-                navPanelAvailableWidth={mainAreaAvailableWidth}
-                activity={this.props.activity}
-                hazUnreadActivities={hazUnreadActivities}
-              />
-            )}
-            {!isGuest &&
-            !isHocRoute && (
-              <NavBar
-                currUser={currUser}
-                user={user}
-                location={this.props.location}
-                name={this.props.routes[1].name}
-                params={this.props.params}
-                flexPanelWidth={flexPanelWidth}
-                hideHeaders={hideHeaders}
-                onToggleHeaders={this.handleHideHeadersToggle}
-                sysvars={sysvars}
-                currentlyEditingAssetInfo={currentlyEditingAssetInfo}
-              />
-            )}
-
-            {currUser &&
-            currUser.suIsBanned && (
-              <Message
-                error
-                icon="ban"
-                header="Your Account has been suspended by an Admin"
-                list={[
-                  'You may not edit Assets or Projects',
-                  'You may not send Chat messages',
-                  'Check your email for details',
-                ]}
-              />
-            )}
-
-            {!loading &&
-              this.props.children &&
-              React.cloneElement(this.props.children, {
-                // Make below props available to all routes.
-                user,
-                currUser,
-                hideHeaders,
-                currUserProjects,
-                hazUnreadAssetChat,
-                ownsProfile,
-                isSuperAdmin,
-                availableWidth: mainAreaAvailableWidth,
-                handleSetCurrentlyEditingAssetInfo: this.handleSetCurrentlyEditingAssetInfo,
-                isTopLevelRoute: true, // Useful so routes can be re-used for embedding.  If false, they can turn off toolbars/headings etc as appropriate
-              })}
-          </div>
+          {/*
+            Just render the route unless we're editing a project asset
+            Project assets need to wrap the asset edit route in the project tabs UI layout
+          */}
+          {routeComponent}
         </div>
         <NetworkStatusMsg meteorStatus={meteorStatus} />
         <NotificationContainer />
@@ -553,7 +585,8 @@ export default _.flow(
     }
 
     return {
-      currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user. Putting it here makes it reactive
+      currUser: currUser ? currUser : null, // Avoid 'undefined'. It's null, or it's defined. Currently Logged in user.
+      // Putting it here makes it reactive
 
       currUserProjects: !handleForProjects
         ? []

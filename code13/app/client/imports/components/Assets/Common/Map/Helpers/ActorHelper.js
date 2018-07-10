@@ -418,32 +418,37 @@ const ActorHelper = {
             map: map[name],
             image: src,
           }
-          ActorHelper.subscriptions[key] = observeAsset(
-            {
-              dn_ownerName: user,
-              name: actorName,
-              isDeleted: false,
-              kind: AssetKindEnum.actor,
-            },
-            () => {
-              // clean up has been called before subscription become ready
-              if (!ActorHelper.subscriptions[key]) {
-                return
-              }
-              const assets = ActorHelper.subscriptions[key].getAssets()
-              if (!assets.length) {
-                console.error('Cannot find asset: ', key)
-                return
-              }
-              if (assets.length > 1) {
-                console.error('Multiple assets found: ', key)
-              }
-            },
-            (...a) => {
-              ActorHelper.clearCache(key)
-              onChange && onChange(...a)
-            },
-          )
+          if (!SpecialGlobals.disabledAssets['actor']) {
+            ActorHelper.subscriptions[key] = observeAsset(
+              {
+                dn_ownerName: user,
+                name: actorName,
+                isDeleted: false,
+                kind: AssetKindEnum.actor,
+              },
+              () => {
+                // clean up has been called before subscription become ready
+                if (!ActorHelper.subscriptions[key]) {
+                  return
+                }
+                const assets = ActorHelper.subscriptions[key].getAssets()
+                if (!assets.length) {
+                  console.error('Cannot find asset: ', key)
+                  return
+                }
+                if (assets.length > 1) {
+                  console.error('Multiple assets found: ', key)
+                }
+              },
+              (...a) => {
+                ActorHelper.clearCache(key)
+                onChange && onChange(...a)
+              },
+            )
+          } else {
+            ActorHelper.clearCache(key)
+          }
+
           cb()
         }
         // load empty image on error

@@ -15,6 +15,54 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tuesday July 10 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.7',
+        state: 'Beta',
+        iteration: '5116',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Editor Tabs',
+          changeSummary:
+            'Ability to work on multiple assets on the same page with the introduction of editor tabs',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Project Switcher',
+          changeSummary: 'Ability to switch projects and related assets more easily',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'New Project Dashboard',
+          changeSummary: 'New project dashboard with assets view, activity, and more',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'Editor forms fix',
+          changeSummary: 'Fixed lagged input fields of editor forms',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'UI cleanup',
+          changeSummary: 'Fixed misplaced scrollbars in Dashboard and Project Overview',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Thursday May 24 2018 15:00:00 GMT-0800 (PST)',
 
       id: {

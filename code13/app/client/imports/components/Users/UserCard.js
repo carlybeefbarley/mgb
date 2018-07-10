@@ -49,7 +49,7 @@ export default class UserCard extends React.Component {
           <Card.Content>
             <UX.UserAvatarNoLink username={username} height="4em" />
           </Card.Content>
-          <Card.Content>
+          <Card.Content style={{ paddingLeft: 0, paddingRight: 0 }}>
             <Card.Header title={username} content={username} />
             {suIsBanned && (
               <div>
@@ -81,7 +81,7 @@ export default class UserCard extends React.Component {
         <Card.Content>
           <UX.UserAvatarNoLink username={username} height="6em" />
         </Card.Content>
-        <Card.Content>
+        <Card.Content style={{ paddingLeft: 0, paddingRight: 0 }}>
           <Header size="large" content={username} />
           <Card.Meta>
             <UX.UserTitle title={title} />

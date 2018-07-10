@@ -206,6 +206,43 @@ const getNavPanels = (currUser, showAll) => {
     // Right side
     right: _.compact([
       showUserOptions && {
+        name: 'projects',
+        explainClickAction: 'Clicking here jumps to the list of your Projects',
+        icon: { name: 'sitemap' },
+        content: 'Projects',
+        to: `/u/${username}/projects`,
+        menu: [
+          {
+            subcomponent: 'Item',
+            jrkey: 'listMy',
+            to: `/u/${username}/projects`,
+            icon: { name: 'sitemap' },
+            content: 'My Projects',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'allProjects',
+            to: '/projects',
+            icon: { name: 'sitemap' },
+            content: 'All Projects',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'importMgb1',
+            to: `/u/${username}/projects/import/mgb1`,
+            icon: { name: 'upload', color: 'orange' },
+            content: 'Import MGBv1 Projects',
+          },
+          {
+            subcomponent: 'Item',
+            jrkey: 'createNew',
+            to: `/u/${username}/projects/create`,
+            icon: { name: 'sitemap', color: 'green' },
+            content: 'Create New Project',
+          },
+        ],
+      },
+      showUserOptions && {
         name: 'assets',
         explainClickAction: 'Clicking here jumps to the list of your Assets',
         icon: { name: 'pencil' },
@@ -247,43 +284,6 @@ const getNavPanels = (currUser, showAll) => {
             to: `/assets/create-from-template`,
             icon: { name: 'pencil' },
             content: 'Create From Template',
-          },
-        ],
-      },
-      showUserOptions && {
-        name: 'projects',
-        explainClickAction: 'Clicking here jumps to the list of your Projects',
-        icon: { name: 'sitemap' },
-        content: 'Projects',
-        to: `/u/${username}/projects`,
-        menu: [
-          {
-            subcomponent: 'Item',
-            jrkey: 'listMy',
-            to: `/u/${username}/projects`,
-            icon: { name: 'sitemap' },
-            content: 'My Projects',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'allProjects',
-            to: '/projects',
-            icon: { name: 'sitemap' },
-            content: 'All Projects',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'importMgb1',
-            to: `/u/${username}/projects/import/mgb1`,
-            icon: { name: 'upload', color: 'orange' },
-            content: 'Import MGBv1 Projects',
-          },
-          {
-            subcomponent: 'Item',
-            jrkey: 'createNew',
-            to: `/u/${username}/projects/create`,
-            icon: { name: 'sitemap', color: 'green' },
-            content: 'Create New Project',
           },
         ],
       },

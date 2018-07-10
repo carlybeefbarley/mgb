@@ -1,12 +1,13 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message } from 'semantic-ui-react'
-import { utilPushTo, utilReplaceTo, utilShowChatPanelChannel } from '../QLink'
+import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
+import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
+import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
@@ -39,7 +40,8 @@ import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/
 
 import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
-import { joyrideStore } from '/client/imports/stores'
+import { assetStore, joyrideStore } from '/client/imports/stores'
+import { __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
@@ -48,6 +50,8 @@ import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
+import SpecialGlobals from '../../../../imports/SpecialGlobals'
+import { withStores } from '/client/imports/hocs'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
 
@@ -60,12 +64,10 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 //                      Asset Kind (immutable)
 //                      Asset Name (mutable)
 //                      ReadOnly / Writeable indicator (changes via project membership)
-//                      Indicate current active viewers/editors of same asset (dynamic) [Could use FlexPanel to show those users]
-//                      Pinned/Unpinned (mutable)
-//                      Asset Change history (dynamic) [Could use FlexPanel to see history]
-//
-// 3. Provide functions for sub components to call which will store the Asset
-// 4. (TODO) Provide "Leave hooks" for warning about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
+//                      Indicate current active viewers/editors of same asset (dynamic) [Could use FlexPanel to show
+// those users] Pinned/Unpinned (mutable) Asset Change history (dynamic) [Could use FlexPanel to see history]  3.
+// Provide functions for sub components to call which will store the Asset 4. (TODO) Provide "Leave hooks" for warning
+// about unsaved work: https://github.com/reactjs/react-router/blob/master/docs/guides/ConfirmingNavigation.md
 
 // TODO: Simplify/cleanup the various overlapping ways of handling collisions
 // asset.isUnconfirmedSave
@@ -74,10 +76,10 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 // asset.content2.changeMarker  (only used by EditGraphic)
 
 // ALSO TODO: Add a 'editorLease' field.. This would contain a userid, sessionId and lease-until timestamp.
-// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if not present or is expired.
-// TBD who does cleanup.
-// Note that the Lease field should not be set on client.. it should be guarded by !isSimulation
-// BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be managed on server:  ??????
+// This SHOULD prevent edits from other users: BLUE editor field, and details of edit actions.  Field is disregarded if
+// not present or is expired. TBD who does cleanup. Note that the Lease field should not be set on client.. it should
+// be guarded by !isSimulation BUT this will not work if clients' clocks are wrong :(  So instead, the leases should be
+// managed on server:  ??????
 
 // The deferred saves are handled by the following data:
 //     this.m_deferredSaveObj: null
@@ -90,8 +92,8 @@ const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempt
 //   timeOfLastWriteAttempt     // TODO
 // }
 // And this structure is set in deferContentChange()
-// ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has been unmounted
-/// (Hmm.. maybe I should create a global state container for this outside this component?)
+// ... Note that this isn't being stored in React's this.state.___ because we need access to it after the component has
+// been unmounted / (Hmm.. maybe I should create a global state container for this outside this component?)
 
 export const offerRevertAssetToForkedParentIfParentIdIs = forkParentId => {
   const event = new CustomEvent('mgbOfferRevertToFork', { detail: forkParentId })
@@ -111,7 +113,8 @@ const AssetEditRoute = React.createClass({
 
   propTypes: {
     hideHeaders: PropTypes.bool, // If true, don't show any UI header stuff. like a Zen mode...
-    params: PropTypes.object, // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental editors
+    params: PropTypes.object, // params.assetId is the ASSET id; params._xed tells <AssetEdit> to load any experimental
+    // editors
     user: PropTypes.object,
     currUser: PropTypes.object,
     currUserProjects: PropTypes.array, // Both Owned and memberOf. Check ownerName / ownerId fields to know which
@@ -137,17 +140,18 @@ const AssetEditRoute = React.createClass({
     skills: PropTypes.object,
   },
 
-  // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the userId
-  // TODO: Make this QLink-smart so it preserves queries
+  // We also support a route which omits the user id, but if we see that, we redirect to get the path that includes the
+  // userId TODO: Make this QLink-smart so it preserves queries
   checkForRedirect() {
-    if (!this.props.user && !!this.data.asset) {
-      // don't push - just replace #225 - back button not always work
-      console.log('AssetEditRoute - redirecting')
-      utilReplaceTo(
-        this.context.urlLocation.query,
-        '/u/' + this.data.asset.dn_ownerName + '/asset/' + this.data.asset._id,
-      )
-    }
+    // console.log('checkForRedirect', { user: this.props.user, asset: this.data.asset })
+    // if (!this.props.user && !!this.data.asset) {
+    //   // don't push - just replace #225 - back button not always work
+    //   console.log('AssetEditRoute - redirecting')
+    //   utilReplaceTo(
+    //     this.context.urlLocation.query,
+    //     '/u/' + this.data.asset.dn_ownerName + '/asset/' + this.data.asset._id,
+    //   )
+    // }
   },
 
   revertDataFromForkParent_ResultCallBack(error, result) {
@@ -189,6 +193,13 @@ const AssetEditRoute = React.createClass({
   },
 
   componentDidMount() {
+    const { query } = this.props.location
+    const { assetStore, currUserProjects } = this.props
+
+    assetStore.trackAllProjects(currUserProjects, assetStore.assets())
+    if (query.project) {
+      assetStore.setProject(query.project)
+    }
     this.checkForRedirect()
     this.m_deferredSaveObj = null
     this.addListenersOnMount()
@@ -228,6 +239,7 @@ const AssetEditRoute = React.createClass({
 
   componentDidUpdate() {
     this.checkForRedirect()
+    assetStore.setProps(this.props)
 
     if (!this.counter && !this.data.loading) {
       this.assetUpdatedAt = this.data.asset.updatedAt
@@ -238,9 +250,16 @@ const AssetEditRoute = React.createClass({
       })
     }
 
-    if (this.counter && this.data.asset && this.assetUpdatedAt != this.data.asset.updatedAt) {
+    if (this.counter && this.data.asset && this.assetUpdatedAt !== this.data.asset.updatedAt) {
       this.assetUpdatedAt = this.data.asset.updatedAt
       this.counter.assetUpdated()
+    }
+
+    // auto open any new asset
+    if (this.data.asset) {
+      const { assetStore } = this.props
+      // console.log('componentDidUpdate: open asset', this.data.asset, assetStore.getOpenAssets())
+      assetStore.openAsset(this.data.asset)
     }
   },
 
@@ -290,17 +309,19 @@ const AssetEditRoute = React.createClass({
 
       get loading() {
         return !assetHandler.isReady
-      }, // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we don't wait for them
+      }, // Child components must be aware that 'activitySnapshots' and 'assetActivity' may still be loading. But we
+      // don't wait for them
     }
   },
 
   canCurrUserEditThisAsset(assetOverride = null) {
     const asset = assetOverride || this.data.asset
-    return asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted
+    return !!(asset && this.canUserEditThisAssetIfUnlocked(asset) && !asset.isCompleted)
   },
 
   canUserEditThisAssetIfUnlocked(assetOverride = null) {
-    if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to do any edits!
+    if (this.data.loading || !this.props.currUser) return false // Need to at least be logged in and have the data to
+    // do any edits!
 
     const asset = assetOverride || this.data.asset
     return canUserEditAssetIfUnlocked(asset, this.props.currUserProjects, this.props.currUser)
@@ -311,7 +332,8 @@ const AssetEditRoute = React.createClass({
     const asset = assetOverride || this.data.asset
     const { currUser } = this.props
 
-    if (!asset || this.data.loading || !currUser) return false // Need to at least be logged in and have the data to do any edits...
+    if (!asset || this.data.loading || !currUser) return false // Need to at least be logged in and have the data to do
+    // any edits...
 
     // Are we superAdmin?
     if (this.props.isSuperAdmin && fAllowSuperAdminToEditAnything) {
@@ -348,7 +370,109 @@ const AssetEditRoute = React.createClass({
     this.setState({ isForkPending: false })
   },
 
+  handleTabChange(asset) {
+    const { assetStore } = this.props
+    const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
+
+    return () => {
+      utilPushTo(this.context.urlLocation, url, { project: assetStore.project() })
+    }
+  },
+
+  handleCloseTab(asset) {
+    return e => {
+      const { params, assetStore } = this.props
+      // console.log('handleCloseTab', asset)
+
+      e.preventDefault()
+      e.stopPropagation()
+      e.nativeEvent.stopImmediatePropagation()
+
+      // open the tab to the left on close of the currently open tab
+      if (params.assetId === asset._id) {
+        const currTabIndex = _.findIndex(assetStore.getOpenAssets(), { _id: asset._id })
+        const nextAsset =
+          assetStore.getOpenAssets()[currTabIndex - 1] || assetStore.getOpenAssets()[currTabIndex + 1]
+        const nextURL = `/u/${nextAsset.dn_ownerName}/asset/${nextAsset._id}`
+
+        utilPushTo(this.context.urlLocation, nextURL)
+      }
+      assetStore.closeAsset(asset)
+    }
+  },
+
   render() {
+    const { assetStore } = this.props
+
+    const panes = _.map(assetStore.getOpenAssets(), asset => {
+      // console.log('render open asset', asset)
+      return {
+        menuItem: {
+          key: asset._id,
+          onClick: this.handleTabChange(asset),
+          content: (
+            <span>
+              <Icon name={AssetKinds[asset.kind].icon} color={AssetKinds[asset.kind].color} />
+              {asset.name}
+              {_.get(assetStore.getOpenAssets(), 'length') > 1 && (
+                <Icon
+                  link
+                  fitted
+                  style={{ marginLeft: '1em' }}
+                  name="remove"
+                  color="grey"
+                  onClick={this.handleCloseTab(asset)}
+                />
+              )}
+            </span>
+          ),
+        },
+        render: this.renderRoute,
+      }
+    })
+
+    // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
+    // console.log('AssetEditRoute: PANES', panes)
+    // console.log('THIS.DATA: ', this.data)
+
+    // Return an IDE-like wrapped tab list & editor if the asset has any project(s)
+    // TODO: Look into data prefetch to make tabs more responsive.
+    return this.resolveProjectRender(panes)
+  },
+
+  resolveProjectRender(panes) {
+    const { params } = this.props
+    const canEdit = this.canCurrUserEditThisAsset()
+    const noAssetPane = (
+      <Segment size="large" basic>
+        You don't currently have any assets open for this project. Click on an asset in the assets menu to
+        begin editing.
+      </Segment>
+    )
+
+    return (
+      <AssetEditProjectLayout canEdit={canEdit} {...this.props}>
+        {params.assetId === __NO_ASSET__ ? (
+          noAssetPane
+        ) : (
+          <Tab
+            menu={{
+              color: canEdit ? null : 'yellow',
+              inverted: !canEdit,
+              attached: 'top',
+              tabular: true,
+              style: { overflowX: 'auto' },
+            }}
+            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+            onTabChange={this.handleTabChange}
+            panes={panes}
+          />
+        )}
+      </AssetEditProjectLayout>
+    )
+  },
+
+  renderRoute() {
     if (this.data.loading) return <Spinner loadingMsg="Loading Asset data" />
 
     const {
@@ -360,6 +484,7 @@ const AssetEditRoute = React.createClass({
       isSuperAdmin,
       hideHeaders,
     } = this.props
+
     const { isForkPending, isDeletePending } = this.state
     const isTooSmall = availableWidth < 500
     let asset = Object.assign({}, this.data.asset) // One Asset provided via getMeteorData()
@@ -385,6 +510,7 @@ const AssetEditRoute = React.createClass({
       <Grid
         padded
         style={{
+          background: '#fff',
           overflowX:
             'hidden' /* this will prevent padding (+v scrolling) caused by mgbjr-asset-edit-header-right when all icons don't fit in the new line*/,
         }}
@@ -463,7 +589,7 @@ const AssetEditRoute = React.createClass({
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator
               asset={asset}
-              canFork={currUser !== null}
+              canFork={currUser !== null && !SpecialGlobals.disabledAssets[asset.kind]}
               doForkAsset={this.doForkAsset}
               isForkPending={isForkPending}
             />
@@ -561,9 +687,9 @@ const AssetEditRoute = React.createClass({
     } else showToast.error('Not logged in. You must Log in to edit Assets')
   }, 5000), // 5000ms is the duration of an error Notification
 
-  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are slowest.
-  // TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for now since we don't
-  //       touch asset.metadata in this method
+  // See comment at top of file for format of m_deferredSaveObj. We only defer content2 and thumbnail because they are
+  // slowest. TODO: Consider benefits of also deferring metadata in the same model... however, it won't conflict for
+  // now since we don't touch asset.metadata in this method
   deferContentChange(content2Object, thumbnail, changeText = 'content change') {
     const asset = this.data.asset // TODO: Change interface so this gets passed in instead?
 
@@ -597,13 +723,14 @@ const AssetEditRoute = React.createClass({
       }
     }
 
-    this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO.. revisit this soon
+    this.forceUpdate() // YUCK, but I think I have to, coz I can't put a deferral data structure in this.state. TODO..
+    // revisit this soon
   },
 
   // Note that this can be called directly by the Sub-components.
   // Primary use case is user hits 'save now' button, or 'play now'
   handleSaveNowRequest() {
-    console.log('User request: Save deferred changes now')
+    // console.log('User request: Save deferred changes now')
     this._attemptToSendAnyDeferredChanges({ forceResend: true })
   },
 
@@ -624,8 +751,8 @@ const AssetEditRoute = React.createClass({
             `Won't send deferred save of asset ${asset.name} yet because the prior save's results are still pending. Keeping it in deferred save Object list so it Will retry later..`,
           )
         } else {
-          // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor RPC save for it..
-          // ... so send the change to the server now
+          // At this point, we have an asset with a deferred save, the connection is up, and there is no pending Meteor
+          // RPC save for it.. ... so send the change to the server now
           this._doSendDeferredChangeNow()
         }
       }
@@ -653,7 +780,8 @@ const AssetEditRoute = React.createClass({
         toBeSent.changeText,
       )
       this.m_deferredSaveObj = null
-      // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data still..
+      // Note that potentially we can no longer recover from a failed save.. but the sub-component does have the data
+      // still..
     }
   },
 
@@ -830,6 +958,8 @@ const AssetEditRoute = React.createClass({
   // This should not conflict with the deferred changes since those don't change these fields :)
   handleToggleProjectName(pName) {
     const { asset } = this.data
+    const { assetStore } = this.props
+    const query = this.props.location.query
     const list = asset.projectNames || []
     const inList = _.includes(list, pName)
     let newChosenProjectNamesArray = inList ? _.without(list, pName) : _.union(list, [pName])
@@ -847,6 +977,13 @@ const AssetEditRoute = React.createClass({
 
     if (inList) logActivity('asset.project', `removed Asset from project '${pName}'`, null, asset)
     else logActivity('asset.project', `Added Asset to project '${pName}'`, null, asset)
+
+    assetStore.closeAsset(asset)
+    if (pName === assetStore.project() && assetStore.projectHasLoadedAssets(pName)) {
+      utilPushTo(query, `/u/${asset.dn_ownerName}/asset/${assetStore.getFirstAssetInProject(pName)._id}`)
+    } else if (pName === assetStore.project() && !assetStore.projectHasLoadedAssets(pName)) {
+      utilPushTo(query, `/u/${asset.dn_ownerName}/asset/${__NO_ASSET__}`)
+    }
   },
 
   handleTaskApprove(hasSkill) {
@@ -870,7 +1007,9 @@ const AssetEditRoute = React.createClass({
   },
 })
 
-export default AssetEditRoute
+export default withStores({
+  assetStore,
+})(AssetEditRoute)
 
 function _makeUpdateObj(content2Object, thumbnail) {
   let updateObj = {}

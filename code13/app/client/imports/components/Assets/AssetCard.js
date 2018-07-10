@@ -14,6 +14,7 @@ import ChallengeState from '/client/imports/components/Controls/ChallengeState'
 import { showToast } from '/client/imports/modules'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import Thumbnail from '/client/imports/components/Assets/Thumbnail'
+import assetStore from '/client/imports/stores/assetStore'
 
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 // Note that middle-click mouse is a shortcut for open Asset in new browser Tab
@@ -280,6 +281,7 @@ const AssetCard = React.createClass({
 
     let projectsString = newChosenProjectNamesArray.join(', ')
     logActivity('asset.project', `now in projects ${projectsString}`, null, this.props.asset)
+    assetStore.untrackAsset(this.props.asset, assetStore.assets())
   },
 
   handleDeleteClick(e) {
@@ -317,12 +319,13 @@ const AssetCard = React.createClass({
   },
 
   handleEditClick(e) {
-    const asset = this.props.asset
-    const url = '/u/' + asset.dn_ownerName + '/asset/' + asset._id
+    const { asset, project } = this.props
+
+    const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
     // middle click - mouseUp reports buttons == 0; button == 1
     if (e.buttons == 4 || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
-    else utilPushTo(this.context.urlLocation.query, url)
+    else utilPushTo(this.context.urlLocation.query, url, { project })
   },
 })
 

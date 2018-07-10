@@ -11,6 +11,7 @@ const style = {
   display: 'flex',
   flexDirection: 'column',
   flex: 1,
+  overflowY: 'auto',
 }
 const particlesStyle = {
   position: 'absolute',

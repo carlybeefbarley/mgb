@@ -1,4 +1,4 @@
 {
   "plugins": ["transform-class-properties", "babel-root-slash-import", "transform-object-rest-spread"],
-  "presets": ["es2015","react"]
+  "presets": ["es2015", "react"]
 }

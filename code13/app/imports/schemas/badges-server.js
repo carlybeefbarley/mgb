@@ -43,6 +43,10 @@ const _skillBasedBadges = [
     newBadgeName: badgeList.getStartedProject.name,
     requiredSkills: ['getStarted.projects.createProject'],
   },
+  {
+    newBadgeName: badgeList.getStartedAll.name,
+    requiredSkills: ['getStarted.projects.createProject'],
+  },
   // {
   //   newBadgeName: badgeList.getStartedAll.name,
   //   requiredSkills: ['getStarted.nonCodeGame.buildAndPlayActorMap'],
@@ -159,6 +163,7 @@ const _timeBasedBadges = [
     timeSec: 10 * 60 * 60,
     editType: 'map',
   },
+  /*
   {
     newBadgeName: badgeList.useActorEditorBronze.name,
     timeSec: 2 * 60,
@@ -189,6 +194,7 @@ const _timeBasedBadges = [
     timeSec: 10 * 60 * 60,
     editType: 'actormap',
   },
+  */
   {
     newBadgeName: badgeList.useSoundEditorBronze.name,
     timeSec: 2 * 60,

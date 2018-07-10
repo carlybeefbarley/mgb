@@ -17,54 +17,56 @@ export default class Dashboard1st extends React.Component {
     const { currUser } = this.props
 
     return (
-      <Container>
-        <Grid columns={1} padded>
-          <Grid.Column>
-            <Header as="h3" color="grey" content="Next up" />
-            <SkillAction currUser={currUser} />
-            {/* TODO uncomment once we get more videos
+      <div style={{ overflowY: 'auto' }}>
+        <Container>
+          <Grid columns={1} padded>
+            <Grid.Column>
+              <Header as="h3" color="grey" content="Next up" />
+              <SkillAction currUser={currUser} />
+              {/* TODO uncomment once we get more videos
             <VideoAction />
             */}
-            <RecentAssetAction currUser={currUser} />
-          </Grid.Column>
-        </Grid>
+              <RecentAssetAction currUser={currUser} />
+            </Grid.Column>
+          </Grid>
 
-        <Divider hidden />
+          <Divider hidden />
 
-        <Grid padded stackable>
-          <Grid.Column tablet={11} computer={12}>
-            <Header as="h3" color="grey" content="My Badges" />
-            <BadgesSegment currUser={currUser} />
+          <Grid padded stackable>
+            <Grid.Column tablet={11} computer={12}>
+              <Header as="h3" color="grey" content="My Badges" />
+              <BadgesSegment currUser={currUser} />
 
-            <Grid>
-              {/*
+              <Grid>
+                {/*
                 Heads Up!
                 This is a responsive position.
                 The ExploreSegment appears at the end of the page in mobile/tablet.
                 See below...
               */}
-              <Grid.Column width={16} only="computer">
-                <Divider hidden section />
-                <ExploreSegment />
-              </Grid.Column>
-            </Grid>
-          </Grid.Column>
+                <Grid.Column width={16} only="computer">
+                  <Divider hidden section />
+                  <ExploreSegment />
+                </Grid.Column>
+              </Grid>
+            </Grid.Column>
 
-          <Grid.Column tablet={5} computer={4}>
-            <FaqSegment />
-          </Grid.Column>
+            <Grid.Column tablet={5} computer={4}>
+              <FaqSegment />
+            </Grid.Column>
 
-          {/*
+            {/*
             Heads Up!
             This is a responsive position.
             The ExploreSegment appears under the BadgesSegment in desktop.
             See above...
           */}
-          <Grid.Column width={16} only="mobile tablet">
-            <ExploreSegment />
-          </Grid.Column>
-        </Grid>
-      </Container>
+            <Grid.Column width={16} only="mobile tablet">
+              <ExploreSegment />
+            </Grid.Column>
+          </Grid>
+        </Container>
+      </div>
     )
   }
 }

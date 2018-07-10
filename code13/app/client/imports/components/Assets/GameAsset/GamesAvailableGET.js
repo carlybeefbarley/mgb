@@ -1,10 +1,13 @@
+import { ReactMeteorData } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
-import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
+import { Icon, Segment } from 'semantic-ui-react'
 
 import { Azzets } from '/imports/schemas'
+import { assetMakeSelector, assetSorters } from '/imports/schemas/assets'
+
+import GameItems from '/client/imports/components/Assets/GameAsset/GameItems'
+import Spinner from '/client/imports/components/Nav/Spinner'
 
 /**
  * Note that this Component will return null while loading, or if there are no games.
@@ -14,6 +17,7 @@ const GamesAvailableGet = React.createClass({
   mixins: [ReactMeteorData],
 
   propTypes: {
+    canEdit: PropTypes.bool,
     header: PropTypes.node,
     currUser: PropTypes.object, // Currently Logged in user. Can be null
     scopeToUserId: PropTypes.string, // e.g. 987e78dsygwef. Can be undefined/null
@@ -50,8 +54,23 @@ const GamesAvailableGet = React.createClass({
 
   render() {
     const { loading, games } = this.data
-    const { currUser, header } = this.props
-    return loading || games.length === 0 ? null : (
+    const { canEdit, currUser, header } = this.props
+
+    if (loading) return <Spinner />
+
+    if (_.isEmpty(games)) {
+      return (
+        <Segment style={{ flex: 1, margin: 0 }}>
+          <p>There are no published games in this project, yet.</p>
+          {canEdit && (
+            <p>
+              <Icon name="lightbulb" /> Add a Code game asset to get started.
+            </p>
+          )}
+        </Segment>
+      )
+    }
+    return (
       <div>
         {header}
         <GameItems currUser={currUser} games={games} wrap={false} />

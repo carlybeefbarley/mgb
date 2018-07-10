@@ -20,7 +20,7 @@ const mgbReleaseInfo = {
       id: {
         ver: '0.4.7',
         state: 'Beta',
-        iteration: '5113',
+        iteration: '5116',
       },
 
       releaseManagement: {

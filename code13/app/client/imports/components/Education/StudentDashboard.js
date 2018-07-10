@@ -23,7 +23,7 @@ class StudentDashboard extends React.Component {
         overflowY: 'auto',
       },
       infoStyle = {
-        fontSize: '1.5em',
+        fontSize: '1em',
         textAlign: 'center',
       },
       upcomingStyle = {
@@ -44,6 +44,12 @@ class StudentDashboard extends React.Component {
       textAlign: 'center',
     }
 
+    const rowStyle = {
+      minHeight: '20em',
+      maxHeight: '20em',
+      marginBottom: '2em',
+    }
+
     return (
       <Grid columns={16} padded style={containerStyle}>
         <Grid.Column width={3} />
@@ -52,7 +58,7 @@ class StudentDashboard extends React.Component {
           <Grid columns={16}>
             <Grid.Row>
               <Grid.Column width={6}>
-                <Segment raised color="blue">
+                <Segment raised color="blue" style={rowStyle}>
                   <ImageShowOrChange
                     id="mgbjr-profile-avatar"
                     maxHeight="11em"
@@ -62,14 +68,8 @@ class StudentDashboard extends React.Component {
                     canEdit
                     handleChange={url => handleAvatarChange(url)}
                   />
-                  <Header
-                    style={titleStyle}
-                    as="h3"
-                    color="grey"
-                    content={`${currUser.username}`}
-                    textAlign="center"
-                  />
-                  <Container style={infoStyle}>
+                  <Header as="h1" content={`${currUser.username}`} textAlign="center" />
+                  <div style={infoStyle}>
                     <p>
                       {classrooms &&
                       classrooms[0] && (
@@ -80,11 +80,17 @@ class StudentDashboard extends React.Component {
                       <br />
                       {teacherName && <QLink to={`/user/${teacherName}`}>{`${teacherName}`}</QLink>}
                     </p>
-                  </Container>
+                  </div>
                 </Segment>
               </Grid.Column>
               <Grid.Column width={10}>
-                <Segment raised color="green" style={upcomingStyle}>
+                <UserBioCard {...this.props} user={currUser} canEdit />
+              </Grid.Column>
+            </Grid.Row>
+
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <Segment raised color="yellow" style={upcomingStyle}>
                   <Header as="h2" content="Upcoming Assignments" />
                   <AssignmentsListGET
                     {...this.props}
@@ -94,12 +100,6 @@ class StudentDashboard extends React.Component {
                     showProjectCreateButtons
                   />
                 </Segment>
-              </Grid.Column>
-            </Grid.Row>
-
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <UserBioCard {...this.props} user={currUser} canEdit />
               </Grid.Column>
             </Grid.Row>
 

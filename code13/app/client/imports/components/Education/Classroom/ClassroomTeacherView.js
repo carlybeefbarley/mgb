@@ -11,7 +11,7 @@ const cellStyle = {
   textAlign: 'center',
 }
 
-export default class TeacherClassroomView extends React.Component {
+export default class ClassroomTeacherView extends React.Component {
   classroomHasStudents = () => {
     const { students, assignments } = this.props
     return students && students.length > 0 && assignments && assignments.length > 0
@@ -19,7 +19,7 @@ export default class TeacherClassroomView extends React.Component {
   // Calls all the other table methods to render out the full table with both student names
   // assignment names, and the status of said assignments in a coherent view.
   renderAssignmentTable = () => {
-    const { assignments, students } = this.props
+    const { assignments } = this.props
 
     if (!this.classroomHasStudents()) {
       return (
@@ -45,7 +45,12 @@ export default class TeacherClassroomView extends React.Component {
 
   // Renders out the assignment header cells based on the assignment's name
   renderTableAssignmentHeaderCells = assignments => {
-    let headerCells = _.map(assignments, assignment => {
+    const sortedAssignments = assignments.sort((assignment1, assignment2) => {
+      if (new Date(assignment1.metadata.dueDate) > new Date(assignment2.metadata.dueDate)) return true
+      return false
+    })
+
+    let headerCells = _.map(sortedAssignments, assignment => {
       return (
         <Table.HeaderCell colSpan="1" key={'column_' + assignment._id}>
           <QLink to={`/u/${assignment.dn_ownerName}/asset/${assignment._id}`}>{assignment.name}</QLink>
@@ -56,9 +61,13 @@ export default class TeacherClassroomView extends React.Component {
   }
   // Renders out the students names for the table.
   renderStudentRows = () => {
-    const { assignments, students, studentProjects } = this.props
+    const { students } = this.props
+    const sortedStudents = students.sort((student1, student2) => {
+      if (student1.username > student2.username) return true
+      return false
+    })
 
-    const rows = _.map(students, student => {
+    const rows = _.map(sortedStudents, student => {
       return (
         <Table.Row key={'row_' + student._id}>
           <Table.Cell collapsing key={'cell_' + student._id}>
@@ -101,11 +110,17 @@ export default class TeacherClassroomView extends React.Component {
   // Render out the "assignment" cells for a student by seeing if they own a project that has
   // the current row's assignmentId referenced in it. This is dependant on this.props.assignments to be
   // in an array so that rows are sorted correctly.
+  // Assignments are sorted by due date, ascending. aka earliest is farther left.
 
   renderStudentProjectStatusCells = student => {
-    const { assignments, students, studentProjects } = this.props
+    const { assignments, studentProjects } = this.props
 
-    const cells = _.map(assignments, assignment => {
+    const sortedAssignments = assignments.sort((assignment1, assignment2) => {
+      if (new Date(assignment1.metadata.dueDate) > new Date(assignment2.metadata.dueDate)) return true
+      return false
+    })
+
+    const cells = _.map(sortedAssignments, assignment => {
       const cellProject = _.find(studentProjects, project => {
         if (
           project.ownerId === student._id &&
@@ -135,7 +150,7 @@ export default class TeacherClassroomView extends React.Component {
   }
 
   render() {
-    const { currUser, assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
+    const { assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
 
     const containerStyle = {
       overflowY: 'auto',

@@ -8,7 +8,7 @@ import AssignmentsListGET from '/client/imports/components/Education/Assignments
 import StudentListGET from '/client/imports/components/Education/StudentListGET'
 import QLink from '/client/imports/routes/QLink'
 
-export default class StudentClassroomView extends React.Component {
+export default class ClassroomStudentView extends React.Component {
   render() {
     const { currUser, classroom, teacher, toggleChat } = this.props
 

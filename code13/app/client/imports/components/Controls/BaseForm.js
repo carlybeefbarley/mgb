@@ -1,9 +1,11 @@
 import React from 'react'
-import { Checkbox } from 'semantic-ui-react'
-
+import _ from 'lodash'
+import { Checkbox, Button } from 'semantic-ui-react'
 import DropArea from './DropArea.js'
 import SmallDD from './SmallDD.js'
 import { joyrideStore } from '/client/imports/stores'
+import ReactQuill from 'react-quill'
+import 'react-quill/dist/quill.snow.css'
 
 // This partial class uses the following React props..
 // propTypes: {
@@ -18,6 +20,22 @@ import { joyrideStore } from '/client/imports/stores'
 // }
 
 export default class BaseForm extends React.Component {
+  // For reactive controlled inputs; used only for text inputs
+  // Components can have multiple form fields, so we need a state
+  // to represent the value for each one mapped by the unique given key
+  //   ex. textVal: {key1: val1, key2: val2}
+  state = {
+    textVal: {},
+    textAreaVal: {},
+    textEditorVal: {},
+    dateVal: {},
+  }
+
+  // Debounce text inputs to prevent onChange on every character
+  handleChange = _.debounce(() => {
+    this.props.onChange && this.props.onChange()
+  }, 250)
+
   options(name, key, options, fieldOptions = {}, mgbjrCT = '', id = '', func) {
     let val = this.data[key]
     if (val === void 0) console.warn('value not defined for:', name + '[' + key + ']')
@@ -81,10 +99,13 @@ export default class BaseForm extends React.Component {
           {...fieldOptions}
           placeholder={name}
           type={type == void 0 ? 'text' : type}
-          value={this.data[key]}
+          value={!_.isEmpty(this.state.textVal) ? this.state.textVal[key] : this.data[key]}
           onChange={e => {
             this.data[key] = e.target.value
-            this.props.onChange && this.props.onChange()
+            let keyVal = this.state.textVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
           }}
           onBlur={() => {
             // special handling for input numbers and min/max value
@@ -96,7 +117,7 @@ export default class BaseForm extends React.Component {
                 this.data[key] = fieldOptions.max
               }
               if (fieldOptions.default != void 0 && !this.data[key]) this.data[key] = fieldOptions.default
-              this.props.onChange && this.props.onChange()
+              this.handleChange()
             }
           }}
         />
@@ -113,13 +134,80 @@ export default class BaseForm extends React.Component {
         <label>{name}</label>
         <textarea
           rows="3"
+          value={!_.isEmpty(this.state.textAreaVal) ? this.state.textAreaVal[key] : this.data[key]}
           onChange={e => {
-            const val = e.target.value
-            this.data[key] = val
-            this.props.onChange && this.props.onChange()
-            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + val)
+            this.data[key] = e.target.value
+            let keyVal = this.state.textAreaVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
+            if (mgbjrCT) joyrideStore.completeTag(mgbjrCT + e.target.value)
           }}
-          value={this.data[key]}
+        />
+      </div>
+    )
+  }
+
+  // Quill.js editor
+  textEditor(name, key, fieldOptions = {}) {
+    /*
+    * Quill modules to attach to editor
+    * See http://quilljs.com/docs/modules/ for complete options
+    */
+    const modules = {
+      toolbar: [
+        [{ header: [1, 2, false] }],
+        ['bold', 'italic', 'underline', 'strike', 'color', 'blockquote', 'code-block'],
+        [{ list: 'ordered' }, { list: 'bullet' }, { indent: '-1' }, { indent: '+1' }],
+        ['link', 'image'],
+        ['clean'],
+      ],
+      clipboard: {
+        matchVisual: false,
+      },
+    }
+
+    /*
+     * Quill editor formats
+     * See http://quilljs.com/docs/formats/
+     */
+    const formats = [
+      'header',
+      'font',
+      'size',
+      'bold',
+      'italic',
+      'underline',
+      'strike',
+      'blockquote',
+      'code-block',
+      'code',
+      'list',
+      'bullet',
+      'indent',
+      'link',
+      'image',
+      'color',
+    ]
+
+    return (
+      <div
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
+        title={fieldOptions && fieldOptions.title}
+      >
+        <label>{name}</label>
+
+        <ReactQuill
+          modules={modules}
+          formats={formats}
+          defaultValue={!_.isEmpty(this.state.textEditorVal) ? this.state.textEditorVal[key] : this.data[key]}
+          onChange={content => {
+            this.data[key] = content // This is an HTML string
+            let keyVal = this.state.textEditorVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
+          }}
         />
       </div>
     )
@@ -148,6 +236,30 @@ export default class BaseForm extends React.Component {
             this.data._ids[key] = asset ? asset._id : ''
             this.props.onChange && this.props.onChange()
             cb && cb(asset)
+          }}
+        />
+      </div>
+    )
+  }
+
+  date(name, key, fieldOptions = {}) {
+    return (
+      <div
+        className={'field' + (fieldOptions.disabled ? ' disabled' : '')}
+        title={fieldOptions && fieldOptions.title}
+      >
+        <label>{name}</label>
+        <input
+          {...fieldOptions}
+          style={{ width: 'auto' }}
+          type="date"
+          value={!_.isEmpty(this.state.dateVal) ? this.state.dateVal[key] : this.data[key]}
+          onChange={e => {
+            this.data[key] = e.target.value
+            let keyVal = this.state.dateVal
+            keyVal[key] = this.data[key]
+            this.setState({ keyVal })
+            this.handleChange()
           }}
         />
       </div>

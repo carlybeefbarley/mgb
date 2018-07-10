@@ -187,8 +187,8 @@ export default class ClassroomTeacherView extends React.Component {
 
     const listStyle = {
       overflowY: 'auto',
-      maxHeight: '14em',
-      minHeight: '14em',
+      maxHeight: '13em',
+      minHeight: '13em',
     }
 
     return (
@@ -231,7 +231,7 @@ export default class ClassroomTeacherView extends React.Component {
             <Grid.Column width={8}>
               <Segment raised color="green" style={rowStyle}>
                 <div>
-                  <Header as="h3" content="Upcoming Assignments" />
+                  <Header as="h2" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
                     <AssignmentsList assignmentAssets={assignments} showUpcoming showNoDueDate />

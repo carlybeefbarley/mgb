@@ -15,7 +15,6 @@ import ClassroomStudentView from '/client/imports/components/Education/Classroom
  *
  * Student projects are subscribed in HOC and and filtered to only show projects that have an assignment ID.
  */
-<<<<<<< HEAD
 class TeacherClassroomView extends React.Component {
   classroomHasStudents = () => {
     const { students, assignments } = this.props
@@ -401,8 +400,6 @@ class StudentClassroomView extends React.Component {
     )
   }
 }
-=======
->>>>>>> ae75c7eeb0c5fd4fe196b92d81460eb0b4d180a7
 
 class Classroom extends React.Component {
   state = { chatIsOpen: true }

@@ -2,6 +2,7 @@ import _ from 'lodash'
 import { Chats } from '/imports/schemas'
 import { Match } from 'meteor/check'
 import validate from '/imports/schemas/validate'
+import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
 
 // Data model for MGB Chats.
 
@@ -252,6 +253,7 @@ export const chatsSchema = {
 export const ChatPosters = {
   SUPERADMIN: '@@superAdmin',
   ACTIVEUSER: '@@activeUser',
+  STAFFUSER: '@@staffUser', // Teacher or Mod or Admin
 }
 
 // TODO: Rename this as PublicChatChannels
@@ -288,6 +290,15 @@ export const ChatChannels = {
     description: 'Off-topic discussions not related to MGB',
     subscopes: {},
   },
+  STAFF: {
+    name: 'staff',
+    icon: 'hashtag',
+    channelName: makeChannelName({ scopeGroupName: 'Global', scopeId: 'STAFF' }),
+    poster: ChatPosters.STAFFUSER,
+    hideFromPublic: true,
+    description: 'MGB Admins and Teaching staff',
+    subscopes: {},
+  },
   // ANNOUNCE: {
   //   name:         "mgb-announce",
   //   icon:         "hashtag",
@@ -300,7 +311,7 @@ export const ChatChannels = {
   getIconClass(key) {
     return (ChatChannels.hasOwnProperty(key) ? ChatChannels[key].icon : 'warning sign') + ' icon'
   },
-  sortedKeys: ['GENERAL', 'MGBBUGS', 'MGBHELP', 'RANDOM'],
+  sortedKeys: ['GENERAL', 'MGBBUGS', 'MGBHELP', 'RANDOM', 'STAFF'],
 }
 
 // TODO: Move to SpecialGlobals.js
@@ -318,6 +329,10 @@ function _userIsSuperAdmin(currUser) {
     })
   }
   return isSuperAdmin
+}
+
+function _userIsStaffUser(currUser) {
+  return currUser && (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
 }
 
 /**
@@ -343,6 +358,8 @@ export function currUserCanSend(currUser, channelName) {
         return _userIsSuperAdmin(currUser)
       case ChatPosters.ACTIVEUSER:
         return !!currUser
+      case ChatPosters.STAFFUSER:
+        return _userIsStaffUser(currUser)
       default:
         console.trace('Unknown Permission requirement message posting: ', validPoster)
         return false

@@ -316,7 +316,7 @@ class ProjectOverview extends Component {
           <Grid.Row columns="equal">
             <Grid.Column textAlign="center" style={sideBarColumnStyle} />
             <Grid.Column>
-              <Header as="h1" textAlign="center" dividing>
+              <Header style={{ padding: '0.5em 0 0.5em 0' }} as="h1" textAlign="center" dividing>
                 {project.name}
               </Header>
             </Grid.Column>

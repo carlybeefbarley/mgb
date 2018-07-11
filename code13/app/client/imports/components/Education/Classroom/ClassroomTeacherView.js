@@ -238,7 +238,7 @@ export default class ClassroomTeacherView extends React.Component {
                             })}`,
                           }}
                         >
-                          <Button fluid labelPosition="left" icon="chat" content="Classroom Chat" />
+                          <Button labelPosition="left" icon="chat" content="Classroom Chat" />
                         </QLink>
                       </List.Content>
                     </List.Item>

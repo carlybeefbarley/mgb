@@ -7,7 +7,7 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
 import EnrollButton from '/client/imports/components/HourOfCode/EnrollButton'
 import { logActivity } from '/imports/schemas/activity'
-import { roleTeacher } from '/imports/schemas/roles'
+import { roleTeacher, isUserTeacher } from '/imports/schemas/roles'
 import { Classrooms } from '/imports/schemas'
 import NavPanelItem from './NavPanel'
 
@@ -49,7 +49,7 @@ const _doLogout = () => {
     if (error) {
       showToast.error(`Logout failed: '${error.toString()}'.  Refresh and try again.`)
     } else {
-      utilPushTo(null, '/')
+      utilPushTo(null, '/', null)
     }
   })
 }
@@ -57,13 +57,13 @@ const _doLogout = () => {
 // exported since the Tutorial Editor uses this to generate some
 // macros in JoyrideSpecialMacros.jsx
 // Note that this uses Meteor's Accounts.loggingIn() so it doesn't flash the Login/Sigup during user login
-const getNavPanels = (currUser, showAll) => {
+const getNavPanels = (currUser, showAll, props) => {
   const username = currUser ? currUser.username : null
   const isLoggingIn = Meteor.loggingIn()
   const showGuestOptions = (!isLoggingIn && !currUser) || showAll
   const showUserOptions = (!isLoggingIn && !!currUser) || showAll
   const isGuest = currUser ? currUser.profile.isGuest : false
-  const isTeacher = true
+  const isTeacher = isUserTeacher(currUser)
   const isHocActivity = isGuest && _.startsWith(window.location.pathname, `/u/${currUser.username}/asset/`)
   const isHocRoute = window.location.pathname === '/hour-of-code'
   rightItemsLoggedIn
@@ -71,48 +71,69 @@ const getNavPanels = (currUser, showAll) => {
     <Menu.Menu position="right">
       {/* Note that className="left" used below because semantic doesnt want to play nice and use direction="left" */}
       {/* ASSETS */}
-      <Dropdown simple item text="Assets" icon={null} link href={`/u/${username}/assets`}>
+      <Dropdown
+        simple
+        item
+        text="Assets"
+        icon={null}
+        onClick={() => utilPushTo(null, `/u/${username}/assets`)}
+      >
         <Dropdown.Menu className="left">
-          <Dropdown.Item link href={`/u/${username}/assets`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/assets`)}>
             <Icon name="pencil" color="black" />My Assets
           </Dropdown.Item>
-          <Dropdown.Item link href={`/assets`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/assets`)}>
             <Icon name="pencil" color="black" />All Assets
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/assets?showChallengeAssets=1&view=s`}>
-            <Icon name="calendar check outline" color="orange" />My "Challenge Assets"
+          <Dropdown.Item
+            onClick={() => utilPushTo(null, `/u/${username}/assets?showChallengeAssets=1&view=s`)}
+          >
+            <Icon name="checked calendar" color="orange" />My "Challenge Assets"
           </Dropdown.Item>
-          <Dropdown.Item link href={`/assets/create`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/assets/create`)}>
             <Icon name="pencil" color="green" />Create New Asset
           </Dropdown.Item>
-          <Dropdown.Item link href={`/assets/create-from-template`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/assets/create-from-template`)}>
             <Icon name="pencil" color="black" />Create From Template
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       {/* PROJECTS */}
-      <Dropdown simple item text="Projects" icon={null} link href={`/u/${username}/projects`}>
+      <Dropdown
+        simple
+        item
+        text="Projects"
+        icon={null}
+        onClick={() => utilPushTo(null, `/u/${username}/projects`)}
+      >
         <Dropdown.Menu className="left">
-          <Dropdown.Item link href={`/u/${username}/projects`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/projects`)}>
             <Icon name="sitemap" color="black" />My Projects
           </Dropdown.Item>
-          <Dropdown.Item link href={`/projects`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/projects`)}>
             <Icon name="sitemap" color="black" />All Projects
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/projects/import/mgb1`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/projects/import/mgb1`)}>
             <Icon name="upload" color="orange" />Import MGBv1 Projects
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/projects/create`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/projects/create`)}>
             <Icon name="sitemap" color="green" />Create New Project
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       {/* DASHBOARD */}
-      <Menu.Item link href="/dashboard-education" content="Dashboard" icon={null} />
+      <Menu.Item href="/dashboard-education" content="Dashboard" icon={null} />
       {/* CLASSROOM */}
-      <Menu.Item link href={`/dashboard-education`} content="Classroom" icon={null} />
+      {!isTeacher && (
+        <Menu.Item
+          onClick={() =>
+            utilPushTo(null, `/user/${currUser._id}/classroom/${_.first(props.currStudentOfClassrooms)._id}`)}
+          content="Classroom"
+          icon={null}
+        />
+      )}
       {/* NOTIFICATIONS */}
-      <Dropdown simple item icon="bell" position="right" direction="right">
+      <Dropdown simple item icon="bell" direction="right">
         <Dropdown.Menu className="left">
           <Dropdown.Header content="Notifications" />
           <Dropdown.Item>
@@ -124,25 +145,23 @@ const getNavPanels = (currUser, showAll) => {
       <Dropdown
         simple
         item
-        link
-        href={`/u/${username}`}
         icon={<Image centered avatar src={currUser && currUser.profile && currUser.profile.avatar} />}
       >
         <Dropdown.Menu className="left">
-          <Dropdown.Header content="PH - USERNAME" />
-          <Dropdown.Item link href={`/u/${username}`}>
+          <Dropdown.Header content={currUser && currUser.username} />
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}`)}>
             <Icon name="user" color="black" />My Profile
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/badges`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/badges`)}>
             <Icon name="trophy" color="black" />My Badges
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/games`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/games`)}>
             <Icon name="gamepad" color="black" />My Games
           </Dropdown.Item>
-          <Dropdown.Item link href={`/u/${username}/skilltree`}>
+          <Dropdown.Item onClick={() => utilPushTo(null, `/u/${username}/skilltree`)}>
             <Icon name="plus circle" color="black" />My Skills
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item onClick={_doLogout}>
             <Icon name="sign out" color="black" />Logout
           </Dropdown.Item>
         </Dropdown.Menu>
@@ -152,7 +171,7 @@ const getNavPanels = (currUser, showAll) => {
 
   const rightItemsNotLoggedIn = (
     <Menu.Menu position="right">
-      <Menu.Item link href="/login" content="Log in" icon={null} />
+      <Menu.Item href="/login" content="Log in" icon={null} />
     </Menu.Menu>
   )
 
@@ -225,9 +244,8 @@ const getNavPanels = (currUser, showAll) => {
 
   return (
     <Menu inverted borderless style={menuStyle}>
-      <Menu.Menu name="mgb" icon="home" explainClickAction="Clicking here jumps to the Home Page" to="/">
+      <Menu.Menu name="mgb" icon="home">
         <Dropdown
-          link
           href="/"
           simple
           item
@@ -235,43 +253,43 @@ const getNavPanels = (currUser, showAll) => {
           text={<Image src="/images/logos/mgb/medium/01w.png" style={logoImageStyle} />}
         >
           <Dropdown.Menu>
-            <Dropdown.Item link href="/whats-new">
+            <Dropdown.Item href="/whats-new">
               <Icon name="gift" color="black" />
               What's New
             </Dropdown.Item>
-            <Dropdown.Item link href="/roadmap">
+            <Dropdown.Item href="/roadmap">
               <Icon name="road" color="black" />
               Road Map
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <Dropdown simple text="Learn" item icon={null} link href="/learn">
+        <Dropdown simple text="Learn" item icon={null} href="/learn">
           <Dropdown.Menu>
-            <Dropdown.Item link href="/learn/get-started">
+            <Dropdown.Item href="/learn/get-started">
               <Icon name="rocket" color="yellow" />
               Get Started
             </Dropdown.Item>
-            <Dropdown.Item link href="/learn/code">
+            <Dropdown.Item href="/learn/code">
               <Icon name="code" color="black" />
               Code
             </Dropdown.Item>
-            <Dropdown.Item link href="/learn/skills">
+            <Dropdown.Item href="/learn/skills">
               <Icon name="student" color="green" />
               All Skills
             </Dropdown.Item>
           </Dropdown.Menu>
         </Dropdown>
-        <Dropdown simple text="Play" item icon={null} link href="/games">
+        <Dropdown simple text="Play" item icon={null} href="/games">
           <Dropdown.Menu>
-            <Dropdown.Item link href="/games?sort=loves">
+            <Dropdown.Item href="/games?sort=loves">
               <Icon name="heart" color="red" />
               Loved Games
             </Dropdown.Item>
-            <Dropdown.Item link href="/games?sort=plays">
+            <Dropdown.Item href="/games?sort=plays">
               <Icon name="gamepad" color="blue" />
               Popular Games
             </Dropdown.Item>
-            <Dropdown.Item link href="/games?sort=edited">
+            <Dropdown.Item href="/games?sort=edited">
               <Icon name="gamepad" color="green" />Updated Games
             </Dropdown.Item>
           </Dropdown.Menu>

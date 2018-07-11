@@ -91,6 +91,7 @@ class StudentDashboard extends React.Component {
                   imageSrc={avatar}
                   header="User Avatar"
                   canEdit
+                  canLinkToSrc
                   handleChange={url => handleAvatarChange(url)}
                 />
 

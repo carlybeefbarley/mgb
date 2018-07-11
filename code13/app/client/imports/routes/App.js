@@ -351,6 +351,7 @@ class AppUI extends Component {
       responsive,
       sysvars,
       user,
+      currStudentOfClassrooms,
     } = this.props
     const {
       currentlyEditingAssetInfo,
@@ -467,6 +468,7 @@ class AppUI extends Component {
           {!isGuest && !isHocRoute && <VerifyBanner currUser={currUser} />}
           {!hideHeaders && (
             <NavPanel
+              currStudentOfClassrooms={currStudentOfClassrooms}
               currUser={currUser}
               navPanelAvailableWidth={mainAreaAvailableWidth}
               activity={this.props.activity}

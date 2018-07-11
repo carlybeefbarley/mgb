@@ -57,7 +57,7 @@ class UserBioCard extends React.Component {
 
     return (
       <Segment raised color="green" style={rowStyle}>
-        <Header as="h2">
+        <Header as="h3">
           {canEdit ? 'About You' : `About ${user.username}`}
           {canEdit && (
             <Button

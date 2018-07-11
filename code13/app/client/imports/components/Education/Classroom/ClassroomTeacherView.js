@@ -28,6 +28,10 @@ export default class ClassroomTeacherView extends React.Component {
   renderAssignmentTable = () => {
     const { assignments } = this.props
 
+    const tableStyle = {
+      overflowX: 'auto',
+    }
+
     if (!this.classroomHasStudents()) {
       return (
         <Segment>
@@ -37,16 +41,18 @@ export default class ClassroomTeacherView extends React.Component {
     }
 
     return (
-      <Table celled striped>
-        <Table.Header>
-          <Table.Row key={'row_root'}>
-            <Table.HeaderCell colSpan="1" key={'column_root'} />
-            {/* Top left spacer cell to fill out table. */}
-            {this.renderTableAssignmentHeaderCells(assignments)}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{this.renderStudentRows()}</Table.Body>
-      </Table>
+      <div style={tableStyle}>
+        <Table celled striped>
+          <Table.Header>
+            <Table.Row key={'row_root'}>
+              <Table.HeaderCell colSpan="1" key={'column_root'} />
+              {/* Top left spacer cell to fill out table. */}
+              {this.renderTableAssignmentHeaderCells(assignments)}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{this.renderStudentRows()}</Table.Body>
+        </Table>
+      </div>
     )
   }
 
@@ -199,6 +205,12 @@ export default class ClassroomTeacherView extends React.Component {
       minHeight: '8em',
     }
 
+    const secondRowStyle = {
+      minHeight: '14em',
+      maxHeight: '14em',
+      marginBottom: '1em',
+    }
+
     return (
       <div style={containerStyle}>
         {/* Floating doesn't seem to work unless I include columns - Hudson */}
@@ -238,11 +250,7 @@ export default class ClassroomTeacherView extends React.Component {
                             })}`,
                           }}
                         >
-<<<<<<< HEAD
                           <Button color="blue" labelPosition="left" icon="chat" content="Classroom Chat" />
-=======
-                          <Button labelPosition="left" icon="chat" content="Classroom Chat" />
->>>>>>> 872c071633adcdc3065bf47ce2df918012e5f2ae
                         </QLink>
                       </List.Content>
                     </List.Item>
@@ -265,11 +273,7 @@ export default class ClassroomTeacherView extends React.Component {
                     />
                   </div>
                   <Divider />
-                  <Button
-                    active={editListMode}
-                    content="Toggle Edit List"
-                    onClick={this.handleToggleEditListMode}
-                  />
+                  <Button active={editListMode} content="Edit List" onClick={this.handleToggleEditListMode} />
                   <ClassroomAddAssignmentModal classroom={classroom} />
                 </div>
               </Segment>
@@ -290,17 +294,17 @@ export default class ClassroomTeacherView extends React.Component {
                 </div>
               </Segment>
 
-              <Segment raised color="purple">
-                <Header as="h3" content="Past Assignments" />
-                <AssignmentsList assignmentAssets={assignments} showPastDue />
+              <Segment raised color="purple" style={secondRowStyle}>
+                <Header as="h3" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={13}>
-              <Segment raised color="orange">
-                <Header as="h3" content="Students" />
-                <StudentListGET studentIds={classroom.studentIds} />
+              <Segment raised color="orange" style={secondRowStyle}>
+                <Header as="h3" content="Past Assignments" />
+                <AssignmentsList assignmentAssets={assignments} showPastDue />
               </Segment>
             </Grid.Column>
           </Grid.Row>

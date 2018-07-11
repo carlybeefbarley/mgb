@@ -110,11 +110,7 @@ export default class ClassroomStudentView extends React.Component {
                           })}`,
                         }}
                       >
-<<<<<<< HEAD
                         <Button color="blue" labelPosition="left" icon="chat" content="Classroom Chat" />
-=======
-                        <Button labelPosition="left" icon="chat" content="Classroom Chat" />
->>>>>>> 872c071633adcdc3065bf47ce2df918012e5f2ae
                       </QLink>
                     </List.Content>
                   </List.Item>

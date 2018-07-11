@@ -71,46 +71,46 @@ const getNavPanels = (currUser, showAll) => {
     <Menu.Menu position="right">
       {/* Note that className="left" used below because semantic doesnt want to play nice and use direction="left" */}
       {/* ASSETS */}
-      <Dropdown simple item text="Assets" icon={null}>
+      <Dropdown simple item text="Assets" icon={null} link href={`/u/${username}/assets`}>
         <Dropdown.Menu className="left">
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/assets`}>
             <Icon name="pencil" color="black" />My Assets
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/assets`}>
             <Icon name="pencil" color="black" />All Assets
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/assets?showChallengeAssets=1&view=s`}>
             <Icon name="calendar check outline" color="orange" />My "Challenge Assets"
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/assets/create`}>
             <Icon name="pencil" color="green" />Create New Asset
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/assets/create-from-template`}>
             <Icon name="pencil" color="black" />Create From Template
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       {/* PROJECTS */}
-      <Dropdown simple item text="Projects" icon={null}>
+      <Dropdown simple item text="Projects" icon={null} link href={`/u/${username}/projects`}>
         <Dropdown.Menu className="left">
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/projects`}>
             <Icon name="sitemap" color="black" />My Projects
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/projects`}>
             <Icon name="sitemap" color="black" />All Projects
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/projects/import/mgb1`}>
             <Icon name="upload" color="orange" />Import MGBv1 Projects
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/projects/create`}>
             <Icon name="sitemap" color="green" />Create New Project
           </Dropdown.Item>
         </Dropdown.Menu>
       </Dropdown>
       {/* DASHBOARD */}
-      <Menu.Item link href="/dashboard" content="Dashboard" icon={null} />
+      <Menu.Item link href="/dashboard-education" content="Dashboard" icon={null} />
       {/* CLASSROOM */}
-      <Menu.Item link href="" content="Classroom" icon={null} />
+      <Menu.Item link href={`/dashboard-education`} content="Classroom" icon={null} />
       {/* NOTIFICATIONS */}
       <Dropdown simple item icon="bell" position="right" direction="right">
         <Dropdown.Menu className="left">
@@ -124,20 +124,22 @@ const getNavPanels = (currUser, showAll) => {
       <Dropdown
         simple
         item
-        icon={<Image centered avatar src="https://v2.mygamebuilder.com/api/asset/png/Jd4dSR3WygBFXp72m" />}
+        link
+        href={`/u/${username}`}
+        icon={<Image centered avatar src={currUser && currUser.profile && currUser.profile.avatar} />}
       >
         <Dropdown.Menu className="left">
           <Dropdown.Header content="PH - USERNAME" />
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}`}>
             <Icon name="user" color="black" />My Profile
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/badges`}>
             <Icon name="trophy" color="black" />My Badges
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/games`}>
             <Icon name="gamepad" color="black" />My Games
           </Dropdown.Item>
-          <Dropdown.Item>
+          <Dropdown.Item link href={`/u/${username}/skilltree`}>
             <Icon name="plus circle" color="black" />My Skills
           </Dropdown.Item>
           <Dropdown.Item>

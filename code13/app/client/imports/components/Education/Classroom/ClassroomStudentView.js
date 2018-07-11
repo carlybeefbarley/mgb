@@ -49,10 +49,16 @@ export default class ClassroomStudentView extends React.Component {
       marginBottom: '1em',
     }
 
+    const secondRowStyle = {
+      minHeight: '14em',
+      maxHeight: '14em',
+      marginBottom: '1em',
+    }
+
     const listStyle = {
       overflowY: 'auto',
-      maxHeight: '10em',
-      minHeight: '10em',
+      maxHeight: '13em',
+      minHeight: '13em',
     }
 
     const smallStyle = {
@@ -85,6 +91,7 @@ export default class ClassroomStudentView extends React.Component {
                 <List style={infoStyle}>
                   <List.Item>
                     <List.Content style={smallStyle}>
+                      Teacher:&nbsp;
                       {teacher && <QLink to={`/u/${teacher.username}`}>{`${teacher.username}`}</QLink>}
                     </List.Content>
                   </List.Item>
@@ -99,6 +106,14 @@ export default class ClassroomStudentView extends React.Component {
             <Grid.Column width={8}>
               <Segment raised color="green" style={rowStyle}>
                 <Header as="h3" content="About this Class" />
+                <Segment>
+                  <ReactQuill
+                    readOnly
+                    style={{ pointerEvents: 'none' }}
+                    theme={null}
+                    defaultValue={classroom && classroom.description}
+                  />
+                </Segment>
               </Segment>
             </Grid.Column>
           </Grid.Row>
@@ -106,20 +121,25 @@ export default class ClassroomStudentView extends React.Component {
             <Grid.Column width={13}>
               <Segment raised color="yellow" style={rowStyle}>
                 <Header as="h3" content="Upcoming Assignments" />
+                <div style={listStyle}>
+                  <AssignmentsListGET {...this.props} showUpcoming showNoDueDate showProjectCreateButtons />
+                </div>
               </Segment>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={13}>
-              <Segment raised color="purple" style={rowStyle}>
+              <Segment raised color="purple" style={secondRowStyle}>
                 <Header as="h3" content="Classmates" />
+                <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={13}>
-              <Segment raised color="red" style={rowStyle}>
+              <Segment raised color="red" style={secondRowStyle}>
                 <Header as="h3" content="Our Finished Games" />
+                <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Column>
           </Grid.Row>

@@ -427,7 +427,7 @@ class ProjectOverview extends Component {
                     _fp: `chat.${makeChannelName({ scopeGroupName: 'Project', scopeId: project._id })}`,
                   }}
                 >
-                  <Button fluid labelPosition="left" icon="chat" content="Project Chat" />
+                  <Button labelPosition="left" icon="chat" content="Project Chat" />
                 </QLink>
                 {this.canEdit(project, currUser, loading) && (
                   <Form>

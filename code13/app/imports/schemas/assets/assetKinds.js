@@ -167,7 +167,7 @@ export const AssetKinds = {
     longName: 'Tutorial definition',
     icon: 'student',
     color: 'black',
-    requiresUserRole: null,
+    requiresUserRole: roleSuperAdmin,
     description: 'The tutorials that you use in MGB are defined in Tutorial Assets',
     explanation:
       'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share',

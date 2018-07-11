@@ -66,8 +66,8 @@ class StudentProfile extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '20em',
-      maxHeight: '20em',
+      minHeight: '18em',
+      maxHeight: '18em',
       marginBottom: '1em',
     }
 
@@ -98,7 +98,7 @@ class StudentProfile extends React.Component {
                     </Header>
                     <ImageShowOrChange
                       id="mgbjr-profile-avatar"
-                      maxHeight="11em"
+                      maxHeight="9em"
                       maxWidth="auto"
                       imageSrc={avatar}
                       header="User Avatar"
@@ -185,9 +185,9 @@ class TeacherProfile extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '20em',
-      maxHeight: '20em',
-      marginBottom: '2em',
+      minHeight: '18em',
+      maxHeight: '18em',
+      marginBottom: '1em',
     }
 
     return (

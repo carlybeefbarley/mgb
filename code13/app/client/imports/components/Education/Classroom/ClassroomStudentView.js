@@ -6,11 +6,24 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import StudentListGET from '/client/imports/components/Education/StudentListGET'
+import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
+
+import { createContainer } from 'meteor/react-meteor-data'
+import { Classrooms, Users } from '/imports/schemas'
+import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 import QLink from '/client/imports/routes/QLink'
 
 export default class ClassroomStudentView extends React.Component {
   render() {
-    const { currUser, classroom, teacher, toggleChat } = this.props
+    const {
+      currUser,
+      classroom,
+      teacher,
+      toggleChat,
+      teacherName,
+      classrooms,
+      handleAvatarChange,
+    } = this.props
 
     if (!classroom) {
       return <Spinner loadingMsg="Loading Classroom..." />
@@ -145,80 +158,6 @@ export default class ClassroomStudentView extends React.Component {
           </Grid.Row>
         </Grid>
       </div>
-
-      // <div style={containerStyle}>
-
-      //   <Grid columns={2} padded stretched>
-      //     <Grid.Row style={rowStyle}>
-      //       <Grid.Column width={5}>
-      //         <Segment raised color="blue" style={rowStyle}>
-      //           <Header style={titleStyle} as="h1" content={classroom && classroom.name} />
-
-      //           {/* Change avatar for classroom later  */}
-      //           <ImageShowOrChange
-      //             id="mgbjr-profile-avatar"
-      //             maxHeight="12em"
-      //             maxWidth="auto"
-      //             imageSrc={avatar}
-      //             header="User Avatar"
-      //             canEdit={false}
-      //           />
-      //           <List style={infoStyle}>
-      //             <List.Item>
-      //               <List.Content>
-      //                 {teacher && <QLink to={`/u/${teacher.username}`}>{`${teacher.username}`}</QLink>}
-      //               </List.Content>
-      //             </List.Item>
-      //             <List.Item>
-      //               <List.Content onClick={toggleChat}>
-      //                 <Button icon="chat" color="blue" content="Classroom Chat" />
-      //               </List.Content>
-      //             </List.Item>
-      //           </List>
-      //         </Segment>
-      //       </Grid.Column>
-
-      //       <Grid.Column width={8}>
-      //         <Segment raised color="green">
-      //           <Header as="h2" content="About this Class" />
-      //           <Segment>
-      //             <ReactQuill
-      //               readOnly
-      //               style={{ pointerEvents: 'none' }}
-      //               theme={null}
-      //               defaultValue={classroom && classroom.description}
-      //             />
-      //           </Segment>
-      //         </Segment>
-      //       </Grid.Column>
-      //     </Grid.Row>
-      //     <Grid.Row>
-      //       <Grid.Column width={13}>
-      //         <Segment raised color="yellow">
-      //           <Header as="h2" content="Upcoming Assignments" />
-      //           <AssignmentsListGET {...this.props} showUpcoming showNoDueDate showProjectCreateButtons />
-      //         </Segment>
-      //       </Grid.Column>
-      //     </Grid.Row>
-      //     <Grid.Column width={13}>
-      //       <Grid.Row>
-      //         <Segment raised color="purple">
-      //           <Header as="h2" content="Students" />
-      //           <StudentListGET studentIds={classroom.studentIds} />
-      //         </Segment>
-      //       </Grid.Row>
-      //     </Grid.Column>
-
-      //     <Grid.Column width={13}>
-      //       <Grid.Row>
-      //         <Segment raised color="orange">
-      //           <Header as="h2" content="Published Games from this Class" />
-      //           <UserProfileGamesList user={currUser} currUser={currUser} />
-      //         </Segment>
-      //       </Grid.Row>
-      //     </Grid.Column>
-      //   </Grid>
-      // </div>
     )
   }
 }

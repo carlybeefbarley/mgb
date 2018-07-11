@@ -1,5 +1,5 @@
 import React from 'react'
-import { Container, Grid, Header, Segment, TextArea } from 'semantic-ui-react'
+import { Container, Grid, Header, Segment, TextArea, List } from 'semantic-ui-react'
 // import PropTypes from 'prop-types'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
@@ -23,8 +23,9 @@ class StudentDashboard extends React.Component {
         overflowY: 'auto',
       },
       infoStyle = {
-        fontSize: '1em',
+        fontSize: '1.3em',
         textAlign: 'center',
+        marginTop: '0.4em',
       },
       upcomingStyle = {
         minHeight: '21.5em',
@@ -45,53 +46,93 @@ class StudentDashboard extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '20em',
-      maxHeight: '20em',
-      marginBottom: '2em',
+      minHeight: '18em',
+      maxHeight: '18em',
+      marginBottom: '1em',
+    }
+
+    const listStyle = {
+      overflowY: 'auto',
+      maxHeight: '16em',
+      minHeight: '16em',
+    }
+
+    const secondRowStyle = {
+      minHeight: '14em',
+      maxHeight: '14em',
+      marginBottom: '1em',
+    }
+
+    const smallStyle = {
+      fontSize: '0.7em',
     }
 
     return (
-      <Grid columns={16} padded style={containerStyle}>
-        <Grid.Column width={3} />
-        <Grid.Column width={10}>
-          <Header as="h1" content="Student Dashboard" style={headerStyle} />
-          <Grid columns={16}>
-            <Grid.Row>
-              <Grid.Column width={6}>
-                <Segment raised color="blue" style={rowStyle}>
-                  <ImageShowOrChange
-                    id="mgbjr-profile-avatar"
-                    maxHeight="11em"
-                    maxWidth="auto"
-                    imageSrc={avatar}
-                    header="User Avatar"
-                    canEdit
-                    handleChange={url => handleAvatarChange(url)}
-                  />
-                  <Header as="h1" content={`${currUser.username}`} textAlign="center" />
-                  <div style={infoStyle}>
-                    <p>
+      <div style={containerStyle}>
+        <Grid columns={1} padded>
+          <Grid.Row>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
+              <Header as="h1" content="Student Dashboard" style={headerStyle} />
+            </Grid.Column>
+          </Grid.Row>
+
+          <Grid.Row>
+            <Grid.Column width={3} />
+            <Grid.Column width={4}>
+              <Segment raised color="blue" style={rowStyle}>
+                <Header as="h1" content={`${currUser.username}`} textAlign="center" />
+
+                <ImageShowOrChange
+                  id="mgbjr-profile-avatar"
+                  maxHeight="9em"
+                  maxWidth="auto"
+                  paddingBottom="0.2em"
+                  imageSrc={avatar}
+                  header="User Avatar"
+                  canEdit
+                  handleChange={url => handleAvatarChange(url)}
+                />
+
+                <List style={infoStyle}>
+                  {/* <List.Item>
+                    <List.Content style={smallStyle}>
+                      Teacher:&nbsp;
+                      {teacher && <QLink to={`/u/${teacher.username}`}>{`${teacher.username}`}</QLink>}
+                    </List.Content>
+                  </List.Item> */}
+
+                  <List.Item>
+                    <List.Content>
                       {classrooms &&
                       classrooms[0] && (
                         <QLink to={`/user/${currUser.username}/classroom/${classrooms[0]._id}`}>
                           {classrooms[0].name}
                         </QLink>
                       )}
-                      <br />
+                    </List.Content>
+                  </List.Item>
+                  <List.Item>
+                    <List.Content>
+                      Teacher:&nbsp;
                       {teacherName && <QLink to={`/user/${teacherName}`}>{`${teacherName}`}</QLink>}
-                    </p>
-                  </div>
-                </Segment>
-              </Grid.Column>
-              <Grid.Column width={10}>
-                <UserBioCard {...this.props} user={currUser} canEdit />
-              </Grid.Column>
-            </Grid.Row>
+                    </List.Content>
+                  </List.Item>
+                </List>
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={6}>
+              <UserBioCard {...this.props} user={currUser} canEdit />
+            </Grid.Column>
+            <Grid.Column width={3} />
+          </Grid.Row>
 
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <Segment raised color="yellow" style={upcomingStyle}>
-                  <Header as="h2" content="Upcoming Assignments" />
+          <Grid.Row>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
+              <Segment raised color="yellow" style={upcomingStyle}>
+                <Header as="h2" content="Upcoming Assignments" />
+                <div style={listStyle}>
                   <AssignmentsListGET
                     {...this.props}
                     showUpcoming
@@ -99,28 +140,23 @@ class StudentDashboard extends React.Component {
                     showPastDue={false}
                     showProjectCreateButtons
                   />
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
+                </div>
+              </Segment>
+            </Grid.Column>
+          </Grid.Row>
 
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <UserColleaguesList user={currUser} narrowItem projects={this.props.currUserProjects} />
-              </Grid.Column>
-            </Grid.Row>
-
-            <Grid.Row>
-              <Grid.Column width={16}>
-                <Segment raised color="purple">
-                  <UserProfileGamesList user={currUser} currUser={currUser} />
-                </Segment>
-              </Grid.Column>
-            </Grid.Row>
-          </Grid>
-        </Grid.Column>
-
-        <Grid.Column width={3} />
-      </Grid>
+          <Grid.Row>
+            <Grid.Column width={3} />
+            <Grid.Column width={10}>
+              <Segment raised color="purple" style={secondRowStyle}>
+                <Header as="h2" content="Your Published Games" />
+                <UserProfileGamesList user={currUser} currUser={currUser} />
+              </Segment>
+            </Grid.Column>
+            <Grid.Column width={3} />
+          </Grid.Row>
+        </Grid>
+      </div>
     )
   }
 }

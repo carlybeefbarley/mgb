@@ -6,6 +6,7 @@ import QLink from '/client/imports/routes/QLink'
 import AssetCardGET from '/client/imports/components/Assets/AssetCardGET'
 import ProjectCardGET from '/client/imports/components/Projects/ProjectCardGET'
 import ChatMessagesView from './fpChat-messagesView'
+import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
 
 import { Azzets } from '/imports/schemas'
 import {
@@ -325,7 +326,9 @@ const fpChat = React.createClass({
         </List.Item>
         {ChatChannels.sortedKeys.map(k => {
           const chan = ChatChannels[k]
-          return (
+          const showThisOption =
+            !chan.hideFromPublic || (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
+          return showThisOption ? (
             <List.Item
               key={k}
               onClick={() => this.handleChatChannelChange(chan.channelName)}
@@ -337,7 +340,7 @@ const fpChat = React.createClass({
                 {this.renderUnreadChannelIndicator(chan.channelName, chatChannelTimestamps)}
               </List.Content>
             </List.Item>
-          )
+          ) : null
         })}
       </List>
     )

@@ -47,7 +47,12 @@ class UserBioCard extends React.Component {
       minHeight: '20em',
       maxHeight: '20em',
       marginBottom: '2em',
+    }
+
+    const listStyle = {
       overflowY: 'auto',
+      maxHeight: '14em',
+      minHeight: '14em',
     }
 
     return (
@@ -63,8 +68,7 @@ class UserBioCard extends React.Component {
             />
           )}
         </Header>
-        <div>
-          {/* TODO: find a way to just havew the bio be scrollable, not the whole segment */}
+        <div style={listStyle}>
           {canEdit &&
           editing && (
             <TextArea

@@ -52,7 +52,7 @@ class StudentProfile extends React.Component {
     }
 
     const SchoolNameStyle = {
-      fontSize: '1.3em',
+      fontSize: '1.2em',
       textAlign: 'center',
     }
 

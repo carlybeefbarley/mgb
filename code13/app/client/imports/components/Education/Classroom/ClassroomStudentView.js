@@ -110,7 +110,7 @@ export default class ClassroomStudentView extends React.Component {
                           })}`,
                         }}
                       >
-                        <Button fluid labelPosition="left" icon="chat" content="Classroom Chat" />
+                        <Button color="blue" labelPosition="left" icon="chat" content="Classroom Chat" />
                       </QLink>
                     </List.Content>
                   </List.Item>

@@ -25,7 +25,6 @@ import Hotjar from '/client/imports/helpers/hotjar.js'
 import { withMeteorData } from '../../hocs'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
-import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import AssignmentProjectListGET from '/client/imports/routes/Projects/AssignmentProjectListGET.js'
 import WorkState from '/client/imports/components/Controls/WorkState'
 
@@ -423,7 +422,13 @@ class ProjectOverview extends Component {
                   </Form.Field>
                 </Form> */}
 
-                <Button icon="chat" color="blue" content="Assignment Chat" />
+                <QLink
+                  query={{
+                    _fp: `chat.${makeChannelName({ scopeGroupName: 'Project', scopeId: project._id })}`,
+                  }}
+                >
+                  <Button fluid labelPosition="left" icon="chat" content="Project Chat" />
+                </QLink>
                 {this.canEdit(project, currUser, loading) && (
                   <Form>
                     <Form.Button

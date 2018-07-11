@@ -4,23 +4,13 @@ import { Grid } from 'semantic-ui-react'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
-import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 import ClassroomTeacherView from '/client/imports/components/Education/Classroom/ClassroomTeacherView'
 import ClassroomStudentView from '/client/imports/components/Education/Classroom/ClassroomStudentView'
 
 class Classroom extends React.Component {
-  state = { chatIsOpen: true }
-
-  toggleChat = () => {
-    this.setState(prevState => {
-      return { ...prevState, chatIsOpen: !prevState.chatIsOpen }
-    })
-  }
-
   render() {
     const { currUser, classroom, isTeacher, loading, params } = this.props
-    const { chatIsOpen } = this.state
 
     if (loading) return <Spinner loadingMsg="Loading Classroom..." />
 
@@ -35,15 +25,9 @@ class Classroom extends React.Component {
     return (
       <div style={containerStyle}>
         <Grid columns={16} stretched>
-          <Grid.Column width={3}>
-            {chatIsOpen && <ChatPanel currUser={currUser} channelName={channelName} />}
-          </Grid.Column>
+          <Grid.Column width={3} />
           <Grid.Column width={13}>
-            {isTeacher ? (
-              <ClassroomTeacherView {...this.props} toggleChat={this.toggleChat} />
-            ) : (
-              <ClassroomStudentView {...this.props} toggleChat={this.toggleChat} />
-            )}
+            {isTeacher ? <ClassroomTeacherView {...this.props} /> : <ClassroomStudentView {...this.props} />}
           </Grid.Column>
         </Grid>
       </div>

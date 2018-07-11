@@ -5,6 +5,7 @@ import AssignmentsList from '/client/imports/components/Education/AssignmentsLis
 import StudentListGET from '/client/imports/components/Education/StudentListGET'
 import ClassroomAddStudentModal from '/client/imports/components/Education/ClassroomAddStudentModal'
 import ClassroomAddAssignmentModal from '/client/imports/components/Education/ClassroomAddAssignmentModal'
+import { makeChannelName } from '/imports/schemas/chats'
 import QLink from '/client/imports/routes/QLink'
 
 const cellStyle = {
@@ -156,7 +157,7 @@ export default class ClassroomTeacherView extends React.Component {
   }
 
   render() {
-    const { assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
+    const { assignments, students, classroom, handleAvatarChange } = this.props
     const { editListMode } = this.state
 
     const containerStyle = {
@@ -228,8 +229,17 @@ export default class ClassroomTeacherView extends React.Component {
                   />
                   <List style={infoStyle}>
                     <List.Item>
-                      <List.Content onClick={toggleChat}>
-                        <Button icon="chat" color="blue" content="Classroom Chat" size="large" />
+                      <List.Content>
+                        <QLink
+                          query={{
+                            _fp: `chat.${makeChannelName({
+                              scopeGroupName: 'Classroom',
+                              scopeId: classroom.name, // Change this later to be use _id?
+                            })}`,
+                          }}
+                        >
+                          <Button fluid labelPosition="left" icon="chat" content="Classroom Chat" />
+                        </QLink>
                       </List.Content>
                     </List.Item>
                   </List>

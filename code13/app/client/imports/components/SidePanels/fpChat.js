@@ -174,11 +174,11 @@ const fpChat = React.createClass({
   },
 
   _calculateActiveChannelName() {
-    const { subNavParam } = this.props // empty string means "default"
+    const { subNavParam, currUser } = this.props // empty string means "default"
     const channelName = subNavParam // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
     return isChannelNameValid(channelName)
       ? channelName
-      : _previousChannelName || chatParams.defaultChannelName
+      : _previousChannelName || (!(currUser && currUser.profile.institution) && chatParams.defaultChannelName)
   },
 
   getInitialState() {
@@ -327,7 +327,9 @@ const fpChat = React.createClass({
         {ChatChannels.sortedKeys.map(k => {
           const chan = ChatChannels[k]
           const showThisOption =
-            !chan.hideFromPublic || (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
+            !(currUser && currUser.profile.institution) ||
+            !chan.hideFromPublic ||
+            (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
           return showThisOption ? (
             <List.Item
               key={k}
@@ -522,6 +524,8 @@ const fpChat = React.createClass({
     // user wall - no mapping required: scopeID for wall posts is the user id (for user friendlines, and user rename is unsupported currently and may never be)
     if (channelObj.scopeGroupName === 'User') return `User "${channelObj.scopeId}"`
 
+    if (channelObj.scopeGroupName === 'Classroom') return `Classroom "${channelObj.scopeId}"`
+
     // Catch-all error to remind us that we forgot to write this when adding a new channel time (DMs etc)
     console.error(
       `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#`,
@@ -537,7 +541,6 @@ const fpChat = React.createClass({
     const objName = this.findObjectNameForChannelName(channelName)
     const presentedChannelName = makePresentedChannelName(channelName, objName)
     const presentedChannelIconName = makePresentedChannelIconName(channelName)
-
     return (
       <div>
         <div>

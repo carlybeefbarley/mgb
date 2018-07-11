@@ -7,7 +7,7 @@ import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import StudentListGET from '/client/imports/components/Education/StudentListGET'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
-
+import { makeChannelName } from '/imports/schemas/chats'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Classrooms, Users } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
@@ -15,15 +15,7 @@ import QLink from '/client/imports/routes/QLink'
 
 export default class ClassroomStudentView extends React.Component {
   render() {
-    const {
-      currUser,
-      classroom,
-      teacher,
-      toggleChat,
-      teacherName,
-      classrooms,
-      handleAvatarChange,
-    } = this.props
+    const { currUser, classroom, teacher, teacherName, classrooms, handleAvatarChange } = this.props
 
     if (!classroom) {
       return <Spinner loadingMsg="Loading Classroom..." />
@@ -109,8 +101,17 @@ export default class ClassroomStudentView extends React.Component {
                     </List.Content>
                   </List.Item>
                   <List.Item>
-                    <List.Content onClick={toggleChat}>
-                      <Button icon="chat" color="blue" content="Classroom Chat" />
+                    <List.Content>
+                      <QLink
+                        query={{
+                          _fp: `chat.${makeChannelName({
+                            scopeGroupName: 'Classroom',
+                            scopeId: classroom.name, // Change this later to be use _id?
+                          })}`,
+                        }}
+                      >
+                        <Button fluid labelPosition="left" icon="chat" content="Classroom Chat" />
+                      </QLink>
                     </List.Content>
                   </List.Item>
                 </List>

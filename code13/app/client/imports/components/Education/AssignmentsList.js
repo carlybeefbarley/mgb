@@ -94,7 +94,7 @@ export default class AssignmentsList extends React.Component {
         <Button
           size="mini"
           compact
-          color="green"
+          color="yellow"
           style={buttonSty}
           onClick={() => {
             utilPushTo(null, `u/${currUser.username}/projects/${project.name}`)

@@ -32,6 +32,7 @@ class NavPanel extends React.Component {
     const { currUser, navPanelAvailableWidth, activity, hazUnreadActivities } = this.props
     const useIcons = navPanelAvailableWidth < 728 // px
     const allNavPanels = getNavPanels(currUser)
+    return allNavPanels
 
     const notifications = _.find(allNavPanels.right, item => item.name === 'notifications')
     if (notifications) {

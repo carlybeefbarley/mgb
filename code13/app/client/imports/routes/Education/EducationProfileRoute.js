@@ -219,7 +219,8 @@ class TeacherProfile extends React.Component {
 
             <Grid.Row>
               <Grid.Column width={16}>
-                <Segment raised color="yellow">
+                <Segment raised color="yellow" style={rowStyle}>
+                  <Header as="h2" content={`${user && user.username}'s Published Games`} />
                   <UserProfileGamesList user={currUser} currUser={currUser} />
                 </Segment>
               </Grid.Column>

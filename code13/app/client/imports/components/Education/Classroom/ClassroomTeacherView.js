@@ -202,6 +202,7 @@ export default class ClassroomTeacherView extends React.Component {
             </p>
           </Grid.Column>
         </Grid>
+
         <Grid columns={2} padded stretched>
           <Grid.Row style={rowStyle}>
             <Grid.Column width={5}>
@@ -210,7 +211,7 @@ export default class ClassroomTeacherView extends React.Component {
                   <Header style={titleStyle} as="h1" content={classroom.name} />
                   <ImageShowOrChange
                     id="mgbjr-profile-avatar"
-                    maxHeight="11em"
+                    maxHeight="12em"
                     maxWidth="auto"
                     imageSrc={avatar}
                     canLinkToSrc
@@ -221,7 +222,7 @@ export default class ClassroomTeacherView extends React.Component {
                   <List style={infoStyle}>
                     <List.Item>
                       <List.Content onClick={toggleChat}>
-                        <Button icon="chat" color="blue" content="Classroom Chat" />
+                        <Button icon="chat" color="blue" content="Classroom Chat" size="large" />
                       </List.Content>
                     </List.Item>
                   </List>

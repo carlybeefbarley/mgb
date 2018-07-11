@@ -217,7 +217,7 @@ class TeacherClassroomView extends React.Component {
                   <Header style={titleStyle} as="h1" content={classroom.name} />
                   <ImageShowOrChange
                     id="mgbjr-profile-avatar"
-                    maxHeight="11em"
+                    maxHeight="12em"
                     maxWidth="auto"
                     imageSrc={avatar}
                     canLinkToSrc

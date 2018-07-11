@@ -42,7 +42,7 @@ class TeacherDashboard extends React.Component {
         overflowY: 'auto',
       },
       titleStyle = {
-        fontSize: '2em',
+        fontSize: '2.5em',
         textAlign: 'center',
       },
       { avatar } = currUser.profile,
@@ -63,15 +63,15 @@ class TeacherDashboard extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '20em',
-      maxHeight: '20em',
-      marginBottom: '2em',
+      minHeight: '18em',
+      maxHeight: '18em',
+      marginBottom: '1.5em',
     }
 
     const listStyle = {
       overflowY: 'auto',
-      maxHeight: '10em',
-      minHeight: '10em',
+      maxHeight: '9em',
+      minHeight: '9em',
     }
 
     return (
@@ -87,7 +87,7 @@ class TeacherDashboard extends React.Component {
           <Grid.Column width={3} />
           <Grid.Column width={4}>
             <Segment raised color="blue" style={rowStyle}>
-              <br />
+              <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
               <ImageShowOrChange
                 id="mgbjr-profile-avatar"
                 maxHeight="11em"
@@ -98,7 +98,6 @@ class TeacherDashboard extends React.Component {
                 canEdit
                 handleChange={url => handleAvatarChange(url)}
               />
-              <Header style={titleStyle} as="h1" content={currUser.username} textAlign="center" />
             </Segment>
           </Grid.Column>
           <Grid.Column width={6}>

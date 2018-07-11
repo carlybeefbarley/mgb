@@ -12,6 +12,12 @@ const cellStyle = {
 }
 
 export default class ClassroomTeacherView extends React.Component {
+  state = { editListMode: false } // Toggle "edit mode" for assignments list for removing assignments
+
+  handleToggleEditListMode = () => {
+    this.setState({ editListMode: !this.state.editListMode })
+  }
+
   classroomHasStudents = () => {
     const { students, assignments } = this.props
     return students && students.length > 0 && assignments && assignments.length > 0
@@ -151,6 +157,7 @@ export default class ClassroomTeacherView extends React.Component {
 
   render() {
     const { assignments, students, classroom, toggleChat, handleAvatarChange } = this.props
+    const { editListMode } = this.state
 
     const containerStyle = {
       overflowY: 'auto',
@@ -235,9 +242,20 @@ export default class ClassroomTeacherView extends React.Component {
                   <Header as="h2" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
-                    <AssignmentsList assignmentAssets={assignments} showUpcoming showNoDueDate />
+                    <AssignmentsList
+                      classroomId={classroom._id}
+                      editListMode={editListMode}
+                      assignmentAssets={assignments}
+                      showUpcoming
+                      showNoDueDate
+                    />
                   </div>
                   <Divider />
+                  <Button
+                    active={editListMode}
+                    content="Toggle Edit List"
+                    onClick={this.handleToggleEditListMode}
+                  />
                   <ClassroomAddAssignmentModal classroom={classroom} />
                 </div>
               </Segment>

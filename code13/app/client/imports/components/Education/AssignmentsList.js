@@ -6,7 +6,6 @@ import QLink, { utilPushTo } from '/client/imports/routes/QLink'
 import WorkState from '/client/imports/components/Controls/WorkState'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import moment from 'moment'
-import { isUserTeacher } from '/imports/schemas/roles'
 
 export default class AssignmentsList extends React.Component {
   static propTypes = {
@@ -18,6 +17,7 @@ export default class AssignmentsList extends React.Component {
     showUpcoming: PropTypes.bool,
     showNoDueDate: PropTypes.bool,
     showCompleted: PropTypes.bool,
+    editListMode: PropTypes.bool,
   }
 
   getFutureAssignments = () => {
@@ -133,9 +133,15 @@ export default class AssignmentsList extends React.Component {
   handleRemoveAssignment = assignmentAsset => {
     const { classroomId } = this.props
 
-    Meteor.call('Classroom.addAssignmentAsset', classroomId, assignmentAsset._id, (err, success) => {
+    // Remove from assignmentAssetIds
+    Meteor.call('Classroom.removeAssignmentAsset', classroomId, assignmentAsset._id, (err, success) => {
       if (err) {
         console.log('Failed to remove assignment: ', err.reason)
+      } else {
+        // Delete asset
+        Meteor.call('Azzets.update', assignmentAsset._id, true, { isDeleted: true }, (err, res) => {
+          if (err) console.error(err.reason)
+        })
       }
     })
   }
@@ -154,7 +160,7 @@ export default class AssignmentsList extends React.Component {
         </List.Item>
       )
     }
-    const { currUser, currUserProjects, showProjectCreateButtons, editListMode } = this.props
+    const { currUserProjects, showProjectCreateButtons, editListMode } = this.props
 
     return _.map(viewAssets, assignmentAsset => {
       const isPastDue = this.assignmentIsPastDue(assignmentAsset)
@@ -166,18 +172,21 @@ export default class AssignmentsList extends React.Component {
 
       return (
         <List.Item key={assignmentAsset.name}>
-          {isUserTeacher(currUser) &&
-          editListMode && (
-            <span>
-              <Icon name="remove" onClick={() => this.handleRemoveAssignment(assignmentAsset)} />
-            </span>
-          )}
           {showProjectCreateButtons ? (
             <List.Icon fitted size="small" style={{ minWidth: '1.5em', ...verticalAlignSty }}>
               {project && <WorkState isAssignment iconOnly size="small" workState={project.workState} />}
             </List.Icon>
+          ) : editListMode ? (
+            <List.Icon
+              fitted
+              color="red"
+              size="small"
+              name="delete"
+              style={{ cursor: 'pointer', ...verticalAlignSty }}
+              onClick={() => this.handleRemoveAssignment(assignmentAsset)}
+            />
           ) : (
-            <List.Icon fitted size="small" style={verticalAlignSty} name="file" />
+            <List.Icon fitted color="grey" size="small" style={verticalAlignSty} name="file" />
           )}
           <List.Content style={{ width: '100%' }}>
             <List.Content floated="right">

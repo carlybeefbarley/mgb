@@ -69,7 +69,7 @@ const getNavPanels = (currUser, showAll, props) => {
 
   const HoCRightItems = null
   /*
-  if (isGuest || isHocActivity || isHocRoute) {
+    if (isGuest || isHocActivity || isHocRoute) {
     return (
       <Menu inverted>
         <Menu.Item name="mgb" icon="home">

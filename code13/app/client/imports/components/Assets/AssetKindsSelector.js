@@ -3,6 +3,7 @@ import React from 'react'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar } from '/imports/schemas/assets'
 import { joyrideStore } from '/client/imports/stores'
 import { Icon, Menu } from 'semantic-ui-react'
+import SpecialGlobals from '/imports/SpecialGlobals.js'
 
 // UI Component to render menus to allow asset types to be selected
 
@@ -44,7 +45,13 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
     )
   })
 
-  const compactProps = showCompact ? { widths: 7 } : { vertical: true }
+  const compactProps = showCompact
+    ? {
+        widths: _.filter(SpecialGlobals.disabledAssets, asset => {
+          return !asset
+        }).length,
+      }
+    : { vertical: true }
 
   return (
     <Menu size="small" {...compactProps} fluid secondary pointing style={{ marginTop: 0 }}>

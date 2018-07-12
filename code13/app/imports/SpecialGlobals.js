@@ -140,7 +140,7 @@ const SpecialGlobals = {
     map: false,
     music: false,
     sound: false,
-    tutorial: true,
+    tutorial: false,
     game: false,
   },
 

@@ -142,7 +142,7 @@ const getNavPanels = (currUser, showAll, props) => {
 
       {/* PROJECTS */}
       <Dropdown
-        id="mgjr-np-projects"
+        id="mgbjr-np-projects"
         simple
         item
         text="Projects"
@@ -154,7 +154,7 @@ const getNavPanels = (currUser, showAll, props) => {
       >
         <Dropdown.Menu className="left">
           <Dropdown.Item
-            id="mgjr-np-projects-listMy"
+            id="mgbjr-np-projects-listMy"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects`)
@@ -163,7 +163,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="sitemap" color="black" />My Projects
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-projects-allProjects"
+            id="mgbjr-np-projects-allProjects"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/projects`)
@@ -172,7 +172,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="sitemap" color="black" />All Projects
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-projects-importMgb1"
+            id="mgbjr-np-projects-importMgb1"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects/import/mgb1`)
@@ -181,7 +181,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="upload" color="orange" />Import MGBv1 Projects
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-projects-createNew"
+            id="mgbjr-np-projects-createNew"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects/create`)
@@ -193,7 +193,7 @@ const getNavPanels = (currUser, showAll, props) => {
       </Dropdown>
       {/* ASSETS */}
       <Dropdown
-        id="mgjr-np-assets"
+        id="mgbjr-np-assets"
         simple
         item
         text="Assets"
@@ -205,7 +205,7 @@ const getNavPanels = (currUser, showAll, props) => {
       >
         <Dropdown.Menu className="left">
           <Dropdown.Item
-            id="mgjr-np-assets-listMy"
+            id="mgbjr-np-assets-listMy"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/assets`)
@@ -214,7 +214,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="pencil" color="black" />My Assets
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-assets-allAssets"
+            id="mgbjr-np-assets-allAssets"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets`)
@@ -223,7 +223,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="pencil" color="black" />All Assets
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-assets-listMyChallenge"
+            id="mgbjr-np-assets-listMyChallenge"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/assets`, { showChallengeAssets: 1, view: 's' })
@@ -232,7 +232,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="checked calendar" color="orange" />My "Challenge Assets"
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-assets-createNew"
+            id="mgbjr-np-assets-createNew"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets/create`)
@@ -241,7 +241,7 @@ const getNavPanels = (currUser, showAll, props) => {
             <Icon name="pencil" color="green" />Create New Asset
           </Dropdown.Item>
           <Dropdown.Item
-            id="mgjr-np-assets-createNewFromTemplate"
+            id="mgbjr-np-assets-createNewFromTemplate"
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets/create-from-template`)
@@ -384,7 +384,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={() => {
                 utilPushTo(null, '/roadmap', null)
               }}
-              id="mgjr-np-mgb-roadmap"
+              id="mgbjr-np-mgb-roadmap"
             >
               <Icon name="road" color="black" />
               Road Map

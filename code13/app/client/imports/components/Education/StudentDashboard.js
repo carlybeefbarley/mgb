@@ -67,6 +67,11 @@ class StudentDashboard extends React.Component {
       fontSize: '0.7em',
     }
 
+    const thirdRowStyle = {
+      minHeight: '22em',
+      maxHeight: '22em',
+    }
+
     return (
       <div style={containerStyle}>
         <Grid columns={1} padded>
@@ -149,8 +154,7 @@ class StudentDashboard extends React.Component {
           <Grid.Row>
             <Grid.Column width={3} />
             <Grid.Column width={10}>
-              <Segment raised color="purple" style={secondRowStyle}>
-                <Header as="h2" content="Your Published Games" />
+              <Segment raised color="purple" style={thirdRowStyle}>
                 <UserProfileGamesList user={currUser} currUser={currUser} />
               </Segment>
             </Grid.Column>

@@ -566,7 +566,6 @@ const fpChat = React.createClass({
               currUser={currUser}
               user={user}
               pastMessageLimit={pastMessageLimit}
-              isSuperAdmin={isSuperAdmin}
               handleExtendMessageLimit={newLimit => {
                 this.setState({ pastMessageLimit: newLimit })
               }}

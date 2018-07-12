@@ -8,6 +8,8 @@ import { Chats } from '/imports/schemas'
 import { joyrideStore } from '/client/imports/stores'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
 import { isSameUserId } from '/imports/schemas/users'
+import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
+import { Users } from '/imports/schemas'
 import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { logActivity } from '/imports/schemas/activity'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
@@ -88,9 +90,19 @@ const ChatMessagesView = React.createClass({
   getMeteorData() {
     const { channelName, pastMessageLimit } = this.props
     const handleForChats = Meteor.subscribe('chats.channelName', channelName, pastMessageLimit)
+    const chats = Chats.find({ toChannelName: channelName }, { sort: { createdAt: 1 } }).fetch()
+    let userIds = []
+
+    _.map(chats, message => {
+      userIds.push(message.byUserId)
+    })
+
+    const handleForUsers = Meteor.subscribe('users.getByIdList', userIds)
+
     const retval = {
-      chats: Chats.find({ toChannelName: channelName }, { sort: { createdAt: 1 } }).fetch(),
-      loading: !handleForChats.ready(),
+      chats,
+      users: Users.find({ _id: { $in: userIds }, permissions: { $exists: true } }).fetch(),
+      loading: !handleForChats.ready() && !handleForUsers.ready(),
     }
     return retval
   },
@@ -207,9 +219,15 @@ const ChatMessagesView = React.createClass({
   renderMessage(c) {
     const ago = moment(c.createdAt).fromNow()
     const to = `/u/${c.byUserName}`
-    const { isSuperAdmin } = this.props
+    const { currUser } = this.props
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    const currUser = Meteor.user()
+    const msgOwner = _.find(this.data.users, user => {
+      return user._id === c.byUserId
+    })
+
+    const isSuperAdmin = isUserSuperAdmin(msgOwner)
+    const isTeacher = isUserSuperAdmin(msgOwner)
+
     //const isModerator = isUserModerator(currUser)
     return (
       <Comment key={c._id}>
@@ -230,7 +248,12 @@ const ChatMessagesView = React.createClass({
         </QLink>
         <Comment.Content>
           <Comment.Author as={QLink} to={to}>
-            {c.byUserName}
+            {c.byUserName}&nbsp;
+            {isSuperAdmin ? (
+              <Icon title="Admin" name="user" />
+            ) : (
+              isTeacher && <Icon title="Teacher" name="bell" />
+            )}
           </Comment.Author>
           <Comment.Metadata>
             <div title={absTime}>{ago}</div>

@@ -28,6 +28,10 @@ export default class ClassroomTeacherView extends React.Component {
   renderAssignmentTable = () => {
     const { assignments } = this.props
 
+    const tableStyle = {
+      overflowX: 'auto',
+    }
+
     if (!this.classroomHasStudents()) {
       return (
         <Segment>
@@ -37,16 +41,18 @@ export default class ClassroomTeacherView extends React.Component {
     }
 
     return (
-      <Table celled striped>
-        <Table.Header>
-          <Table.Row key={'row_root'}>
-            <Table.HeaderCell colSpan="1" key={'column_root'} />
-            {/* Top left spacer cell to fill out table. */}
-            {this.renderTableAssignmentHeaderCells(assignments)}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>{this.renderStudentRows()}</Table.Body>
-      </Table>
+      <div style={tableStyle}>
+        <Table celled striped>
+          <Table.Header>
+            <Table.Row key={'row_root'}>
+              <Table.HeaderCell colSpan="1" key={'column_root'} />
+              {/* Top left spacer cell to fill out table. */}
+              {this.renderTableAssignmentHeaderCells(assignments)}
+            </Table.Row>
+          </Table.Header>
+          <Table.Body>{this.renderStudentRows()}</Table.Body>
+        </Table>
+      </div>
     )
   }
 
@@ -167,7 +173,7 @@ export default class ClassroomTeacherView extends React.Component {
     const { avatar } = classroom
 
     const titleStyle = {
-      fontSize: '2em',
+      fontSize: '1.5em',
       textAlign: 'center',
     }
 
@@ -188,15 +194,21 @@ export default class ClassroomTeacherView extends React.Component {
     }
 
     const rowStyle = {
-      minHeight: '23em',
-      maxHeight: '23em',
+      minHeight: '18em',
+      maxHeight: '18em',
       marginBottom: '2em',
     }
 
     const listStyle = {
       overflowY: 'auto',
-      maxHeight: '13em',
-      minHeight: '13em',
+      maxHeight: '8em',
+      minHeight: '8em',
+    }
+
+    const secondRowStyle = {
+      minHeight: '14em',
+      maxHeight: '14em',
+      marginBottom: '1em',
     }
 
     return (
@@ -219,7 +231,7 @@ export default class ClassroomTeacherView extends React.Component {
                   <Header style={titleStyle} as="h1" content={classroom.name} />
                   <ImageShowOrChange
                     id="mgbjr-profile-avatar"
-                    maxHeight="12em"
+                    maxHeight="8em"
                     maxWidth="auto"
                     imageSrc={avatar}
                     canLinkToSrc
@@ -238,7 +250,7 @@ export default class ClassroomTeacherView extends React.Component {
                             })}`,
                           }}
                         >
-                          <Button fluid labelPosition="left" icon="chat" content="Classroom Chat" />
+                          <Button color="blue" labelPosition="left" icon="chat" content="Classroom Chat" />
                         </QLink>
                       </List.Content>
                     </List.Item>
@@ -249,7 +261,7 @@ export default class ClassroomTeacherView extends React.Component {
             <Grid.Column width={8}>
               <Segment raised color="green" style={rowStyle}>
                 <div>
-                  <Header as="h2" content="Upcoming Assignments" />
+                  <Header as="h3" content="Upcoming Assignments" />
 
                   <div style={listStyle}>
                     <AssignmentsList
@@ -261,11 +273,7 @@ export default class ClassroomTeacherView extends React.Component {
                     />
                   </div>
                   <Divider />
-                  <Button
-                    active={editListMode}
-                    content="Toggle Edit List"
-                    onClick={this.handleToggleEditListMode}
-                  />
+                  <Button active={editListMode} content="Edit List" onClick={this.handleToggleEditListMode} />
                   <ClassroomAddAssignmentModal classroom={classroom} />
                 </div>
               </Segment>
@@ -286,17 +294,17 @@ export default class ClassroomTeacherView extends React.Component {
                 </div>
               </Segment>
 
-              <Segment raised color="purple">
-                <Header as="h3" content="Past Assignments" />
-                <AssignmentsList assignmentAssets={assignments} showPastDue />
+              <Segment raised color="purple" style={secondRowStyle}>
+                <Header as="h3" content="Students" />
+                <StudentListGET studentIds={classroom.studentIds} />
               </Segment>
             </Grid.Column>
           </Grid.Row>
           <Grid.Row>
             <Grid.Column width={13}>
-              <Segment raised color="orange">
-                <Header as="h3" content="Students" />
-                <StudentListGET studentIds={classroom.studentIds} />
+              <Segment raised color="orange" style={secondRowStyle}>
+                <Header as="h3" content="Past Assignments" />
+                <AssignmentsList assignmentAssets={assignments} showPastDue />
               </Segment>
             </Grid.Column>
           </Grid.Row>

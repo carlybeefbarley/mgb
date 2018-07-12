@@ -149,7 +149,15 @@ class ClassroomCreateNewModal extends React.Component {
         open={isOpen}
         onClose={() => this.toggleIsOpen()}
         onOpen={() => this.toggleIsOpen()}
-        trigger={<Button color="yellow" floated="right" icon="plus" content="Create New Classroom" />}
+        trigger={
+          <Button
+            color="yellow"
+            floated="right"
+            icon="plus"
+            paddingBottom="5px"
+            content="Create New Classroom"
+          />
+        }
       >
         <Modal.Header>Create New Classroom</Modal.Header>
         <Modal.Content>

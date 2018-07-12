@@ -52,7 +52,7 @@ class StudentProfile extends React.Component {
     }
 
     const SchoolNameStyle = {
-      fontSize: '1.3em',
+      fontSize: '1.2em',
       textAlign: 'center',
     }
 
@@ -160,7 +160,7 @@ class TeacherProfile extends React.Component {
     const { avatar } = user && user.profile
 
     const TeacherNameStyle = {
-      fontSize: '2.6em',
+      fontSize: '2em',
       textAlign: 'center',
     }
 
@@ -187,22 +187,26 @@ class TeacherProfile extends React.Component {
     const rowStyle = {
       minHeight: '18em',
       maxHeight: '18em',
-      marginBottom: '1em',
+      marginBottom: '2em',
     }
 
     return (
       <Grid columns={16} padded style={containerStyle}>
         <Grid.Column width={3} />
         <Grid.Column width={10}>
-          <Header as="h1" content={`${user && user.username}'s Teacher Profile`} style={headerStyle} />
+          <Header as="h1" content={`${user && user.username}'s Profile`} style={headerStyle} />
+
           <Grid columns={16}>
             <Grid.Row style={rowStyle}>
               <Grid.Column width={6}>
                 <Segment raised color="blue" style={rowStyle}>
                   {/* Change avatar for classroom later  */}
+                  <Header as="h1" style={TeacherNameStyle}>
+                    {user && user.username}
+                  </Header>
                   <ImageShowOrChange
                     id="mgbjr-profile-avatar"
-                    maxHeight="11em"
+                    maxHeight="10em"
                     maxWidth="auto"
                     imageSrc={avatar}
                     header="User Avatar"
@@ -211,9 +215,6 @@ class TeacherProfile extends React.Component {
                     handleChange={url => handleAvatarChange(url)}
                   />
                   <List>
-                    <List.Item>
-                      <List.Content style={TeacherNameStyle}>{user && user.username}</List.Content>
-                    </List.Item>
                     <List.Item>
                       <List.Content style={SchoolNameStyle}>AIE</List.Content>
                     </List.Item>
@@ -232,7 +233,7 @@ class TeacherProfile extends React.Component {
             <Grid.Row>
               <Grid.Column width={16}>
                 <Segment raised color="yellow" style={rowStyle}>
-                  <Header as="h2" content={`${user && user.username}'s Published Games`} />
+                  <Header as="h3" content={`${user && user.username}'s Published Games`} />
                   <UserProfileGamesList user={currUser} currUser={currUser} />
                 </Segment>
               </Grid.Column>

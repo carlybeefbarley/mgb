@@ -178,7 +178,7 @@ const fpChat = React.createClass({
     const channelName = subNavParam // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
     return isChannelNameValid(channelName)
       ? channelName
-      : _previousChannelName || (!(currUser && currUser.profile.institution) && chatParams.defaultChannelName)
+      : _previousChannelName || chatParams.defaultChannelName
   },
 
   getInitialState() {
@@ -327,9 +327,7 @@ const fpChat = React.createClass({
         {ChatChannels.sortedKeys.map(k => {
           const chan = ChatChannels[k]
           const showThisOption =
-            !(currUser && currUser.profile.institution) ||
-            !chan.hideFromPublic ||
-            (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
+            !chan.hideFromPublic || (isUserSuperAdmin(currUser) || isUserTeacher(currUser))
           return showThisOption ? (
             <List.Item
               key={k}
@@ -568,13 +566,12 @@ const fpChat = React.createClass({
               currUser={currUser}
               user={user}
               pastMessageLimit={pastMessageLimit}
-              isSuperAdmin={isSuperAdmin}
               handleExtendMessageLimit={newLimit => {
                 this.setState({ pastMessageLimit: newLimit })
               }}
               channelName={channelName}
               MessageContextComponent={
-                channelObj.scopeGroupName === 'Global' ? null : (
+                channelObj.scopeGroupName === 'Global' || channelObj.scopeGroupName === 'Classroom' ? null : (
                   <Popup
                     on="hover"
                     size="small"

@@ -22,6 +22,8 @@ const _fullStepField = null // This is returned in notFoundMacros[].field result
 
 */
 
+// Need to be updated for NavPanel changes!
+/*
 // Style: Use %inverted% for any step requiring user action (mostly with awaitCompletionTag)
 
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
@@ -72,6 +74,7 @@ const _mkNavPanelMacros = () => {
 
   return retval
 }
+*/
 
 // Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' ) is %fp-learn%
 const _mkFp = (fpname, icon) => ({
@@ -245,7 +248,7 @@ const makeStepMacros = () => {
       },
     },
 
-    ..._mkNavPanelMacros(),
+    // ..._mkNavPanelMacros(),
 
     _mkFp('activity', 'lightning'),
     _mkFp('learn', 'student'),

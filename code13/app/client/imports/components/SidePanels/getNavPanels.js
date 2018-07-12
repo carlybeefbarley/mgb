@@ -10,6 +10,7 @@ import { logActivity } from '/imports/schemas/activity'
 import { roleTeacher, isUserTeacher } from '/imports/schemas/roles'
 import { Classrooms } from '/imports/schemas'
 import NavPanelItem from './NavPanel'
+import { joyrideStore } from '/client/imports/stores'
 
 // Heads up!
 // Keep in sync with landing-layout.less .mgb-menu-logo
@@ -151,6 +152,9 @@ const getNavPanels = (currUser, showAll, props) => {
           e.stopPropagation()
           utilPushTo(null, `/u/${username}/projects`)
         }}
+        onMouseEnter={() => {
+          joyrideStore.completeTag(`mgbjr-CT-np-projects`)
+        }}
       >
         <Dropdown.Menu className="left">
           <Dropdown.Item
@@ -158,6 +162,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects`)
+              joyrideStore.completeTag(`mgbjr-CT-np-projects-listMy`)
             }}
           >
             <Icon name="sitemap" color="black" />My Projects
@@ -167,6 +172,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/projects`)
+              joyrideStore.completeTag(`mgbjr-CT-np-projects-allProjects`)
             }}
           >
             <Icon name="sitemap" color="black" />All Projects
@@ -176,6 +182,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects/import/mgb1`)
+              joyrideStore.completeTag(`mgbjr-CT-np-projects-importMgb1`)
             }}
           >
             <Icon name="upload" color="orange" />Import MGBv1 Projects
@@ -185,6 +192,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/projects/create`)
+              joyrideStore.completeTag(`mgbjr-CT-np-projects-createNew`)
             }}
           >
             <Icon name="sitemap" color="green" />Create New Project
@@ -193,6 +201,7 @@ const getNavPanels = (currUser, showAll, props) => {
       </Dropdown>
       {/* ASSETS */}
       <Dropdown
+        key="assets"
         id="mgbjr-np-assets"
         simple
         item
@@ -202,6 +211,9 @@ const getNavPanels = (currUser, showAll, props) => {
           e.stopPropagation()
           utilPushTo(null, `/u/${username}/assets`)
         }}
+        onMouseEnter={() => {
+          joyrideStore.completeTag(`mgbjr-CT-np-assets`)
+        }}
       >
         <Dropdown.Menu className="left">
           <Dropdown.Item
@@ -209,6 +221,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/assets`)
+              joyrideStore.completeTag(`mgbjr-CT-np-assets-listMy`)
             }}
           >
             <Icon name="pencil" color="black" />My Assets
@@ -218,6 +231,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets`)
+              joyrideStore.completeTag(`mgbjr-CT-np-assets-allAssets`)
             }}
           >
             <Icon name="pencil" color="black" />All Assets
@@ -227,6 +241,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/assets`, { showChallengeAssets: 1, view: 's' })
+              joyrideStore.completeTag(`mgbjr-CT-np-assets-listMyChallenge`)
             }}
           >
             <Icon name="checked calendar" color="orange" />My "Challenge Assets"
@@ -236,6 +251,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets/create`)
+              joyrideStore.completeTag(`mgbjr-CT-np-assets-createNew`)
             }}
           >
             <Icon name="pencil" color="green" />Create New Asset
@@ -245,6 +261,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/assets/create-from-template`)
+              joyrideStore.completeTag(`mgbjr-CT-np-assets-createNewFromTemplate`)
             }}
           >
             <Icon name="pencil" color="black" />Create From Template
@@ -257,6 +274,7 @@ const getNavPanels = (currUser, showAll, props) => {
         onClick={e => {
           e.stopPropagation()
           utilPushTo(null, '/dashboard-education', null)
+          joyrideStore.completeTag(`mgbjr-CT-np-dashboard`)
         }}
         content="Dashboard"
         icon={null}
@@ -265,8 +283,10 @@ const getNavPanels = (currUser, showAll, props) => {
       {!isTeacher && (
         <Menu.Item
           id="mgbjr-np-classroom"
-          onClick={() =>
-            utilPushTo(null, `/user/${currUser._id}/classroom/${_.first(props.currStudentOfClassrooms)._id}`)}
+          onClick={() => {
+            utilPushTo(null, `/user/${currUser._id}/classroom/${_.first(props.currStudentOfClassrooms)._id}`)
+            joyrideStore.completeTag(`mgbjr-CT-np-classroom`)
+          }}
           content="Classroom"
           icon={null}
         />
@@ -289,6 +309,9 @@ const getNavPanels = (currUser, showAll, props) => {
           e.stopPropagation()
           utilPushTo(null, `/u/${username}`)
         }}
+        onMouseEnter={() => {
+          joyrideStore.completeTag(`mgbjr-CT-np-user`)
+        }}
         icon={
           <Image
             id="mgbjr-np-user-avatar"
@@ -305,6 +328,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}`)
+              joyrideStore.completeTag(`mgbjr-CT-np-user-myProfile`)
             }}
           >
             <Icon name="user" color="black" />My Profile
@@ -314,6 +338,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/badges`)
+              joyrideStore.completeTag(`mgbjr-CT-np-user-myBadges`)
             }}
           >
             <Icon name="trophy" color="black" />My Badges
@@ -323,6 +348,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/games`)
+              joyrideStore.completeTag(`mgbjr-CT-np-user-myGames`)
             }}
           >
             <Icon name="gamepad" color="black" />My Games
@@ -332,6 +358,7 @@ const getNavPanels = (currUser, showAll, props) => {
             onClick={e => {
               e.stopPropagation()
               utilPushTo(null, `/u/${username}/skilltree`)
+              joyrideStore.completeTag(`mgbjr-CT-np-user-mySkills`)
             }}
           >
             <Icon name="plus circle" color="black" />My Skills
@@ -364,6 +391,9 @@ const getNavPanels = (currUser, showAll, props) => {
           onClick={() => {
             utilPushTo(null, '/', null)
           }}
+          onMouseEnter={() => {
+            joyrideStore.completeTag(`mgbjr-CT-np-mgb`)
+          }}
           simple
           item
           icon={null}
@@ -375,6 +405,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo(null, '/whats-new', null)
+                joyrideStore.completeTag(`mgbjr-CT-np-mgb-whatsNew`)
               }}
             >
               <Icon name="gift" color="black" />
@@ -400,12 +431,16 @@ const getNavPanels = (currUser, showAll, props) => {
           onClick={() => {
             utilPushTo(null, '/learn', null)
           }}
+          onMouseEnter={() => {
+            joyrideStore.completeTag(`mgbjr-CT-np-learn`)
+          }}
         >
           <Dropdown.Menu>
             <Dropdown.Item
               id="mgbjr-np-learn-getStarted"
               onClick={() => {
                 utilPushTo(null, '/learn/get-started', null)
+                joyrideStore.completeTag(`mgbjr-CT-np-learn-getStarted`)
               }}
             >
               <Icon name="rocket" color="yellow" />
@@ -416,6 +451,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo(null, '/learn/code', null)
+                joyrideStore.completeTag(`mgbjr-CT-np-learn-learnCode`)
               }}
             >
               <Icon name="code" color="black" />
@@ -425,6 +461,7 @@ const getNavPanels = (currUser, showAll, props) => {
               id="mgbjr-np-learn-learnSkills"
               onClick={() => {
                 utilPushTo(null, '/learn/skills', null)
+                joyrideStore.completeTag(`mgbjr-CT-np-learn-learnSkills`)
               }}
             >
               <Icon name="student" color="green" />
@@ -441,6 +478,9 @@ const getNavPanels = (currUser, showAll, props) => {
           onClick={() => {
             utilPushTo(null, '/games', null)
           }}
+          onMouseEnter={() => {
+            joyrideStore.completeTag(`mgbjr-CT-np-play`)
+          }}
         >
           <Dropdown.Menu>
             <Dropdown.Item
@@ -448,6 +488,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo({ sort: 'loves' }, '/games', { sort: 'loves' })
+                joyrideStore.completeTag(`mgbjr-CT-np-play-lovedGames`)
               }}
             >
               <Icon name="heart" color="red" />
@@ -458,6 +499,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo({ sort: 'plays' }, '/games', { sort: 'plays' })
+                joyrideStore.completeTag(`mgbjr-CT-np-play-popularGames`)
               }}
             >
               <Icon name="gamepad" color="blue" />
@@ -468,6 +510,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo({ sort: 'edited' }, '/games', { sort: 'edited' })
+                joyrideStore.completeTag(`mgbjr-CT-np-play-updatedGames`)
               }}
             >
               <Icon name="gamepad" color="green" />Updated Games
@@ -479,6 +522,9 @@ const getNavPanels = (currUser, showAll, props) => {
           onClick={e => {
             e.stopPropagation()
             utilPushTo(null, '/users', null)
+          }}
+          onMouseEnter={() => {
+            joyrideStore.completeTag(`mgbjr-CT-np-meet`)
           }}
           simple
           text="Meet"
@@ -494,6 +540,7 @@ const getNavPanels = (currUser, showAll, props) => {
               onClick={e => {
                 e.stopPropagation()
                 utilPushTo({ _fp: 'chat.G_GENERAL_' }, '/users', { _fp: 'chat.G_GENERAL_' })
+                joyrideStore.completeTag(`mgbjr-CT-np-meet-publicChat`)
               }}
             >
               <Icon name="chat" color="black" />Public Chat

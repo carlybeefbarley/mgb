@@ -26,7 +26,8 @@ const _fullStepField = null // This is returned in notFoundMacros[].field result
 
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNavPanelMacros = () => {
-  const username = Meteor.user().username
+  const currUser = Meteor.user()
+  const username = currUser && currUser.username
   const np = {
     left: [
       {

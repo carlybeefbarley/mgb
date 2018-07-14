@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Segment, Header, Icon } from 'semantic-ui-react'
+import { Segment, Header, Icon, Checkbox } from 'semantic-ui-react'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
@@ -62,11 +62,34 @@ const fpSettings = React.createClass({
     return getFeatureLevel(this.context.settings, makeLevelKey(name))
   },
 
+  toggleActorMapOption(newVal, data) {
+    const { currUser } = this.props
+    if (data.checked !== currUser.profile.showActorMap) {
+      Meteor.call(
+        'User.updateProfile',
+        this.props.currUser._id,
+        { 'profile.showActorMap': data.checked },
+        error => {
+          if (!error) return
+          console.error(error.reason)
+        },
+      )
+    }
+  },
+
   resetToDefaults() {
+    const { currUser } = this.props
     resetAllFeatureLevelsToDefaults(this.context.settings)
+    if (currUser && currUser.profile.showActorMap) {
+      Meteor.call('User.updateProfile', this.props.currUser._id, { 'profile.showActorMap': false }, error => {
+        if (!error) return
+        console.error(error.reason)
+      })
+    }
   },
 
   render() {
+    const { currUser } = this.props
     const makeSlider = name => {
       const maxVal = expectedToolbars.getMaxLevel(name)
       const defaultLevel = expectedToolbars.getDefaultLevel(name)
@@ -82,6 +105,7 @@ const fpSettings = React.createClass({
         marginRight: '0.85em',
         marginBottom: '1.35em',
       }
+
       if (isHighlighted) outerSty.backgroundColor = _highlightRelevantAreasColor
       return (
         <div key={name} style={outerSty}>
@@ -137,6 +161,31 @@ const fpSettings = React.createClass({
           subheader="Slide to enable advanced features"
         />
         {_.map(expectedToolbars.scopeNamesTunable, name => makeSlider(name))}
+        <div
+          style={{
+            padding: '0.35em 0.15em',
+            marginLeft: '0.1em',
+            marginRight: '0.85em',
+            marginBottom: '1.35em',
+          }}
+        >
+          <Icon
+            style={{ float: 'left', marginTop: '0.15em', marginRight: '0.5em' }}
+            color="grey"
+            size="big"
+            name="child"
+          />
+          <div style={{ marginLeft: '0.5em' }}>
+            Enable ActorMap
+            <br />
+            <Checkbox
+              id={'mgbjr-input-level-slider-actormap'}
+              toggle
+              checked={currUser && currUser.profile.showActorMap}
+              onChange={(e, data) => this.toggleActorMapOption(e, data)}
+            />
+          </div>
+        </div>
         <button onClick={this.resetToDefaults} className="ui right floated mini active yellow button">
           Reset to defaults
         </button>

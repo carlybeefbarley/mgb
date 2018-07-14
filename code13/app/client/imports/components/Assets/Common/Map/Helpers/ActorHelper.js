@@ -398,6 +398,7 @@ const ActorHelper = {
 
         // don't use here CDN link - as we will save this path as image path
         const src = `/api/asset/png/${iuser}/${iname}`
+        const currUser = Meteor.user()
 
         map[name].firstgid = nr
         map[name].actor = d
@@ -418,7 +419,7 @@ const ActorHelper = {
             map: map[name],
             image: src,
           }
-          if (!SpecialGlobals.disabledAssets['actor']) {
+          if (currUser && currUser.profile.showActorMap) {
             ActorHelper.subscriptions[key] = observeAsset(
               {
                 dn_ownerName: user,

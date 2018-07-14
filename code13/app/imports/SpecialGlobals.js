@@ -131,18 +131,6 @@ const SpecialGlobals = {
     },
   },
 
-  disabledAssets: {
-    graphic: false,
-    actor: true,
-    actormap: true,
-    code: false,
-    map: false,
-    music: false,
-    sound: false,
-    tutorial: true,
-    game: false,
-  },
-
   quotas: {
     // Project limits: max members in project
     defaultNumMembersAllowedInProject: 10, // For normal users

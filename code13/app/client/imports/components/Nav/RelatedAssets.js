@@ -46,6 +46,7 @@ class RelatedAssetsUI extends React.Component {
 
   getAllowedUserIds = () => {
     const { currUserProjects, currUser } = this.props
+    if (!currUser) return
     let list = []
 
     for (let member of currUserProjects) {
@@ -67,6 +68,7 @@ class RelatedAssetsUI extends React.Component {
 
   getFilteredAssets = (assets, searchQuery) => {
     const { currUser, currentlyEditingAssetInfo } = this.props
+    if (!currUser) return
     // Compile list of allowed user Ids from currUserProjects and check if the open assets belong to any
     // of those users
     const allowedUserIds = this.getAllowedUserIds()

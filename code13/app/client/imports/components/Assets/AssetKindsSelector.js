@@ -7,16 +7,21 @@ import { Icon, Menu } from 'semantic-ui-react'
 // UI Component to render menus to allow asset types to be selected
 
 const _iconStyle = { marginLeft: '1px', marginRight: '3px' }
-const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback }) => {
+
+const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback, showActorMap }) => {
   // Split kinds string into array for convenience
   const kindsArray = kindsActive.split(safeAssetKindStringSepChar)
 
+  // ActorMaps aren't completely disabled (can be re-enabled in settings)
   // Build the list of 'Create New Asset' Menu choices
-  const choices = AssetKindKeys.map(k => {
+  const choices = _.filter(AssetKindKeys, kind => {
+    return !((kind === 'actor' || kind === 'actormap') && !showActorMap)
+  }).map(k => {
     const active = k == kindsArray // map == ['map']
     const name = AssetKinds.getName(k)
     const color = AssetKinds.getColor(k)
     const icon = <Icon name={active ? 'checkmark box' : 'square outline'} />
+
     return (
       <Menu.Item
         as="a"
@@ -44,7 +49,12 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
     )
   })
 
-  const compactProps = showCompact ? { widths: 6 } : { vertical: true }
+  const widths = showActorMap ? AssetKindKeys.length : AssetKindKeys.length - 2
+  const compactProps = showCompact
+    ? {
+        widths,
+      }
+    : { vertical: true }
 
   return (
     <Menu size="small" {...compactProps} fluid secondary pointing style={{ marginTop: 0 }}>

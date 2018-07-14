@@ -321,7 +321,11 @@ const UserAssetListRoute = React.createClass({
                 (show all)
               </small>
             )}
-            <AssetKindsSelector kindsActive={qN.kinds} handleToggleKindCallback={this.handleToggleKind} />
+            <AssetKindsSelector
+              kindsActive={qN.kinds}
+              handleToggleKindCallback={this.handleToggleKind}
+              showActorMap={currUser && currUser.profile.showActorMap}
+            />
           </div>
 
           <WorkStateMultiSelect

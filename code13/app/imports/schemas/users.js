@@ -30,6 +30,7 @@ const schema = {
     isDeleted: optional(Boolean), // soft delete flag, so we can have an undelete easily
     //    invites: optional([]),             // DEPRECATED
     projectNames: optional([String]), // An array of strings  DEPRECATED, IGNORE+DELETE
+    showActorMap: optional(Boolean), // Setting for showing ActorMap assets (for old users)
     HoC: {
       currStepId: optional(String),
       stepToAssetMap: optional(Object),
@@ -123,6 +124,7 @@ Meteor.methods({
       'profile.isDeleted': optional(schema.profile.isDeleted),
       'profile.projectNames': optional(schema.profile.projectNames),
       'profile.latestNewsTimestampSeen': optional(schema.profile.latestNewsTimestampSeen),
+      'profile.showActorMap': optional(schema.profile.showActorMap),
       'profile.HoC.currStepId': optional(schema.profile.HoC.currStepId),
       'profile.HoC.stepToAssetMap': optional(schema.profile.HoC.stepToAssetMap),
       'profile.HoC.email': optional(schema.profile.HoC.email),

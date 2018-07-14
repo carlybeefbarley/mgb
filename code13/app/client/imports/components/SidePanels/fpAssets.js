@@ -238,6 +238,7 @@ const fpAssets = React.createClass({
               showCompact
               kindsActive={kindsActive}
               handleToggleKindCallback={this.handleToggleKind}
+              showActorMap={currUser && currUser.profile.showActorMap}
             />
             <AssetListChooseView
               sty={{ float: 'right' }}

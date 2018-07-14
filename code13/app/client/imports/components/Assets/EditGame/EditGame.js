@@ -12,8 +12,8 @@ import FullScreenExitPosition from './FullScreenExitPosition'
 
 import './editGame.css'
 
-const _gameTypes = {
-  //'ActorMap Game (no code)': 'actorGame',
+let _gameTypes = {
+  'ActorMap Game (no code)': 'actorGame',
   'Code-Based Game': 'codeGame',
 }
 
@@ -47,11 +47,12 @@ class EditGameForm extends BaseForm {
   }
 
   render() {
+    const { currUser } = this.props
     const isActorGame = _isActorGame(this.data)
     const isCodeGame = _isCodeGame(this.data)
     const hasGameType = _hasGameType(this.data)
 
-    const isAdmin = isUserSuperAdmin(Meteor.user())
+    const isAdmin = isUserSuperAdmin(currUser)
 
     const touchControlSupportedFieldOptions = { boolIsTF: true, disabled: isActorGame }
 

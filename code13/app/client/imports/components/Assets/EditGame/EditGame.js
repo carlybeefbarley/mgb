@@ -12,7 +12,7 @@ import FullScreenExitPosition from './FullScreenExitPosition'
 
 import './editGame.css'
 
-let _gameTypes = {
+const _gameTypes = {
   'ActorMap Game (no code)': 'actorGame',
   'Code-Based Game': 'codeGame',
 }

@@ -22,13 +22,199 @@ const _fullStepField = null // This is returned in notFoundMacros[].field result
 
 */
 
-// Need to be updated for NavPanel changes!
-/*
 // Style: Use %inverted% for any step requiring user action (mostly with awaitCompletionTag)
 
 // Helper which makes an array of NavPanel stepMacro: e.g. _mkNp( 'learn', 'student' )
 const _mkNavPanelMacros = () => {
-  const np = getNavPanels(Meteor.user(), true) // this gets the complete set so we can extract what we want
+  const currUser = Meteor.user()
+  const username = currUser && currUser.username
+  const np = {
+    left: [
+      {
+        name: 'mgb',
+        explainClickAction: 'Clicking here jumps to the Home Page',
+        to: '/',
+        menu: [
+          {
+            jrkey: 'whatsNew', // used for mgjr-np-mgb-{jrkey} id generation for joyride system
+            explainClickAction: "What's New",
+            to: '/whats-new',
+          },
+          {
+            jrkey: 'roadmap',
+            to: '/roadmap',
+          },
+        ],
+      },
+      {
+        name: 'learn',
+        explainClickAction: 'Clicking here jumps to the Learning Paths page',
+        hideInIconView: true, // For top-level, items, use
+        to: '/learn',
+        menu: [
+          {
+            jrkey: 'getStarted',
+            to: '/learn/get-started',
+          },
+          {
+            jrkey: 'learnCode',
+            to: '/learn/code',
+          },
+          {
+            jrkey: 'learnSkills',
+            to: '/learn/skills',
+          },
+        ],
+      },
+      {
+        name: 'play',
+        explainClickAction: 'Clicking here jumps to the list of playable games',
+        to: '/games',
+        menu: [
+          {
+            jrkey: 'lovedGames',
+            to: '/games',
+            query: { sort: 'loves' },
+          },
+          {
+            jrkey: 'popularGames',
+            to: '/games',
+            query: { sort: 'plays' },
+          },
+          {
+            jrkey: 'updatedGames',
+            to: '/games',
+            query: { sort: 'edited' },
+          },
+        ],
+      },
+      {
+        name: 'meet',
+        explainClickAction: 'Clicking here jumps to the User search page',
+        to: '/users',
+        menu: [
+          {
+            jrkey: 'allUsers',
+            to: '/users',
+          },
+          {
+            jrkey: 'publicChat',
+            query: { _fp: 'chat.G_GENERAL_' },
+          },
+        ],
+      },
+    ],
+    // Right side
+    right: _.compact([
+      {
+        name: 'projects',
+        explainClickAction: 'Clicking here jumps to the list of your Projects',
+        to: `/u/${username}/projects`,
+        menu: [
+          {
+            jrkey: 'listMy',
+            to: `/u/${username}/projects`,
+          },
+          {
+            jrkey: 'allProjects',
+            to: '/projects',
+          },
+          {
+            jrkey: 'importMgb1',
+            to: `/u/${username}/projects/import/mgb1`,
+          },
+          {
+            jrkey: 'createNew',
+            to: `/u/${username}/projects/create`,
+          },
+        ],
+      },
+      {
+        name: 'assets',
+        explainClickAction: 'Clicking here jumps to the list of your Assets',
+        to: `/u/${username}/assets`,
+        menu: [
+          {
+            jrkey: 'listMy',
+            to: `/u/${username}/assets`,
+          },
+          {
+            jrkey: 'allAssets',
+            to: '/assets',
+          },
+          {
+            jrkey: 'listMyChallenge',
+            to: `/u/${username}/assets`,
+            query: { showChallengeAssets: '1', view: 's' },
+          },
+          {
+            jrkey: 'createNew',
+            to: `/assets/create`,
+          },
+          {
+            jrkey: 'createFromTemplate',
+            to: `/assets/create-from-template`,
+          },
+        ],
+      },
+      {
+        name: 'dashboard',
+        explainClickAction: 'Clicking here jumps to the Learning Paths page',
+        to: `/dashboard`,
+        jrkey: 'dashboard',
+      },
+      {
+        name: 'notifications',
+        explainClickAction: 'Shortcut: Clicking here jumps to your notifications',
+        to: `/notifications`,
+        jrkey: 'notifications',
+
+        menu: [
+          {
+            jrkey: 'notificationsHeader',
+          },
+        ],
+      },
+      {
+        name: 'user',
+        explainClickAction: 'Clicking here jumps to your Profile Page', // if logged in, and this is used by tutorials, so that's ok
+        to: `/u/${username}`,
+        menu: [
+          {
+            jrkey: 'username',
+          },
+          {
+            to: `/u/${username}`,
+            jrkey: 'myProfile',
+          },
+          {
+            to: `/u/${username}/badges`,
+            jrkey: 'myBadges',
+          },
+          {
+            to: `/u/${username}/games`,
+            jrkey: 'myGames',
+          },
+          {
+            to: `/u/${username}/skilltree`,
+            jrkey: 'mySkills',
+          },
+          {
+            jrkey: 'logout',
+          },
+        ],
+      },
+      {
+        name: 'login',
+        to: '/login',
+      },
+      {
+        name: 'signup',
+        to: '/signup',
+      },
+    ]),
+  }
+
   const retval = []
   const parseDropdown = (dd, position) => {
     const ddUpName = _.upperFirst(dd.name)
@@ -74,7 +260,6 @@ const _mkNavPanelMacros = () => {
 
   return retval
 }
-*/
 
 // Helper which makes a FlexPanel stepMacro: e.g. _mkNp( 'learn', 'student' ) is %fp-learn%
 const _mkFp = (fpname, icon) => ({
@@ -248,7 +433,7 @@ const makeStepMacros = () => {
       },
     },
 
-    // ..._mkNavPanelMacros(),
+    ..._mkNavPanelMacros(),
 
     _mkFp('activity', 'lightning'),
     _mkFp('learn', 'student'),

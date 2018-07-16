@@ -153,8 +153,8 @@ const _getAssetNameIfAvailable = (assetId, chatChannelTimestamp) => {
 // TODO: Push this up to flexPanel.js? or have flexPanel.js provide an optional 'recent state' prop?
 let _previousChannelName = null // This should be null or a name known to succeed with isChannelNameValid()
 
-const fpChat = React.createClass({
-  propTypes: {
+export default class fpChat extends React.Component{
+  static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
@@ -166,23 +166,22 @@ const fpChat = React.createClass({
     chatChannelTimestamps: PropTypes.array, // as defined by Chats.getLastMessageTimestamps RPC
     requestChatChannelTimestampsNow: PropTypes.func.isRequired, // It does what it says on the box. Used by fpChat
     hazUnreadChats: PropTypes.array, // As defined in App.js:state
-  },
+  }
 
   // Settings context needed for get/setLastReadTimestampForChannel and the pin/unpin list
-  contextTypes: {
+  static contextTypes = {
     settings: PropTypes.object,
-  },
+  }
 
-  _calculateActiveChannelName() {
+  _calculateActiveChannelName = () => {
     const { subNavParam, currUser } = this.props // empty string means "default"
     const channelName = subNavParam // So this should be something like 'G_MGBBUGS_'.. i.e. a key into ChatChannels{}
     return isChannelNameValid(channelName)
       ? channelName
       : _previousChannelName || chatParams.defaultChannelName
-  },
+  }
 
-  getInitialState() {
-    return {
+  state = {
       view: 'comments', // Exactly one of ['comments', 'channels']
       pendingCommentsRenderForChannelName: '*', // Very explicit way to edge-detect to trigger code on first
       // render of a specific chat channel (for handling read/unread
@@ -191,9 +190,8 @@ const fpChat = React.createClass({
       // if any-other-string, then we are waiting for that specific channelName
       pastMessageLimit: initialMessageLimit,
     }
-  },
 
-  changeChannel(selectedChannelName) {
+  changeChannel = (selectedChannelName) => {
     joyrideStore.completeTag(`mgbjr-CT-fp-chat-channel-select-${selectedChannelName}`)
     if (
       selectedChannelName &&
@@ -207,30 +205,30 @@ const fpChat = React.createClass({
       })
       this.props.handleChangeSubNavParam(selectedChannelName)
     }
-  },
+  }
 
-  handleChatChannelChange(newChannelName) {
+  handleChatChannelChange = (newChannelName) => {
     this.changeChannel(newChannelName)
     this.setState({ view: 'comments' })
-  },
+  }
 
-  handleDocumentKeyDown(e) {
+  handleDocumentKeyDown = (e) => {
     if (e.keyCode === 27 && this.state.view === 'channels') this.setState({ view: 'comments' })
-  },
+  }
 
-  handleDocumentClick() {
+  handleDocumentClick = () => {
     if (this.state.view === 'channels') this.setState({ view: 'comments' })
-  },
+  }
 
   componentWillMount() {
     document.addEventListener('keydown', this.handleDocumentKeyDown)
     document.addEventListener('click', this.handleDocumentClick)
-  },
+  }
 
   componentWillUnmount() {
     document.removeEventListener('keydown', this.handleDocumentKeyDown)
     document.removeEventListener('click', this.handleDocumentClick)
-  },
+  }
 
   componentDidUpdate() {
     const { pendingCommentsRenderForChannelName } = this.state
@@ -260,36 +258,36 @@ const fpChat = React.createClass({
         }
       }
     }
-  },
+  }
 
-  handleToggleChannelSelector(e) {
+  handleToggleChannelSelector = (e) => {
     // prevent document click from immediately closing the menu on toggle open
     e.preventDefault()
     e.nativeEvent.stopImmediatePropagation()
     const { view } = this.state
 
     this.setState({ view: view === 'comments' ? 'channels' : 'comments' })
-  },
+  }
 
-  doesChannelHaveUnreads(channelName, channelTimestamps) {
+  doesChannelHaveUnreads = (channelName, channelTimestamps) => {
     const latestForChannel = _.find(channelTimestamps, { _id: channelName })
     if (!latestForChannel) return false
 
     const lastReadByUser = getLastReadTimestampForChannel(this.context.settings, channelName)
 
     return !lastReadByUser || latestForChannel.lastCreatedAt.getTime() > lastReadByUser.getTime()
-  },
+  }
 
-  renderUnreadChannelIndicator(channelName, channelTimeStamps) {
+  renderUnreadChannelIndicator = (channelName, channelTimeStamps) => {
     if (!this.doesChannelHaveUnreads(channelName, channelTimeStamps)) return null
 
     return <Label empty circular color="red" size="mini" style={unreadChannelIndicatorStyle} />
-  },
+  }
 
   /** Render the channel chooser list. This is shown when this.state.view == 'channels'
    *
    */
-  renderChannelSelector() {
+  renderChannelSelector = () => {
     const { view } = this.state
     const { currUser, currUserProjects, chatChannelTimestamps } = this.props
     const { settings } = this.context
@@ -488,7 +486,7 @@ const fpChat = React.createClass({
         {assetChannels}
       </div>
     )
-  },
+  }
 
   /**
    * This is intended to generate the 2nd objectName param that is required by
@@ -499,7 +497,7 @@ const fpChat = React.createClass({
    * @param {String} channelName
    * @returns {String} something like project.name or asset.name or user.name
    */
-  findObjectNameForChannelName(channelName) {
+  findObjectNameForChannelName = (channelName) => {
     const channelObj = parseChannelName(channelName)
 
     // Global channels are a special case since they are a fixed mapping in chats.js
@@ -529,7 +527,7 @@ const fpChat = React.createClass({
       `findObjectNameForChannelName() has a ScopeGroupName (${channelObj.scopeGroupName}) that is not in user context. #investigate#`,
     )
     return 'TODO'
-  },
+  }
 
   render() {
     const { currUser, isSuperAdmin, user } = this.props
@@ -605,7 +603,5 @@ const fpChat = React.createClass({
         <p ref="bottomOfMessageDiv">&nbsp;</p>
       </div>
     )
-  },
-})
-
-export default fpChat
+  }
+}

@@ -4,11 +4,11 @@ import React from 'react'
 
 import CalendarHeatmapStyled from '/client/imports/components/Controls/CalendarHeatmap/CalendarHeatmapStyled'
 
-const ActivityHeatmap = React.createClass({
-  propTypes: {
+export default class ActivityHeatmap extends React.PureComponent{
+  static propTypes = {
     user: PropTypes.object,
     className: PropTypes.string,
-  },
+  }
 
   render() {
     const { user } = this.props
@@ -31,7 +31,5 @@ const ActivityHeatmap = React.createClass({
         />
       </div>
     )
-  },
-})
-
-export default ActivityHeatmap
+  }
+}

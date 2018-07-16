@@ -9,14 +9,14 @@ import UX from '/client/imports/UX'
 
 // [[THIS FILE IS PART OF AND MUST OBEY THE SKILLS_MODEL_TRIFECTA constraints as described in SkillNodes.js]]
 
-const fpSkills = React.createClass({
-  propTypes: {
+class fpSkills extends React.PureComponent{
+  static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
-  },
+  }
 
   render() {
     const { currUser, isSuperAdmin } = this.props
@@ -42,7 +42,5 @@ const fpSkills = React.createClass({
         <Button as={QLink} to="/learn/skills" size="large" fluid icon="refresh" content="Learn skills" />
       </div>
     )
-  },
-})
-
-export default fpSkills
+  }
+}

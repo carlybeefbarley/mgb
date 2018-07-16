@@ -3,12 +3,12 @@ import React from 'react'
 
 // TODO: use full list from view-source:https://codemirror.net/demo/search.html
 
-const KeyBindings = React.createClass({
-  propTypes: {
+export default class KeyBindings extends React.PureComponent{
+  static propTypes = {
     commandContext: PropTypes.string,
-  },
+  }
 
-  makeList(cmdContext) {
+  makeList = (cmdContext) => {
     return keysDB.filter(v => v.command.startsWith(cmdContext)).map(v2 => (
       <a className="item" key={v2.command}>
         <div className="ui horizontal label" style={{ width: '5em' }}>
@@ -17,7 +17,7 @@ const KeyBindings = React.createClass({
         <small>{v2.description}</small>
       </a>
     ))
-  },
+  }
 
   render() {
     const { commandContext } = this.props
@@ -30,10 +30,8 @@ const KeyBindings = React.createClass({
         {this.makeList(commandContext)}
       </div>
     )
-  },
-})
-
-export default KeyBindings
+  }
+}
 
 export const keysDB = [
   {

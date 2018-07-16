@@ -9,20 +9,21 @@ import Hotjar from '/client/imports/helpers/hotjar.js'
 // Default params we will accept in ? params on url
 const suggestedParamNames = 'projectName,assetName,assetKind'.split(',')
 
-const AssetCreateNewRoute = React.createClass({
-  propTypes: {
+export default class AssetCreateNewRoute extends React.PureComponent{
+  static propTypes = {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object, // Maybe absent if route is /assets
     currUser: PropTypes.object, // Currently Logged in user
     currUserProjects: PropTypes.array,
     ownsProfile: PropTypes.bool,
     location: PropTypes.object, // We get this from react-router
-  },
+  }
 
   componentDidMount() {
-    // setTimeou just to be sure that everything is loaded
+    // setTimeout just to be sure that everything is loaded
+    // TODO: Do not use setTimeout as a method to test loaded content. Unreliable.
     setTimeout(() => Hotjar('trigger', 'asset-create-new', this.props.currUser), 200)
-  },
+  }
 
   render() {
     return (
@@ -37,7 +38,5 @@ const AssetCreateNewRoute = React.createClass({
         </Container>
       </Segment>
     )
-  },
-})
-
-export default AssetCreateNewRoute
+  }
+}

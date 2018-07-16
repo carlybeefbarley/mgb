@@ -7,21 +7,21 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 
 import ImportGraphic from '/client/imports/components/Import/ImportGraphic'
 
-const ImportRoute = React.createClass({
-  propTypes: {
+export default class ImportRoute extends React.PureComponent{
+  static propTypes = {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object, // Maybe absent if route is /assets
     currUser: PropTypes.object, // Currently Logged in user
     currUserProjects: PropTypes.array,
     ownsProfile: PropTypes.bool,
     location: PropTypes.object, // We get this from react-router
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
 
-  createAsset(
+  createAsset = (
     assetKindKey,
     assetName,
     projectName,
@@ -32,7 +32,7 @@ const ImportRoute = React.createClass({
     assetLicense,
     workState,
     isCompleted,
-  ) {
+  ) => {
     if (!this.props.currUser) {
       showToast.error('You must be logged-in to create a new Asset')
       return
@@ -67,7 +67,7 @@ const ImportRoute = React.createClass({
         logActivity('asset.create', `Bulk import ${assetKindKey}`, null, newAsset)
       }
     })
-  },
+  }
 
   render() {
     return (
@@ -80,7 +80,5 @@ const ImportRoute = React.createClass({
         />
       </div>
     )
-  },
-})
-
-export default ImportRoute
+  }
+}

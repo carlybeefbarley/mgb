@@ -54,16 +54,16 @@ const JoyrideSummary = ({
     </div>
   )
 
-const fpGoals = React.createClass({
-  propTypes: {
+class fpGoals extends React.PureComponent{
+  static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     skills: PropTypes.object, // skills for currently loggedIn user (not necessarily the props.user user)
-  },
+  }
 
   render() {
     const skillarea = 'code' // temp hack
@@ -89,7 +89,7 @@ const fpGoals = React.createClass({
         <Button as={QLink} to="/learn" fluid icon="left arrow" labelPosition="left" content="All tutorials" />
       </div>
     )
-  },
-})
+  }
+}
 
 export default withStores({ joyride: joyrideStore })(fpGoals)

@@ -5,16 +5,14 @@ import { browserHistory } from 'react-router'
 
 // TODO.. 1. Fix this so it works again
 // TODO.. 2. change to use   utilPushTo(this.context.urlLocation.query, ...) instead of browserHistory.push()
-const SocialAuth = React.createClass({
-  propTypes: {
+export default class SocialAuth extends React.PureComponent{
+  static propTypes = {
     type: PropTypes.string,
-  },
+  }
 
-  getDefaultProps() {
-    return {
+  static defaultProps = {
       type: 'Join',
     }
-  },
 
   render() {
     return null // disabled for now
@@ -25,9 +23,9 @@ const SocialAuth = React.createClass({
     //       <button className="ui button" type="button" onClick={this.handleTwitter} >{this.props.type} with Twitter <i className="fa fa-twitter fa-lg"></i></button>
     //     </div>
     // );
-  },
+  }
 
-  handleFacebook() {
+  handleFacebook = () => {
     Meteor.loginWithFacebook(
       {
         requestPermissions: ['email'],
@@ -43,9 +41,9 @@ const SocialAuth = React.createClass({
         }
       },
     )
-  },
+  }
 
-  handleGoogle() {
+  handleGoogle = () => {
     Meteor.loginWithGoogle(
       {
         requestPermissions: ['email'],
@@ -61,9 +59,9 @@ const SocialAuth = React.createClass({
         }
       },
     )
-  },
+  }
 
-  handleTwitter() {
+  handleTwitter = () => {
     Meteor.loginWithTwitter(error => {
       if (error) {
         this.setState({
@@ -74,7 +72,5 @@ const SocialAuth = React.createClass({
         browserHistory.push(`/user/${Meteor.user()._id}`)
       }
     })
-  },
-})
-
-export default SocialAuth
+  }
+}

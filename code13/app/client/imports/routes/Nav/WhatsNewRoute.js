@@ -33,32 +33,30 @@ const _getIconForChangeType = (ct, size) => (
   <Icon size={size} color={_icons[ct].color} name={_icons[ct].name} />
 )
 
-const WhatsNewRoute = React.createClass({
-  propTypes: {
+export default class WhatsNewRoute extends React.Component{
+  static propTypes = {
     currUser: PropTypes.object, // Can be null (if user is not logged in)
-  },
+  }
 
   /** React callback - before render() is called */
-  getInitialState() {
-    return {
+  state = {
       releaseIdx: 0, // Index into mgbReleaseInfo[] for currently viewed release
       olderHistoryJsonResult: null, // Will be the data loaded from ${olderHistoryPath} once loaded
       limit: 5, // Only allow 5 info releases to show at once
-    }
-  },
+  }
 
-  onLoadMore() {
+  onLoadMore =() => {
     this.setState({
       limit: this.state.limit + 5,
     })
-  },
+  }
 
-  getCombinedReleaseInfo() {
+  getCombinedReleaseInfo = () => {
     const { olderHistoryJsonResult } = this.state
     return olderHistoryJsonResult
       ? _.concat(mgbReleaseInfo.releases, olderHistoryJsonResult.releases)
       : mgbReleaseInfo.releases
-  },
+  }
 
   componentDidMount() {
     if (olderHistoryPath && !this.state.olderHistoryJsonResult) {
@@ -67,12 +65,12 @@ const WhatsNewRoute = React.createClass({
         .catch(err => console.error(`Unable to load olderHistoryPath via ajax: ${err.toString()}`))
     }
     this.handleUserSawNews(this.latestReleaseTimestamp())
-  },
+  }
 
   /** This is called when the WhatsNew popup has been clicked and shown.
    *  We are to note the current timestamp of the latest release in the user profile
    */
-  handleUserSawNews(latestNewsTimestampSeen) {
+  handleUserSawNews = (latestNewsTimestampSeen) => {
     let currUser = this.props.currUser
     if (currUser && currUser.profile.latestNewsTimestampSeen !== latestNewsTimestampSeen) {
       Meteor.call(
@@ -86,15 +84,15 @@ const WhatsNewRoute = React.createClass({
         },
       )
     }
-  },
+  }
 
-  latestReleaseTimestamp() {
+  latestReleaseTimestamp =() => {
     return mgbReleaseInfo.releases[0].timestamp
-  },
+  }
 
-  handleReleaseClicked(releaseIdx) {
+  handleReleaseClicked = (releaseIdx) => {
     this.setState({ releaseIdx })
-  },
+  }
 
   render() {
     var { releases } = this.props
@@ -115,7 +113,7 @@ const WhatsNewRoute = React.createClass({
         <Footer />
       </div>
     )
-  },
+  }
 
   // Some sub-functions to render various bits of this control.
   // They are called (directly, or indirectly) by render() above
@@ -123,7 +121,7 @@ const WhatsNewRoute = React.createClass({
 
   /** This renders the 2 column structure for update info */
 
-  renderNews() {
+  renderNews = () => {
     const { releaseIdx } = this.state
     const release = this.getCombinedReleaseInfo()[releaseIdx]
     const ago = moment(new Date(release.timestamp)).fromNow()
@@ -163,10 +161,10 @@ const WhatsNewRoute = React.createClass({
         </Grid>
       </Container>
     )
-  },
+  }
 
   /** This is the right column. Uses React's state.releaseIdx */
-  renderNewsMgbVersionsColumn() {
+  renderNewsMgbVersionsColumn = () => {
     const releases = this.getCombinedReleaseInfo()
     const activeReleaseIdx = this.state.releaseIdx
 
@@ -202,10 +200,10 @@ const WhatsNewRoute = React.createClass({
         })}
       </Item.Group>
     )
-  },
+  }
 
   /** This is the left column. Uses React's state.releaseIdx */
-  renderNewsReleaseChangesColumn() {
+  renderNewsReleaseChangesColumn = () =>  {
     const { releaseIdx } = this.state
     const release = this.getCombinedReleaseInfo()[releaseIdx]
 
@@ -239,7 +237,5 @@ const WhatsNewRoute = React.createClass({
         })}
       </Item.Group>
     )
-  },
-})
-
-export default WhatsNewRoute
+  }
+}

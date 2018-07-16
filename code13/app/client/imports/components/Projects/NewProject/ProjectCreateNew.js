@@ -6,24 +6,20 @@ import { Message, Icon } from 'semantic-ui-react'
 
 // The Create Project link is always in context of a user since only a user can create a project in their account.
 
-const ProjectCreateNew = React.createClass({
-  propTypes: {
+export default class ProjectCreateNew extends React.Component{
+  static propTypes = {
     placeholderName: PropTypes.string.isRequired, // Note that a default is provided below
     handleCreateProjectClick: PropTypes.func.isRequired, // Callback function to create the project, and is expected to navigate to the new page. Params are (projectKindKey, newProjectNameString). The newProjectNameString can be ""
     currUser: PropTypes.object, // currently logged in user (if any)
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
-  },
+  }
 
-  getDefaultProps() {
-    return { placeholderName: 'name for new project..' }
-  },
+  defaultProps = { placeholderName: 'name for new project..' }
 
-  getInitialState() {
-    return {
+  state = {
       buttonActionPending: false, // True after the button has been pushed. so it doesn't get pushed twice
       newProjectName: '', // "" or a valid projectName string
     }
-  },
 
   /**
    *
@@ -31,7 +27,7 @@ const ProjectCreateNew = React.createClass({
    * @param {any} pName
    * @returns {Boolean}
    */
-  isProjectNameInUseByCurrUser(pName) {
+  isProjectNameInUseByCurrUser = (pName) => {
     const { currUser } = this.props
     if (!currUser) return false
 
@@ -41,7 +37,7 @@ const ProjectCreateNew = React.createClass({
       p => p.ownerId === cuid && _.upperCase(p.name) === _.upperCase(pName),
     )
     return exists
-  },
+  }
 
   render() {
     const { currUser } = this.props
@@ -123,12 +119,10 @@ const ProjectCreateNew = React.createClass({
         )}
       </div>
     )
-  },
+  }
 
-  handleCreateProjectClick() {
+  handleCreateProjectClick = () => {
     this.setState({ buttonActionPending: true })
     this.props.handleCreateProjectClick(this.state.newProjectName)
-  },
-})
-
-export default ProjectCreateNew
+  }
+}

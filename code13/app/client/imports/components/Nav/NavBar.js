@@ -12,8 +12,8 @@ import RelatedAssets from './RelatedAssets'
 // The NavBar contains a breadcrumb bar and some system
 // alerts (new version, system-upgrade-in-process etc)
 
-const NavBar = React.createClass({
-  propTypes: {
+export default class NavBar extends React.PureComponent{
+  static propTypes =  {
     onToggleHeaders: PropTypes.func, // Callback called when header toggle is clicked
     hideHeaders: PropTypes.bool, // Whether or not headers are hidden (determines direction of toggle icon)
     params: PropTypes.object.isRequired, // The :params from /imports/routes/index.js via App.js. See there for description of params
@@ -22,13 +22,13 @@ const NavBar = React.createClass({
     location: PropTypes.object, // basically windows.location, but via this.props.location from App.js (from React Router)
     name: PropTypes.string, // Page title to show in NavBar breadcrumb
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
-  },
+  }
 
-  handleHideHeadersToggle() {
+  handleHideHeadersToggle = () => {
     const { onToggleHeaders } = this.props
 
     if (onToggleHeaders) onToggleHeaders()
-  },
+  }
 
   render() {
     const {
@@ -102,7 +102,5 @@ const NavBar = React.createClass({
         />
       </div>
     )
-  },
-})
-
-export default NavBar
+  }
+}

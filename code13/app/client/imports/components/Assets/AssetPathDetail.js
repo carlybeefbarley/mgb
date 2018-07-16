@@ -67,8 +67,8 @@ const AssetKindExplainer = ({ kind, ownerName }) => {
   )
 }
 
-const AssetPathDetail = React.createClass({
-  propTypes: {
+export default class AssetPathDetail extends React.Component {
+  static propTypes ={
     canEdit: PropTypes.bool.isRequired, // True iff the user can edit this file
     ownerName: PropTypes.string.isRequired, // Asset.dn_ownerName (as a string)
     kind: PropTypes.string.isRequired, // Asset.kind (as a string)
@@ -80,14 +80,14 @@ const AssetPathDetail = React.createClass({
     lastUpdated: PropTypes.instanceOf(Date),
     handleDescriptionChange: PropTypes.func.isRequired,
     handleSaveNowRequest: PropTypes.func.isRequired, // Callback indicating User has said 'save now'
-  },
+  }
 
-  handleFieldChanged(data) {
+  handleFieldChanged = data => {
     // data = { description: "New validated text comes here" }
     // Update your model from here
     if (data.name) this.props.handleNameChange(data.name)
     if (data.text) this.props.handleDescriptionChange(data.text)
-  },
+  }
 
   render() {
     const {
@@ -143,7 +143,5 @@ const AssetPathDetail = React.createClass({
         </Grid.Row>
       </Grid.Column>
     )
-  },
-})
-
-export default AssetPathDetail
+  }
+}

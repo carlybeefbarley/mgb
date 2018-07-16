@@ -2,13 +2,13 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-const FunctionDescription = React.createClass({
-  propTypes: {
+export default class FunctionDescription extends React.PureComponent{
+  static propTypes = {
     functionHelp: PropTypes.object, // This is the data from ternServer.cachedArgHints
     functionArgPos: PropTypes.number, // -1 means not valid since not in a call
     functionTypeInfo: PropTypes.object, // This is the return value from a Tern TYPE request. So we get doc, url etc
     helpDocJsonMethodInfo: PropTypes.object, // See DocsPhaser.js for example and schema and help functions
-  },
+  }
 
   /** Make A Table
  * @param {array} headers - Array of Column Header strings to be displayed (or null)
@@ -16,7 +16,7 @@ const FunctionDescription = React.createClass({
  * @param {array} data - Array of objects (maybe) containing specified fields
  * @param {number} highlightRow - 0-based row index to highlight
  */
-  makeTable(headers, fields, data, highlightRow = undefined) {
+  makeTable = (headers, fields, data, highlightRow = undefined) => {
     let m = this.props.helpDocJsonMethodInfo
     // TODO: add extra description for the rest/spread arguments ... (three dots)
     return (
@@ -63,9 +63,9 @@ const FunctionDescription = React.createClass({
         </tbody>
       </table>
     )
-  },
+  }
   // beautify type - TODO: make nice indent for object like types
-  beautifyType(type) {
+  beautifyType = (type) => {
     // for cases {}
     if (type.length < 3) {
       return type
@@ -74,18 +74,19 @@ const FunctionDescription = React.createClass({
       .replace(/\{/gi, '{\n ')
       .replace(/,/gi, ',\n')
       .replace(/}/gi, '\n}\n')
-  },
+  }
+
   render() {
-    let fh = this.props.functionHelp
-    let hDoc = this.props.helpDocJsonMethodInfo
-    let argPos = this.props.functionArgPos // 0 for first argument, -1 for Not in a function at all
+    const fh = this.props.functionHelp
+    const hDoc = this.props.helpDocJsonMethodInfo
+    const argPos = this.props.functionArgPos // 0 for first argument, -1 for Not in a function at all
 
     if (!fh || _.isEmpty(fh) || argPos === -1) return null
 
-    let { name, origin } = this.props.functionTypeInfo // eg Phaser.Game, phaser
-    let { doc, url } = this.props.functionTypeInfo
-    let colorGrey = { color: '#777' }
-    let colorBlue = { color: 'navy' }
+    const { name, origin } = this.props.functionTypeInfo // eg Phaser.Game, phaser
+    const { doc, url } = this.props.functionTypeInfo
+    const colorGrey = { color: '#777' }
+    const colorBlue = { color: 'navy' }
 
     // Return info
     let retInfoHelpText = null
@@ -176,7 +177,7 @@ const FunctionDescription = React.createClass({
         )}
       </div>
     )
-  },
-})
+  }
 
-export default FunctionDescription
+}
+

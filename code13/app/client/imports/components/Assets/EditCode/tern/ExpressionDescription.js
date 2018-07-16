@@ -3,15 +3,15 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-function makeFriendlyName(name, eName) {
+const makeFriendlyName = (name, eName) => {
   if (name === '<top>') return `[GLOBAL] ${eName}`
   else return name ? name : 'Unknown'
 }
 
-const ExpressionDescription = React.createClass({
-  propTypes: {
+export default class ExpressionDescription extends React.PureComponent{
+  static propTypes = {
     expressionTypeInfo: PropTypes.object, // Has the data from a TernJS typeInfo request on an expression
-  },
+  }
 
   render() {
     if (!this.props.expressionTypeInfo || !this.props.expressionTypeInfo.exprName) return null
@@ -89,7 +89,5 @@ const ExpressionDescription = React.createClass({
         )}
       </div>
     )
-  },
-})
-
-export default ExpressionDescription
+  }
+}

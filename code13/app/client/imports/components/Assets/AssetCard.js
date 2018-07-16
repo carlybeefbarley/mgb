@@ -40,8 +40,8 @@ const _preventOnMouseUpClickSteal = e => {
 
 export const defaultAssetViewChoice = 'm'
 
-const AssetCard = React.createClass({
-  propTypes: {
+class AssetCard extends React.Component{
+  static propTypes = {
     classNames: PropTypes.string, // Null, or string with extra classnames
     showFooter: PropTypes.bool, // If false, hide the 4-button footer
     fluid: PropTypes.bool, // If true then this is a fluid (full width) card.
@@ -50,43 +50,41 @@ const AssetCard = React.createClass({
     currUser: PropTypes.object, // currently Logged In user (not always provided)
     canEdit: PropTypes.bool, // Whether changes (like stable, delete etc) are allowed. Can be false
     renderView: PropTypes.string, // One of null/undefined  OR  one of the keys of AssetCard.assetViewChoices
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
 
-  getDefaultProps() {
-    return {
+  static defaultProps = {
       canEdit: false,
       renderView: defaultAssetViewChoice,
     }
-  },
 
   componentDidMount() {
     // this is here because React makes passive event listeners and it's not
     // possible to prevent default from passive event listener
     this.dragSurface = this.refs.thumbnailCanvas
     this.dragSurface.addEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
-  },
+  }
   componentWillUnmount() {
     // See comment in componentDidMount() and #478
     this.dragSurface.removeEventListener('touchstart', DragNDropHelper.startSyntheticDrag)
-  },
+  }
 
-  startDrag(e) {
+  startDrag = (e) => {
     const { asset } = this.props
     const url = `/api/asset/png/${asset._id}`
     // IE supports only text.. so - encode everything in the "text"
     e.dataTransfer.setData('text', JSON.stringify({ link: url, asset }))
     document.body.classList.add('dragging') // this is in mgb.css
-  },
+  }
 
-  endDrag(e) {
+  endDrag = (e) => {
     //const { asset } = this.props
     //console.log(`AssetCard stopDrag(${asset ? asset._id : 'null?'})..`)
     document.body.classList.remove('dragging') // this is in mgb.css
-  },
+  }
 
   render() {
     if (!this.props.asset) return null
@@ -254,18 +252,18 @@ const AssetCard = React.createClass({
         )}
       </Card>
     )
-  },
+  }
 
   /**
    * Used by the functions below as the Meteor (err, response) callback
    *
    * @param {any} err
    */
-  _handleMeteorErrResp(err) {
+  _handleMeteorErrResp = (err) => {
     if (err) showToast.error(err.reason)
-  },
+  }
 
-  handleChangeChosenProjectNames(newChosenProjectNamesArray) {
+  handleChangeChosenProjectNames = (newChosenProjectNamesArray) => {
     newChosenProjectNamesArray.sort()
     Meteor.call(
       'Azzets.update',
@@ -278,10 +276,10 @@ const AssetCard = React.createClass({
     let projectsString = newChosenProjectNamesArray.join(', ')
     logActivity('asset.project', `now in projects ${projectsString}`, null, this.props.asset)
     assetStore.untrackAsset(this.props.asset, assetStore.assets())
-  },
+  }
 
-  handleDeleteClick(e) {
-    let newIsDeletedState = !this.props.asset.isDeleted
+  handleDeleteClick = (e) => {
+    const newIsDeletedState = !this.props.asset.isDeleted
     Meteor.call(
       'Azzets.update',
       this.props.asset._id,
@@ -295,9 +293,9 @@ const AssetCard = React.createClass({
 
     e.preventDefault()
     e.stopPropagation()
-  },
+  }
 
-  handleCompletedClick(e) {
+  handleCompletedClick = (e) => {
     let newIsCompletedStatus = !this.props.asset.isCompleted
     Meteor.call(
       'Azzets.update',
@@ -312,9 +310,9 @@ const AssetCard = React.createClass({
 
     e.preventDefault()
     e.stopPropagation()
-  },
+  }
 
-  handleEditClick(e) {
+  handleEditClick = (e) => {
     const { asset, project } = this.props
 
     const url = `/u/${asset.dn_ownerName}/asset/${asset._id}`
@@ -322,7 +320,7 @@ const AssetCard = React.createClass({
     if (e.buttons == 4 || e.button == 1)
       window.open(url + (window.location.search ? window.location.search : ''))
     else utilPushTo(this.context.urlLocation.query, url, { project })
-  },
-})
+  }
+}
 
 export default AssetCard

@@ -2,24 +2,24 @@ import PropTypes from 'prop-types'
 import React from 'react'
 //import Inspector from 'react-inspector'
 
-const DebugASTview = React.createClass({
-  propTypes: {
+export default class DebugASTview extends React.PureComponent{
+  static propTypes = {
     atCursorMemberParentRequestResponse: PropTypes.object,
-  },
+  }
 
-  smartRender() {
+  smartRender = () => {
     if (
       !this.props.atCursorMemberParentRequestResponse ||
       !this.props.atCursorMemberParentRequestResponse.data
     )
       return null
 
-    let d = this.props.atCursorMemberParentRequestResponse.data
+    const d = this.props.atCursorMemberParentRequestResponse.data
 
     if (d.isProperty) {
       if (d.objType && d.objType.types && d.objType.types[0]) return <p>***{d.objType.types[0].name}***</p>
     } else return null
-  },
+  }
 
   render() {
     if (!this.props.atCursorMemberParentRequestResponse) return null
@@ -34,7 +34,6 @@ const DebugASTview = React.createClass({
           */}
       </div>
     )
-  },
-})
+  }
+}
 
-export default DebugASTview

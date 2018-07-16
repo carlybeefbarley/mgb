@@ -6,13 +6,13 @@ import QLink from '/client/imports/routes/QLink'
 import moment from 'moment'
 import { ActivityTypes } from '/imports/schemas/activity'
 
-const ActivityItem = props => {
+class ActivityItem extends React.PureComponent {
   // propTypes: {
   //   activity: PropTypes.object,
   //   hideUser: PropTypes.bool,
   // }
-
-  const { activity, hideUser } = props
+render(){
+  const { activity, hideUser } = this.props
   const icon = AssetKinds.getIconName(activity.toAssetKind)
   const iconColor = AssetKinds.getColor(activity.toAssetKind)
   const linkTo = `/u/${activity.toOwnerName}/asset/${activity.toAssetId}`
@@ -38,7 +38,7 @@ const ActivityItem = props => {
         </List.Description>
       </List.Content>
     </List.Item>
-  )
+  )}
 }
 
 export default ActivityItem

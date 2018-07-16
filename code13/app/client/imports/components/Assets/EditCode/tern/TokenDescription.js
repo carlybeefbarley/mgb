@@ -1660,27 +1660,27 @@ function urlLink(urlString) {
   )
 }
 
-const TokenDescription = React.createClass({
-  propTypes: {
+export default class TokenDescription extends React.PureComponent{
+  static propTypes = {
     currentToken: PropTypes.object,
     comment: PropTypes.object, // info about comment - if any
     //getPrevToken: PropTypes.func.isRequired,
     //getNextToken: PropTypes.func.isRequired
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     skills: PropTypes.object,
-  },
+  }
 
-  handleHideShowClick(skillNodeKey) {
+  handleHideShowClick = (skillNodeKey) => {
     if (!skillNodeKey) return
 
     if (hasSkill(this.context.skills, skillNodeKey)) Meteor.call('Skill.forget', skillNodeKey)
     else Meteor.call('Skill.learn', skillNodeKey)
-  },
+  }
 
   render() {
-    let token = this.props.currentToken
+    const token = this.props.currentToken
     // search for the next token - just in case..
     /*
     TODO: @stauzs fix this and uncomment - this is pretty slow atm
@@ -1699,18 +1699,18 @@ const TokenDescription = React.createClass({
     }*/
 
     // we have slightly smarter comment handling - even if CM cannot figure out that token has comment type
-    let type = this.props.comment ? 'comment' : token ? token.type : null
+    const type = this.props.comment ? 'comment' : token ? token.type : null
 
     if (_.includes(noHelpTypes, type)) return null
 
-    let ts = token.string.trim()
-    let specialHandler = specialHelpTypes[type]
+    const ts = token.string.trim()
+    const specialHandler = specialHelpTypes[type]
 
     const maxTokenLenToShow = 20
-    let tsTrunc = ts.length > maxTokenLenToShow ? ts.substr(0, maxTokenLenToShow) + '...' : ts
+    const tsTrunc = ts.length > maxTokenLenToShow ? ts.substr(0, maxTokenLenToShow) + '...' : ts
 
-    let help = _.find(helpInfo, h => h.tt === type && (h.ts === null || h.ts === ts))
-    let tokenTypeToDisplay = specialHandler
+    const help = _.find(helpInfo, h => h.tt === type && (h.ts === null || h.ts === ts))
+    const tokenTypeToDisplay = specialHandler
       ? typeof specialHandler.betterTypeName == 'function'
         ? specialHandler.betterTypeName(ts, this) || type
         : specialHandler.betterTypeName
@@ -1806,7 +1806,5 @@ const TokenDescription = React.createClass({
           ))}
       </div>
     )
-  },
-})
-
-export default TokenDescription
+  }
+}

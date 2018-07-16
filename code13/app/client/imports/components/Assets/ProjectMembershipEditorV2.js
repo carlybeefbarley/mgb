@@ -134,14 +134,14 @@ const ProjectMembershipPopup = props => {
   return <div style={{ maxHeight: '500px', overflowY: 'auto', overflowX: 'hidden' }}>{choices}</div>
 }
 
-const ProjectMembershipEditorV2 = React.createClass({
-  propTypes: {
+export default class ProjectMembershipEditorV2 extends React.PureComponent{
+  static propTypes = {
     currUserId: PropTypes.string, // Can be null (No user logged in)
     asset: PropTypes.object, // Can be null (Asset not yet loaded)
     currUserProjects: PropTypes.array, // Projects list for currently logged in user. Can be null if current User participates in No Projects (meaning [])
     handleToggleProjectName: PropTypes.func, // Will be passed the name of the projectName to add/remove for the owner
     canEdit: PropTypes.bool, // Can be false
-  },
+  }
 
   render() {
     const { currUserId, asset, currUserProjects, canEdit, handleToggleProjectName } = this.props
@@ -172,7 +172,5 @@ const ProjectMembershipEditorV2 = React.createClass({
         />
       </Popup>
     )
-  },
-})
-
-export default ProjectMembershipEditorV2
+  }
+}

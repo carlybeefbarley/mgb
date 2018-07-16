@@ -7,36 +7,34 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import QLink from '/client/imports/routes/QLink'
 import { showToast } from '/client/imports/modules'
 
-const TemplateCard = React.createClass({
-  propTypes: {
+export default class TemplateCard extends React.Component{
+  static propTypes = {
     codeAssetId: PropTypes.string,
     name: PropTypes.string,
     description: PropTypes.string,
     imageId: PropTypes.string,
     currUser: PropTypes.object, // currently logged in user (if any)
-  },
+  }
 
-  getInitialState() {
-    return {
+  state ={
       isForkPending: false,
     }
-  },
 
-  handleForkClick() {
+  handleForkClick = () => {
     if (!this.state.isForkPending) {
       Meteor.call('Azzets.fork', this.props.codeAssetId, this.forkResultCallback)
       this.setState({ isForkPending: true })
     }
-  },
+  }
 
-  forkResultCallback(error, result) {
+  forkResultCallback = (error, result) => {
     if (error) showToast.error(`Unable to create a forked copy of this asset: '${error.toString()}'`)
     else {
       const url = `/u/${this.props.currUser.profile.name}/asset/` + result.newId
       utilPushTo(null, url)
       this.setState({ isForkPending: false })
     }
-  },
+  }
 
   render() {
     return (
@@ -48,7 +46,5 @@ const TemplateCard = React.createClass({
         </Card.Content>
       </Card>
     )
-  },
-})
-
-export default TemplateCard
+  }
+}

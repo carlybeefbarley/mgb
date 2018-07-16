@@ -2,20 +2,19 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 
-const RefsAndDefDescription = React.createClass({
-  propTypes: {
+export default class RefsAndDefDescription extends React.PureComponent{
+  static propTypes = {
     refsInfo: PropTypes.object, // This is the data from ternServer REFS request
     defInfo: PropTypes.object, // This is the data from ternServer DEFINITION request, plus 'definitionText'
     expressionTypeInfo: PropTypes.object, // This is the data frim ternserver TYPE request
-  },
+  }
 
   render() {
     if (!this.props.refsInfo) return null
 
-    let refs = this.props.refsInfo.refs
-
-    let def = this.props.defInfo
-    let origin = def ? def.origin : null
+    const refs = this.props.refsInfo.refs
+    const def = this.props.defInfo
+    const origin = def ? def.origin : null
 
     let exprName = null,
       type = ''
@@ -88,7 +87,7 @@ const RefsAndDefDescription = React.createClass({
         )}
       </div>
     )
-  },
-})
+  }
+}
 
-export default RefsAndDefDescription
+

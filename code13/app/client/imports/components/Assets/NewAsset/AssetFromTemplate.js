@@ -59,10 +59,10 @@ const _templates = [
   },
 ]
 
-const AssetFromTemplate = React.createClass({
-  propTypes: {
+export default class AssetFromTemplate extends React.PureComponent{
+ static propTypes = {
     currUser: PropTypes.object, // currently logged in user (if any)
-  },
+  }
 
   render() {
     return (
@@ -82,7 +82,5 @@ const AssetFromTemplate = React.createClass({
         </Card.Group>
       </div>
     )
-  },
-})
-
-export default AssetFromTemplate
+  }
+}

@@ -6,24 +6,24 @@ import { Button, Icon } from 'semantic-ui-react'
 
 import { joyrideStore } from '/client/imports/stores'
 
-const AssetCreateSelectKind = React.createClass({
-  propTypes: {
+export default class AssetCreateSelectKind extends React.Component{
+  static propTypes = {
     onChangeAsset: PropTypes.func.isRequired, // Callback function to create the asset, and is expected to navigate to the new page.
     //   Params are (assetKindKey, newAssetNameString). The newAssetNameString can be ""
     currUser: PropTypes.object, // Currently logged in user (if any)
     selectedKind: PropTypes.string,
-  },
+  }
 
-  getInitialState: () => ({ showMoreInfo: false }),
+  state = { showMoreInfo: false }
 
-  getDefaultProps: () => ({ selectedKind: AssetKindKeys[0] }),
+  static DefaultProps = { selectedKind: AssetKindKeys[0] }
 
-  handleShowMoreLessClick() {
+  handleShowMoreLessClick = () => {
     const { showMoreInfo } = this.state
 
     this.setState({ showMoreInfo: !showMoreInfo })
     joyrideStore.completeTag(`mgbjr-CT-create-asset-kindinfo-${showMoreInfo ? 'less' : 'more'}`)
-  },
+  }
 
   render() {
     const { onChangeAsset, currUser, selectedKind } = this.props
@@ -82,7 +82,5 @@ const AssetCreateSelectKind = React.createClass({
         )}
       </div>
     )
-  },
-})
-
-export default AssetCreateSelectKind
+  }
+}

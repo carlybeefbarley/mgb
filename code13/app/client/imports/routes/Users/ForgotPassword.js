@@ -4,17 +4,15 @@ import validate from '/imports/schemas/validate'
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import LoginLinks from './LoginLinks'
 
-const ForgotPasswordRoute = React.createClass({
-  getInitialState() {
-    return {
-      errors: {},
-      formData: {},
-      isLoading: false,
-      isComplete: false,
-    }
-  },
+export default class ForgotPasswordRoute extends React.Component {
+  state = {
+    errors: {},
+    formData: {},
+    isLoading: false,
+    isComplete: false,
+  }
 
-  renderContent() {
+  renderContent = () => {
     const { isLoading, isComplete, errors, formData } = this.state
     const { currUser } = this.props
 
@@ -48,32 +46,9 @@ const ForgotPasswordRoute = React.createClass({
         <Form.Button fluid primary disabled={!formData.email || errors.email} content="Request reset" />
       </Form>
     )
-  },
+  }
 
-  render() {
-    const { errors } = this.state
-
-    return (
-      <HeroLayout
-        heroContent={
-          <Container text>
-            <Grid columns="equal" verticalAlign="middle">
-              <Grid.Column width={4} only="computer tablet" />
-              <Grid.Column>
-                <Header as="h2" inverted content="Forgot password " />
-                <Segment stacked>{this.renderContent()}</Segment>
-                {errors.server && <Message error content={errors.server} />}
-                <LoginLinks showLogin="Remember your password? Log in." showSignup />
-              </Grid.Column>
-              <Grid.Column width={4} only="computer tablet" />
-            </Grid>
-          </Container>
-        }
-      />
-    )
-  },
-
-  handleChange(e) {
+  handleChange = e => {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -84,9 +59,9 @@ const ForgotPasswordRoute = React.createClass({
       },
       formData: { ...prevState.formData, [name]: value },
     }))
-  },
+  }
 
-  handleSubmit(event) {
+  handleSubmit = event => {
     const { email } = this.state.formData
 
     const emailError = validate.emailWithReason(email)
@@ -131,7 +106,28 @@ const ForgotPasswordRoute = React.createClass({
         }
       })
     })
-  },
-})
+  }
 
-export default ForgotPasswordRoute
+  render() {
+    const { errors } = this.state
+
+    return (
+      <HeroLayout
+        heroContent={
+          <Container text>
+            <Grid columns="equal" verticalAlign="middle">
+              <Grid.Column width={4} only="computer tablet" />
+              <Grid.Column>
+                <Header as="h2" inverted content="Forgot password " />
+                <Segment stacked>{this.renderContent()}</Segment>
+                {errors.server && <Message error content={errors.server} />}
+                <LoginLinks showLogin="Remember your password? Log in." showSignup />
+              </Grid.Column>
+              <Grid.Column width={4} only="computer tablet" />
+            </Grid>
+          </Container>
+        }
+      />
+    )
+  }
+}

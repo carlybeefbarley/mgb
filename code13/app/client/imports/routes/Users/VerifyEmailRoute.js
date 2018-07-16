@@ -4,18 +4,16 @@ import { Icon, Message } from 'semantic-ui-react'
 
 import refreshBadgeStatus from '/client/imports/helpers/refreshBadgeStatus'
 
-const VerifyEmailRoute = React.createClass({
-  propTypes: {
+export default class VerifyEmailRoute extends React.Component{
+  static propTypes = {
     params: PropTypes.object,
-  },
+  }
 
-  getInitialState() {
-    return {
+  state = {
       isLoading: true,
       isVerified: false,
       error: null,
     }
-  },
 
   componentDidMount() {
     Accounts.verifyEmail(this.props.params.token, error => {
@@ -28,7 +26,7 @@ const VerifyEmailRoute = React.createClass({
         refreshBadgeStatus()
       }
     })
-  },
+  }
 
   render() {
     if (this.state.isLoading) return <Icon loading />
@@ -49,7 +47,5 @@ const VerifyEmailRoute = React.createClass({
           content="Ooops! Something went wrong, please notify our admins in a chat!"
         />
       )
-  },
-})
-
-export default VerifyEmailRoute
+  }
+}

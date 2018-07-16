@@ -3,12 +3,10 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { Container, Header, Segment, List, Message } from 'semantic-ui-react'
 import ActivityItem from '/client/imports/components/Activities/ActivityItem'
 
-const NotificationsRoute = React.createClass({
-  getInitialState() {
-    return {
+export default class NotificationsRoute extends React.Component{
+  state = {
       notifications: [],
     }
-  },
 
   componentDidMount() {
     Meteor.call('Activity.getNotifications', (error, notifications) => {
@@ -17,11 +15,11 @@ const NotificationsRoute = React.createClass({
         this.setState({ notifications })
       }
     })
-  },
+  }
 
   componentWillMount() {
     if (!this.props.currUser) utilPushTo(null, '/')
-  },
+  }
 
   render() {
     if (this.state.notifications.length == 0)
@@ -47,7 +45,5 @@ const NotificationsRoute = React.createClass({
         </Segment>
       </Container>
     )
-  },
-})
-
-export default NotificationsRoute
+  }
+}

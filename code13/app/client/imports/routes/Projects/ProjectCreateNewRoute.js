@@ -10,17 +10,37 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
-const ProjectCreateNewRoute = React.createClass({
-  propTypes: {
+export default class ProjectCreateNewRoute extends React.PureComponent{
+  static propTypes= {
     user: PropTypes.object, // Maybe absent if route is /assets
     currUser: PropTypes.object, // Currently Logged in user
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
     ownsProfile: PropTypes.bool,
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
+
+  handleCreateProjectClickFromComponent = (pName) => {
+    if (!pName || pName.length < 1) {
+      showToast.warning('TODO: Project name too short')
+      return
+    }
+
+    let newProj = {
+      name: pName,
+      description: '',
+    }
+
+    Meteor.call('Projects.create', newProj, (error, result) => {
+      if (error) showToast.error('Could not create project - ' + error.reason)
+      else {
+        logActivity('project.create', `Create project ${pName}`)
+        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/projects/${pName}`)
+      }
+    })
+  }
 
   render() {
     const numUserOwnprojects = _.filter(
@@ -45,27 +65,5 @@ const ProjectCreateNewRoute = React.createClass({
         />
       </Segment>
     )
-  },
-
-  handleCreateProjectClickFromComponent(pName) {
-    if (!pName || pName.length < 1) {
-      showToast.warning('TODO: Project name too short')
-      return
-    }
-
-    let newProj = {
-      name: pName,
-      description: '',
-    }
-
-    Meteor.call('Projects.create', newProj, (error, result) => {
-      if (error) showToast.error('Could not create project - ' + error.reason)
-      else {
-        logActivity('project.create', `Create project ${pName}`)
-        utilPushTo(this.context.urlLocation.query, `/u/${this.props.currUser.profile.name}/projects/${pName}`)
-      }
-    })
-  },
-})
-
-export default ProjectCreateNewRoute
+  }
+}

@@ -8,24 +8,22 @@ import { showToast } from '/client/imports/modules'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import validate from '/imports/schemas/validate'
 
-const ResetPasswordRoute = React.createClass({
-  propTypes: {
+export default class ResetPasswordRoute extends React.Component{
+  static propTypes = {
     params: PropTypes.object.isRequired,
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     urlLocation: PropTypes.object,
-  },
+  }
 
-  getInitialState() {
-    return {
+  state ={
       errors: {},
       formData: {},
       isLoading: false,
     }
-  },
 
-  renderContent() {
+  renderContent = () => {
     const { isLoading, errors, formData } = this.state
 
     return (
@@ -43,31 +41,9 @@ const ResetPasswordRoute = React.createClass({
         </Form.Button>
       </Form>
     )
-  },
+  }
 
-  render() {
-    const { errors } = this.state
-
-    return (
-      <HeroLayout
-        heroContent={
-          <Container text>
-            <Grid columns="equal" verticalAlign="middle">
-              <Grid.Column width={4} only="computer tablet" />
-              <Grid.Column>
-                <Header as="h2" inverted content="Reset password " />
-                <Segment stacked>{this.renderContent()}</Segment>
-                {errors.server && <Message error content={errors.server} />}
-              </Grid.Column>
-              <Grid.Column width={4} only="computer tablet" />
-            </Grid>
-          </Container>
-        }
-      />
-    )
-  },
-
-  handleChange(e) {
+  handleChange = (e) => {
     const { name, value } = e.target
 
     this.setState((prevState, props) => ({
@@ -78,9 +54,9 @@ const ResetPasswordRoute = React.createClass({
       },
       formData: { ...prevState.formData, [name]: value },
     }))
-  },
+  }
 
-  handleSubmit(event) {
+  handleSubmit = (event) => {
     const { params } = this.props
     const { password } = this.state.formData
 
@@ -109,7 +85,27 @@ const ResetPasswordRoute = React.createClass({
       utilPushTo(this.context.urlLocation.query, '/')
       this.setState({ isLoading: false, errors: {} })
     })
-  },
-})
+  }
 
-export default ResetPasswordRoute
+  render() {
+    const { errors } = this.state
+
+    return (
+      <HeroLayout
+        heroContent={
+          <Container text>
+            <Grid columns="equal" verticalAlign="middle">
+              <Grid.Column width={4} only="computer tablet" />
+              <Grid.Column>
+                <Header as="h2" inverted content="Reset password " />
+                <Segment stacked>{this.renderContent()}</Segment>
+                {errors.server && <Message error content={errors.server} />}
+              </Grid.Column>
+              <Grid.Column width={4} only="computer tablet" />
+            </Grid>
+          </Container>
+        }
+      />
+    )
+  }
+}

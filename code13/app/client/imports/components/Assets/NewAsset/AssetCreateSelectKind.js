@@ -16,7 +16,7 @@ export default class AssetCreateSelectKind extends React.Component{
 
   state = { showMoreInfo: false }
 
-  static DefaultProps = { selectedKind: AssetKindKeys[0] }
+  static defaultProps = { selectedKind: AssetKindKeys[0] }
 
   handleShowMoreLessClick = () => {
     const { showMoreInfo } = this.state

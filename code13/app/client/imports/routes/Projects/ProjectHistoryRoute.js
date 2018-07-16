@@ -4,11 +4,11 @@ import React from 'react'
 import { Segment, List } from 'semantic-ui-react'
 import ActivityItem from '/client/imports/components/Activities/ActivityItem'
 
-const ProjectHistoryRoute = React.createClass({
-  propTypes: {
+export default class ProjectHistoryRoute extends React.PureComponent{
+  static propTypes = {
     activities: PropTypes.array,
     project: PropTypes.object,
-  },
+  }
 
   render() {
     const { activities, project } = this.props
@@ -35,7 +35,5 @@ const ProjectHistoryRoute = React.createClass({
         </List>
       </Segment>
     )
-  },
-})
-
-export default ProjectHistoryRoute
+  }
+}

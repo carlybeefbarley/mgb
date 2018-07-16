@@ -292,7 +292,14 @@ const getNavPanels = (currUser, showAll, props) => {
         />
       )}
       {/* NOTIFICATIONS */}
-      <Dropdown id="mgbjr-np-notifications" simple item icon="bell" direction="right">
+      <Dropdown
+        label={{ color: 'red', circular: true }}
+        id="mgbjr-np-notifications"
+        simple
+        item
+        icon="bell"
+        direction="right"
+      >
         <Dropdown.Menu className="left">
           <Dropdown.Header id="mgbjr-np-notifications-notificationsHeader" content="Notifications" />
           <Dropdown.Item id="mgbjr-np-notifications-empty-notifications">
@@ -412,7 +419,8 @@ const getNavPanels = (currUser, showAll, props) => {
               What's New
             </Dropdown.Item>
             <Dropdown.Item
-              onClick={() => {
+              onClick={e => {
+                e.stopPropagation()
                 utilPushTo(null, '/roadmap', null)
               }}
               id="mgbjr-np-mgb-roadmap"

@@ -3,19 +3,17 @@ import { utilPushTo } from '/client/imports/routes/QLink'
 import { Container, Header, Segment, List } from 'semantic-ui-react'
 import ActivityItem from '/client/imports/components/Activities/ActivityItem'
 
-const ProjectActivityRoute = React.createClass({
-  getInitialState() {
-    return {
+const ACTIVITY_LIMIT = 30
+class ProjectActivityRoute extends React.Component {
+  state = {
       activities: [],
     }
-  },
 
   componentDidMount() {
-    const activityLimit = 30
     Meteor.call(
       'Activity.getActivitiesByProjectName',
       this.props.params.projectName,
-      activityLimit,
+      ACTIVITY_LIMIT,
       (error, activities) => {
         if (error) console.warn(error)
         else {
@@ -23,11 +21,11 @@ const ProjectActivityRoute = React.createClass({
         }
       },
     )
-  },
+  }
 
   componentWillMount() {
     if (!this.props.currUser) utilPushTo(null, '/')
-  },
+  }
 
   render() {
     return (
@@ -44,7 +42,8 @@ const ProjectActivityRoute = React.createClass({
         </Segment>
       </Container>
     )
-  },
-})
+  }
+
+}
 
 export default ProjectActivityRoute

@@ -6,41 +6,39 @@ import QLink from '/client/imports/routes/QLink'
 import moment from 'moment'
 import { ActivityTypes } from '/imports/schemas/activity'
 
-const ActivityItem = React.createClass({
-  propTypes: {
-    activity: PropTypes.object,
-    hideUser: PropTypes.bool,
-  },
+const ActivityItem = props => {
+  // propTypes: {
+  //   activity: PropTypes.object,
+  //   hideUser: PropTypes.bool,
+  // }
 
-  render() {
-    const { activity, hideUser } = this.props
-    const icon = AssetKinds.getIconName(activity.toAssetKind)
-    const iconColor = AssetKinds.getColor(activity.toAssetKind)
-    const linkTo = `/u/${activity.toOwnerName}/asset/${activity.toAssetId}`
-    const activityBy = activity.byUserName ? activity.byUserName : ''
-    const when = moment(activity.timestamp).fromNow()
-    const description = ActivityTypes.getDescription(activity.activityType)
-    return (
-      <List.Item key={activity._id}>
-        <List.Icon name={icon} color={iconColor} />
-        <List.Content style={{ width: '100%' }}>
-          <List.Content floated="right">
-            <small style={{ color: 'lightgray' }}>{when}</small>
-          </List.Content>
-          <List.Header>
-            <QLink to={linkTo} className="ui item">
-              {activity.toAssetName}
-            </QLink>
-          </List.Header>
-          <List.Description>
-            <small>
-              {hideUser ? '' : activityBy} {description}
-            </small>
-          </List.Description>
+  const { activity, hideUser } = props
+  const icon = AssetKinds.getIconName(activity.toAssetKind)
+  const iconColor = AssetKinds.getColor(activity.toAssetKind)
+  const linkTo = `/u/${activity.toOwnerName}/asset/${activity.toAssetId}`
+  const activityBy = activity.byUserName ? activity.byUserName : ''
+  const when = moment(activity.timestamp).fromNow()
+  const description = ActivityTypes.getDescription(activity.activityType)
+  return (
+    <List.Item key={activity._id}>
+      <List.Icon name={icon} color={iconColor} />
+      <List.Content style={{ width: '100%' }}>
+        <List.Content floated="right">
+          <small style={{ color: 'lightgray' }}>{when}</small>
         </List.Content>
-      </List.Item>
-    )
-  },
-})
+        <List.Header>
+          <QLink to={linkTo} className="ui item">
+            {activity.toAssetName}
+          </QLink>
+        </List.Header>
+        <List.Description>
+          <small>
+            {hideUser ? '' : activityBy} {description}
+          </small>
+        </List.Description>
+      </List.Content>
+    </List.Item>
+  )
+}
 
 export default ActivityItem

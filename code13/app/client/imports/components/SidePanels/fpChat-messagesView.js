@@ -1,24 +1,25 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
-import { showToast } from '/client/imports/modules'
-import { Chats } from '/imports/schemas'
-import { joyrideStore } from '/client/imports/stores'
 import { Button, Comment, Divider, Form, Header, Icon } from 'semantic-ui-react'
+import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
+import QLink from '/client/imports/routes/QLink'
+import ChatMessage, { encodeAssetInMsg } from './fpChat-message'
+import { Chats } from '/imports/schemas'
+import { showToast } from '/client/imports/modules'
+import { joyrideStore } from '/client/imports/stores'
 import { isSameUserId } from '/imports/schemas/users'
 import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
 import { Users } from '/imports/schemas'
-import DragNDropHelper from '/client/imports/helpers/DragNDropHelper'
 import { logActivity } from '/imports/schemas/activity'
 import { makeCDNLink, makeExpireTimestamp } from '/client/imports/helpers/assetFetchers'
 import SpecialGlobals from '/imports/SpecialGlobals'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
 import { setLastReadTimestampForChannel } from '/imports/schemas/settings-client'
-import QLink from '/client/imports/routes/QLink'
 import moment from 'moment'
+import { withTracker } from 'meteor/react-meteor-data'
+
 
 import {
   deleteChatRecord,
@@ -66,65 +67,42 @@ const UndeleteChatMessage = ({ chat, currUser, isSuperAdmin }) =>
     </span>
   ) : null
 
-const ChatMessagesView = React.createClass({
-  mixins: [ReactMeteorData],
+class ChatMessagesView extends React.Component{
 
-  propTypes: {
+  static propTypes = {
     channelName: PropTypes.string.isRequired,
     pastMessageLimit: PropTypes.number.isRequired,
     handleExtendMessageLimit: PropTypes.func.isRequired, // Call this with new desired pastMessageLimit
     MessageContextComponent: PropTypes.node, // - A react component that will be rendered to the left of the 'Send Message' Button as context for the message send
-  },
+  }
 
-  getInitialState() {
-    return {
+  state = {
       isMessagePending: false,
     }
-  },
 
   // Settings context needed for get/setLastReadTimestampForChannel and the pin/unpin list
-  contextTypes: {
+  static contextTypes = {
     settings: PropTypes.object,
-  },
+  }
 
-  getMeteorData() {
-    const { channelName, pastMessageLimit } = this.props
-    const handleForChats = Meteor.subscribe('chats.channelName', channelName, pastMessageLimit)
-    const chats = Chats.find({ toChannelName: channelName }, { sort: { createdAt: 1 } }).fetch()
-    let userIds = []
-
-    _.map(chats, message => {
-      userIds.push(message.byUserId)
-    })
-
-    const handleForUsers = Meteor.subscribe('users.getByIdList', userIds)
-
-    const retval = {
-      chats,
-      users: Users.find({ _id: { $in: userIds }, permissions: { $exists: true } }).fetch(),
-      loading: !handleForChats.ready() && !handleForUsers.ready(),
-    }
-    return retval
-  },
 
   componentDidUpdate() {
-    const { channelName } = this.props
+    const { channelName, loading, chats } = this.props
     // There are some tasks to do the first time a comments/chat list has been rendered for a particular channel
-    if (!this.data.loading) {
+    if (!loading) {
       // First.. Maybe mark channel as read. This uses setLastReadTimestampForChannel()
       // which will do no work if the value has not changed
-      if (this.data.chats && this.data.chats.length > 0) {
-        const timestamp = _.last(this.data.chats).createdAt
+      if (chats && chats.length > 0) {
+        const timestamp = _.last(chats).createdAt
         setLastReadTimestampForChannel(this.context.settings, channelName, timestamp)
       }
     }
-  },
+  }
 
-  renderGetMoreMessages() {
-    const { chats } = this.data
-    const { pastMessageLimit } = this.props
+  renderGetMoreMessages = () => {
+    const { pastMessageLimit, chats, loading } = this.props
     const elementId = 'mgbjr-fp-chat-channel-get-earlier-messages'
-    if (this.data.loading) return <p id={elementId}>loading...</p>
+    if (loading) return <p id={elementId}>loading...</p>
 
     if (!chats || chats.length === 0)
       return (
@@ -163,9 +141,9 @@ const ChatMessagesView = React.createClass({
         }
       />
     )
-  },
+  }
 
-  doSendMessage() {
+  doSendMessage = () => {
     const { messageValue } = this.state
     const { channelName } = this.props
     if (!messageValue || messageValue.length < 1) return
@@ -206,22 +184,22 @@ const ChatMessagesView = React.createClass({
         }
       }
     })
-  },
+  }
 
-  doGetMoreMessages() {
+  doGetMoreMessages = () => {
     const newMessageLimit = Math.min(
       chatParams.maxClientChatHistory,
       this.props.pastMessageLimit + additionalMessageIncrement,
     )
     this.props.handleExtendMessageLimit(newMessageLimit)
-  },
+  }
 
-  renderMessage(c) {
+  renderMessage = (c) => {
     const ago = moment(c.createdAt).fromNow()
     const to = `/u/${c.byUserName}`
-    const { currUser } = this.props
+    const { currUser, users } = this.props
     const absTime = moment(c.createdAt).format('MMMM Do YYYY, h:mm:ss a')
-    const msgOwner = _.find(this.data.users, user => {
+    const msgOwner = _.find(users, user => {
       return user._id === c.byUserId
     })
 
@@ -281,9 +259,9 @@ const ChatMessagesView = React.createClass({
         </Comment.Content>
       </Comment>
     )
-  },
+  }
 
-  onDropChatMsg(e) {
+  onDropChatMsg = (e) => {
     const asset = DragNDropHelper.getAssetFromEvent(e)
     if (!asset) {
       console.log('Drop - NO asset')
@@ -292,15 +270,15 @@ const ChatMessagesView = React.createClass({
     this.setState({
       messageValue: (this.state.messageValue || '') + encodeAssetInMsg(asset),
     })
-  },
+  }
 
-  handleMessageChange(e) {
+  handleMessageChange = (e) => {
     this.setState({ messageValue: e.target.value })
-  },
+  }
 
   render() {
-    const { messageValue } = this.state
-    const { currUser, channelName, MessageContextComponent, tooltipPosition } = this.props
+    const { messageValue, isMessagePending } = this.state
+    const { currUser, channelName, MessageContextComponent, tooltipPosition, chats } = this.props
     const canSend = currUserCanSend(currUser, channelName)
     const isOpen = true
 
@@ -331,7 +309,7 @@ const ChatMessagesView = React.createClass({
           {this.renderGetMoreMessages()}
           <div id="mgbjr-fp-chat-channel-messages">
             {// Always have at least one div so we will be robust with a '#mgbjr-fp-chat-channel-messages div:first' css selector for tutorials
-            this.data.chats ? this.data.chats.map(this.renderMessage) : <div />}
+            chats ? chats.map(this.renderMessage) : <div />}
           </div>
           <span />
         </Comment.Group>
@@ -355,10 +333,10 @@ const ChatMessagesView = React.createClass({
             <Button
               floated="right"
               color="blue"
-              icon={this.state.isMessagePending ? { loading: false, name: 'spinner' } : 'chat'}
+              icon={isMessagePending ? { loading: false, name: 'spinner' } : 'chat'}
               labelPosition="left"
-              disabled={!canSend || this.state.isMessagePending}
-              content={this.state.isMessagePending ? 'Sending Message...' : 'Send Message'}
+              disabled={!canSend || isMessagePending}
+              content={isMessagePending ? 'Sending Message...' : 'Send Message'}
               data-tooltip="Shortcut: Ctrl-ENTER to send"
               data-position={tooltipPosition ? tooltipPosition : 'bottom right'}
               data-inverted=""
@@ -368,11 +346,30 @@ const ChatMessagesView = React.createClass({
         </Form>
       </div>
     )
-  },
+  }
 
-  handleMessageKeyUp(e) {
+  handleMessageKeyUp = (e) => {
     if (e.keyCode === 13 && e.ctrlKey) this.doSendMessage()
-  },
-})
+  }
+}
 
-export default ChatMessagesView
+export default withTracker(props => {
+  const { channelName, pastMessageLimit } = props
+    const handleForChats = Meteor.subscribe('chats.channelName', channelName, pastMessageLimit)
+    const chats = Chats.find({ toChannelName: channelName }, { sort: { createdAt: 1 } }).fetch()
+    let userIds = []
+
+    _.map(chats, message => {
+      userIds.push(message.byUserId)
+    })
+
+    const handleForUsers = Meteor.subscribe('users.getByIdList', userIds)
+
+    const retval = {
+      ...props,
+      chats,
+      users: Users.find({ _id: { $in: userIds }, permissions: { $exists: true } }).fetch(),
+      loading: !handleForChats.ready() && !handleForUsers.ready(),
+    }
+    return retval
+})(ChatMessagesView)

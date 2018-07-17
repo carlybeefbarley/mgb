@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Segment, Popup, Menu, Message, Header } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 import { Azzets, Projects } from '/imports/schemas'
 import {
@@ -35,6 +35,70 @@ import SpecialGlobals from '/imports/SpecialGlobals'
 import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCreateLink'
 import Hotjar from '/client/imports/helpers/hotjar.js'
 
+
+/**
+   * queryNormalized() takes a location query that comes in via the browser url.
+   *   Any missing or invalid params are replaced by defaults
+   *   The result is a data structure that can be used without need for range/validity checking
+   * @param q typically this.props.location.query  -  from react-router
+  */
+
+const queryNormalized = (q = {}) => {
+  // Start with defaults
+  let newQ = _.clone(queryDefaults)
+
+  // Next, validate and apply values from url location query to overrride defaults
+
+  // query.sort
+  if (assetSorters.hasOwnProperty(q.sort)) newQ.sort = q.sort
+
+  if (assetViewChoices.hasOwnProperty(q.view)) newQ.view = q.view
+  else if (localStorage.getItem(_lsAssetViewKey)) newQ.view = localStorage.getItem(_lsAssetViewKey)
+
+  if (_.isString(q.limit)) {
+    // It was supplied in URL
+    newQ.limit = _.toFinite(q.limit)
+  } else if (localStorage.getItem(_lsAssetLimitKey)) {
+    // This browser has set a prior default
+    newQ.limit = localStorage.getItem(_lsAssetLimitKey)
+  }
+  newQ.limit = _.clamp(newQ.limit, 10, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
+
+  // query.project
+  if (q.project) newQ.project = q.project
+
+  // query.hidews - This is a hideWorkState bitmask as defined in makeWorkstateNamesArray()
+  if (q.hidews) newQ.hidews = q.hidews
+
+  // query.showChallengeAssets
+  if (q.showChallengeAssets === '1') newQ.showChallengeAssets = q.showChallengeAssets
+
+  // query.showDeleted
+  if (q.showDeleted === '1') newQ.showDeleted = q.showDeleted
+
+  // query.showStable
+  if (q.showStable === '1') newQ.showStable = q.showStable
+
+  // query.searchName
+  if (q.searchName) newQ.searchName = q.searchName
+
+  // query.kinds
+  // This one is more complicated.. It will be dynamically expanded to be a comma-separated list of all valid enabled asset kinds
+  if (q.kinds && q.kinds === safeAssetKindStringSepChar) newQ.kinds = ''
+  else if (q.kinds && q.kinds.length > 0) {
+    // Externally "-" becomes "" internally
+    // url supplied a list, so parse for valid ones and put back into string
+    const asArray = q.kinds.toLowerCase().split(safeAssetKindStringSepChar)
+    const asValidatedArray = _.intersection(asArray, AssetKindKeys)
+    newQ.kinds = asValidatedArray.join(safeAssetKindStringSepChar)
+  } else {
+    //no list of Asset Kinds supplied in url query so expand now to all valid secondary
+    newQ.kinds = AssetKindKeys.join(safeAssetKindStringSepChar)
+  }
+
+  return newQ
+}
+
 // Default values for url?query - i.e. the this.props.location.query keys
 const queryDefaults = {
   project: ProjectSelector.ANY_PROJECT_PROJNAME,
@@ -55,154 +119,49 @@ const _filterSegmentStyle = { ..._contentsSegmentStyle, minWidth: '220px', maxWi
 const _lsAssetViewKey = 'asset-view'
 const _lsAssetLimitKey = 'asset-limit-num'
 
-const UserAssetListRoute = React.createClass({
-  mixins: [ReactMeteorData],
+class UserAssetListRoute extends React.PureComponent{
+  // mixins: [ReactMeteorData],
 
-  propTypes: {
+  static propTypes = {
     params: PropTypes.object, // .id (LEGACY /user/:id routes), or .username (current /u/:username routes) Maybe absent if route is /assets
     user: PropTypes.object, // Maybe absent if route is /assets
     currUser: PropTypes.object, // Currently Logged in user. Can be null
     ownsProfile: PropTypes.bool,
     location: PropTypes.object, // We get this from react-router
-  },
+  }
 
   componentDidMount() {
     this.hotjarFlag = true
-  },
-
-  /**
-   * queryNormalized() takes a location query that comes in via the browser url.
-   *   Any missing or invalid params are replaced by defaults
-   *   The result is a data structure that can be used without need for range/validity checking
-   * @param q typically this.props.location.query  -  from react-router
-  */
-  queryNormalized(q = {}) {
-    // Start with defaults
-    let newQ = _.clone(queryDefaults)
-
-    // Next, validate and apply values from url location query to overrride defaults
-
-    // query.sort
-    if (assetSorters.hasOwnProperty(q.sort)) newQ.sort = q.sort
-
-    if (assetViewChoices.hasOwnProperty(q.view)) newQ.view = q.view
-    else if (localStorage.getItem(_lsAssetViewKey)) newQ.view = localStorage.getItem(_lsAssetViewKey)
-
-    if (_.isString(q.limit)) {
-      // It was supplied in URL
-      newQ.limit = _.toFinite(q.limit)
-    } else if (localStorage.getItem(_lsAssetLimitKey)) {
-      // This browser has set a prior default
-      newQ.limit = localStorage.getItem(_lsAssetLimitKey)
-    }
-    newQ.limit = _.clamp(newQ.limit, 10, SpecialGlobals.assets.mainAssetsListSubscriptionMaxLimit)
-
-    // query.project
-    if (q.project) newQ.project = q.project
-
-    // query.hidews - This is a hideWorkState bitmask as defined in makeWorkstateNamesArray()
-    if (q.hidews) newQ.hidews = q.hidews
-
-    // query.showChallengeAssets
-    if (q.showChallengeAssets === '1') newQ.showChallengeAssets = q.showChallengeAssets
-
-    // query.showDeleted
-    if (q.showDeleted === '1') newQ.showDeleted = q.showDeleted
-
-    // query.showStable
-    if (q.showStable === '1') newQ.showStable = q.showStable
-
-    // query.searchName
-    if (q.searchName) newQ.searchName = q.searchName
-
-    // query.kinds
-    // This one is more complicated.. It will be dynamically expanded to be a comma-separated list of all valid enabled asset kinds
-    if (q.kinds && q.kinds === safeAssetKindStringSepChar) newQ.kinds = ''
-    else if (q.kinds && q.kinds.length > 0) {
-      // Externally "-" becomes "" internally
-      // url supplied a list, so parse for valid ones and put back into string
-      const asArray = q.kinds.toLowerCase().split(safeAssetKindStringSepChar)
-      const asValidatedArray = _.intersection(asArray, AssetKindKeys)
-      newQ.kinds = asValidatedArray.join(safeAssetKindStringSepChar)
-    } else {
-      //no list of Asset Kinds supplied in url query so expand now to all valid secondary
-      newQ.kinds = AssetKindKeys.join(safeAssetKindStringSepChar)
-    }
-
-    return newQ
-  },
+  }
 
   /**  Returns the given query EXCEPT for keys that match a key/value pair in queryDefaults array
   */
-  _stripQueryOfDefaults(queryObj) {
+  _stripQueryOfDefaults = (queryObj) => {
     var strippedQ = _.omitBy(queryObj, function(val, key) {
       let retval = queryDefaults.hasOwnProperty(key) && queryDefaults[key] === val
       return retval
     })
     return strippedQ
-  },
+  }
 
   /** helper Function for updating just a query string with react router
   */
-  _updateLocationQuery(queryModifier) {
+  _updateLocationQuery = (queryModifier) => {
     let loc = this.props.location
     let newQ = Object.assign({}, loc.query, queryModifier)
     newQ = this._stripQueryOfDefaults(newQ)
     // This is browserHistory.push and NOT utilPushTo() since we are staying on the same page
     browserHistory.push(Object.assign({}, loc, { query: newQ }))
-  },
-
-  /**
-   * Always get the Assets stuff.
-   * Optionally get the Project info - if this is a user-scoped view
-   */
-  getMeteorData() {
-    const userId = this.props.user && this.props.user._id ? this.props.user._id : null
-    const qN = this.queryNormalized(this.props.location.query)
-    let handleForAssets = Meteor.subscribe(
-      'assets.public',
-      userId,
-      qN.kinds.split(safeAssetKindStringSepChar),
-      qN.searchName,
-      qN.project,
-      qN.showDeleted === '1',
-      qN.showStable === '1',
-      qN.sort,
-      qN.limit,
-      qN.hidews,
-      qN.showChallengeAssets === '1',
-    )
-    let assetSorter = assetSorters[qN.sort]
-    let assetSelector = assetMakeSelector(
-      userId,
-      qN.kinds.split(safeAssetKindStringSepChar),
-      qN.searchName,
-      qN.project,
-      qN.showDeleted === '1',
-      qN.showStable === '1',
-      qN.hidews,
-      qN.showChallengeAssets === '1',
-    )
-
-    let handleForProjects = userId ? Meteor.subscribe('projects.byUserId', userId) : null
-    let selectorForProjects = {
-      $or: [{ ownerId: userId }, { memberIds: { $in: [userId] } }],
-    }
-    return {
-      assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
-      projects: userId ? Projects.find(selectorForProjects, { sort: defaultProjectSorter }).fetch() : null, // Can be null
-      loading: !handleForAssets.ready(),
-    }
-  },
+  }
 
   // This is the callback from AssetsKindSelector
-  handleToggleKind(
+  handleToggleKind = (
     k,
     altKey, // k is the string for the AssetKindsKey to toggle existence of in the array
-  ) {
+  ) => {
     let newKindsString
     // get current qN.kinds string as array
-    const kindsStr = this.queryNormalized(this.props.location.query).kinds
+    const kindsStr = queryNormalized(this.props.location.query).kinds
     // Beware that "".split("-") is [""] so we have to special case empty string
     const kindsArray = kindsStr === '' ? [] : kindsStr.split(safeAssetKindStringSepChar)
     const isCurrentlOnlyKindBeingToggled = kindsArray.length === 1 && kindsArray[0] === k
@@ -227,52 +186,51 @@ const UserAssetListRoute = React.createClass({
     }
     // Finally, special case the empty and full situations
     this._updateLocationQuery({ kinds: newKindsString })
-  },
+  }
 
-  handleSearchGo(newSearchText) {
+  handleSearchGo = (newSearchText) => {
     this._updateLocationQuery({ searchName: newSearchText })
-  },
-  handleChangeSortByClick(newSort) {
+  }
+  handleChangeSortByClick = (newSort) => {
     this._updateLocationQuery({ sort: newSort })
-  },
-  handleChangeShowStableFlag(newValue) {
+  }
+  handleChangeShowStableFlag = (newValue) => {
     this._updateLocationQuery({ showStable: newValue })
-  },
-  handleChangeShowDeletedFlag(newValue) {
+  }
+  handleChangeShowDeletedFlag = (newValue) => {
     this._updateLocationQuery({ showDeleted: newValue })
-  },
-  handleChangeWorkstateHideMask(newValue) {
+  }
+  handleChangeWorkstateHideMask = (newValue) => {
     this._updateLocationQuery({ hidews: String(newValue) })
-  },
-  handleChangeSelectedProjectName(newValue) {
+  }
+  handleChangeSelectedProjectName = (newValue) => {
     this._updateLocationQuery({ project: newValue })
-  },
-  handleChangeShowChallengeAssetsFlag(newValue) {
+  }
+  handleChangeShowChallengeAssetsFlag = (newValue) => {
     this._updateLocationQuery({ showChallengeAssets: newValue })
-  },
+  }
 
-  handleChangeViewClick(newView) {
+  handleChangeViewClick = (newView) => {
     localStorage.setItem(_lsAssetViewKey, newView)
     this._updateLocationQuery({ view: newView })
-  },
+  }
 
-  handleChangeLimitClick(newLimitNum) {
+  handleChangeLimitClick = (newLimitNum) => {
     localStorage.setItem(_lsAssetLimitKey, newLimitNum)
     this._updateLocationQuery({ limit: newLimitNum })
-  },
+  }
 
   render() {
-    const { assets, projects, loading } = this.data // can be null due to empty or still loading, or public-assets
-    const { currUser, user, ownsProfile, location } = this.props
+    const { assets, projects, loading, currUser, user, ownsProfile, location } = this.props // withTracker data can be null due to empty or still loading, or public-assets
     const name = user ? user.profile.name : ''
-    const qN = this.queryNormalized(location.query)
+    const qN = queryNormalized(location.query)
     const { view, limit } = qN
     const isAllKinds = isAssetKindsStringComplete(qN.kinds)
     const isOneKind = !_.includes(qN.kinds, safeAssetKindStringSepChar)
     const pageTitle = user ? `${name}'s Assets` : 'All Assets'
 
     // need to send hotjar when we have assets and only once
-    if (this.hotjarFlag && !loading && this.data.assets.length > 0) {
+    if (this.hotjarFlag && !loading && assets.length > 0) {
       // console.log('assetList', this.data.assets.length, loading)
       this.hotjarFlag = false
       // setTimeout just to be sure that everything is loaded and rendered
@@ -417,7 +375,51 @@ const UserAssetListRoute = React.createClass({
         </Segment>
       </Segment.Group>
     )
-  },
-})
+  }
+}
 
-export default UserAssetListRoute
+
+/**
+ * Always get the Assets stuff.
+ * Optionally get the Project info - if this is a user-scoped view
+*/
+
+export default withTracker(props => {
+  const userId = props.user && props.user._id ? props.user._id : null
+    const qN = queryNormalized(props.location.query)
+    const handleForAssets = Meteor.subscribe(
+      'assets.public',
+      userId,
+      qN.kinds.split(safeAssetKindStringSepChar),
+      qN.searchName,
+      qN.project,
+      qN.showDeleted === '1',
+      qN.showStable === '1',
+      qN.sort,
+      qN.limit,
+      qN.hidews,
+      qN.showChallengeAssets === '1',
+    )
+    const assetSorter = assetSorters[qN.sort]
+    const assetSelector = assetMakeSelector(
+      userId,
+      qN.kinds.split(safeAssetKindStringSepChar),
+      qN.searchName,
+      qN.project,
+      qN.showDeleted === '1',
+      qN.showStable === '1',
+      qN.hidews,
+      qN.showChallengeAssets === '1',
+    )
+
+    const handleForProjects = userId ? Meteor.subscribe('projects.byUserId', userId) : null
+    const selectorForProjects = {
+      $or: [{ ownerId: userId }, { memberIds: { $in: [userId] } }],
+    }
+    return {
+      ...props,
+      assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
+      projects: userId ? Projects.find(selectorForProjects, { sort: defaultProjectSorter }).fetch() : null, // Can be null
+      loading: !handleForAssets.ready(),
+    }
+})(UserAssetListRoute)

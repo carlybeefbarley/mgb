@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
@@ -25,6 +25,7 @@ import AssetChatDetail from '/client/imports/components/Assets/AssetChatDetail'
 import elementResizeDetectorMaker from 'element-resize-detector'
 
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
+import { Azzets } from '/imports/schemas/'
 
 // TODO: The debounce / throttle needs to move to the server really
 const _incrementPlayCount = _.debounce(
@@ -373,10 +374,8 @@ const PlayGame = ({ game, user, incrementPlayCountCb, availableWidth }) => {
   }
 }
 
-const PlayGameRoute = React.createClass({
-  mixins: [ReactMeteorData],
-
-  propTypes: {
+class PlayGameRoute extends React.PureComponent {
+  static propTypes = {
     params: PropTypes.object, // params.assetId is the ASSET id
     user: PropTypes.object,
     hazUnreadAssetChat: PropTypes.bool,
@@ -385,80 +384,49 @@ const PlayGameRoute = React.createClass({
     // isSuperAdmin:     PropTypes.bool,
     // ownsProfile:      PropTypes.bool,        // true IFF user is valid and asset owner is currently logged in user
     handleSetCurrentlyEditingAssetInfo: PropTypes.func, // We should call this to set/clear current asset kind
-  },
+  }
 
-  getMeteorData() {
-    const { params } = this.props
-    const { assetId } = params
-    const assetHandler = (this.assetHandler = getAssetHandlerWithContent2(assetId, () => {
-      if (this.assetHandler) this.forceUpdate()
-    }))
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+  }
 
-    if (this.assetHandler) {
-      const { handleSetCurrentlyEditingAssetInfo } = this.props
-      const { asset } = this.assetHandler
-      if (asset && handleSetCurrentlyEditingAssetInfo) {
-        const assetInfo = makeAssetInfoFromAsset(asset, 'Play')
-        handleSetCurrentlyEditingAssetInfo(assetInfo)
-      }
-    }
-
-    return {
-      get asset() {
-        return assetHandler.asset
-      },
-      get loading() {
-        return !assetHandler.isReady
-      },
-    }
-  },
-
-  incrementPlayCount() {
-    const game = this.data.asset // One Asset provided via getMeteorData()
+  incrementPlayCount = () => {
+    const game = this.props.asset // One Asset provided via withTracker()
     if (game && game._id) _incrementPlayCount(game._id)
-  },
+  }
 
-  //
-  checkForImplicitIncrementPlayCount() {
-    const game = this.data.asset // One Asset provided via getMeteorData()
+  checkForImplicitIncrementPlayCount = () => {
+    const game = this.props.asset // One Asset provided via withTracker()
     if (game && game._id && game.metadata.gameType === 'codeGame' && !this.autoUpdateHasBeenHandled) {
       this.incrementPlayCount()
       this.autoUpdateHasBeenHandled = true
     }
-  },
-
+  }
   componentDidMount() {
     this.checkForImplicitIncrementPlayCount()
-  },
+  }
 
   componentWillUnmount() {
-    if (this.assetHandler) {
-      this.assetHandler.stop()
-      this.assetHandler = null
       // Clear Asset kind status for parent App
       if (this.props.handleSetCurrentlyEditingAssetInfo) this.props.handleSetCurrentlyEditingAssetInfo({})
-    }
-  },
-  contextTypes: {
-    urlLocation: PropTypes.object,
-  },
+  }
 
   componentDidUpdate() {
     this.checkForImplicitIncrementPlayCount()
-  },
+  }
 
-  handleChatClick() {
+  handleChatClick = () => {
     const channelName = makeChannelName({ scopeGroupName: 'Asset', scopeId: this.props.params.assetId })
     joyrideStore.completeTag('mgbjr-CT-asset-play-game-show-chat')
     utilShowChatPanelChannel(this.context.urlLocation, channelName)
-  },
+  }
 
   render() {
-    if (this.data.loading) return <Spinner />
+    if (this.props.loading) return <Spinner />
 
-    if (!this.data.asset) return <ThingNotFound type="GameConfig Asset" id={params.assetId} />
+    if (!this.props.asset) return <ThingNotFound type="GameConfig Asset" id={params.assetId} />
     const { params, user, hazUnreadAssetChat } = this.props
-    const game = this.data.asset // One Asset provided via getMeteorData()
+    const game = this.props.asset // One Asset provided via withTracker()
 
     return (
       <Segment basic padded style={{ paddingTop: 0, paddingBottom: 0, marginBottom: 0 }}>
@@ -483,7 +451,22 @@ const PlayGameRoute = React.createClass({
         />
       </Segment>
     )
-  },
-})
+  }
+}
 
-export default PlayGameRoute
+export default withTracker(props => {
+  const { params, handleSetCurrentlyEditingAssetInfo } = props
+  const { assetId } = params
+  const assetHandler = getAssetHandlerWithContent2(assetId)
+  const asset = Azzets.findOne(assetId)
+
+  if (assetHandler && asset && handleSetCurrentlyEditingAssetInfo) {
+    const assetInfo = makeAssetInfoFromAsset(asset, 'Play')
+    handleSetCurrentlyEditingAssetInfo(assetInfo)
+  }
+
+  return {
+    asset,
+    loading: !assetHandler.isReady,
+  }
+})(PlayGameRoute)

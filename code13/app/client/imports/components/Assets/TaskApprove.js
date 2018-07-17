@@ -2,28 +2,18 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Popup, Label, Button, Segment } from 'semantic-ui-react'
 import { Skills } from '/imports/schemas'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
-const TaskApprove = React.createClass({
-  mixins: [ReactMeteorData],
+class TaskApprove extends React.PureComponent{
 
-  propTypes: {
+  static propTypes = {
     asset: PropTypes.object.isRequired,
     ownerID: PropTypes.string.isRequired,
     handleTaskApprove: PropTypes.func.isRequired,
-  },
-
-  getMeteorData() {
-    const sub = Meteor.subscribe('skills.userId', this.props.ownerID)
-
-    return {
-      ownerSkills: Skills.find(this.props.ownerID).fetch(),
-      loading: !sub.ready(),
-    }
-  },
+  }
 
   render() {
-    const { loading, ownerSkills } = this.data
+    const { loading, ownerSkills } = this.props
 
     // no need to show button if we don't know asset owner skills
     if (loading) return <span />
@@ -60,7 +50,15 @@ const TaskApprove = React.createClass({
         </Popup.Content>
       </Popup>
     )
-  },
-})
+  }
+}
 
-export default TaskApprove
+export default withTracker(props => {
+const sub = Meteor.subscribe('skills.userId', props.ownerID)
+
+    return {
+      ...props,
+      ownerSkills: Skills.find(props.ownerID).fetch(),
+      loading: !sub.ready(),
+    }
+})(TaskApprove)

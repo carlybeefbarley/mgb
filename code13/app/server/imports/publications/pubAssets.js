@@ -125,11 +125,12 @@ Meteor.publish('assets.byAssignmentsList', list => {
 
 // Return one asset. This is a good subscription for AssetEditRoute
 // Removed - as c2 is fetched and cached via ajax / cdn combo
+
+// 2018-07-17 Reinstated as we are no longer using mixins, react create class and a bunch of other
+// archaic methods. As far as I am aware newer code completely sidesteps the need for complex
+// handlers and caching as meteor has gotten a lot smarter about this. - Hudson
 Meteor.publish('assets.public.byId.withContent2', function(assetId) {
-  console.error(
-    'DEPRECATED: assets.public.byId.withContent2 has been removed. How is this even being invoked!?',
-  )
-  return null
+  return Azzets.find(assetId)
 })
 
 // drop area used this

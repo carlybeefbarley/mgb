@@ -15,7 +15,7 @@ import {
   Container,
 } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
 
 import mgb1 from '/client/imports/helpers/mgb1'
@@ -48,43 +48,24 @@ import Hotjar from '/client/imports/helpers/hotjar.js'
 
 const UserShowcase = () => null // TODO based on workState
 
-const UserProfileRoute = React.createClass({
-  mixins: [ReactMeteorData],
-
-  propTypes: {
+class UserProfileRoute extends React.Component {
+  static propTypes = {
     query: PropTypes.object,
     params: PropTypes.object,
     user: PropTypes.object,
     currUser: PropTypes.object,
     ownsProfile: PropTypes.bool,
-  },
+  }
 
   componentDidMount() {
     // setTimeout just to be sure that everything is loaded
     setTimeout(() => Hotjar('trigger', 'user-profile', this.props.currUser), 200)
-  },
-
-  getMeteorData() {
-    const userId = this.props.user && this.props.user._id ? this.props.user._id : null
-    let findOpts = {
-      sort: projectSorters['createdNewest'],
-    }
-    const handleForProjects = Meteor.subscribe('projects.byUserId', userId)
-    const projectSelector = projectMakeSelector(userId)
-
-    const handleForClassrooms = Meteor.subscribe('classrooms.all')
-
-    return {
-      classrooms: Classrooms.find({}),
-      projects: Projects.find(projectSelector, findOpts).fetch(),
-      loading: userId && !handleForProjects.ready(),
-    }
-  },
+  }
 
   /**
    *   @param changeObj contains { field: value } settings.. e.g "profile.title": "New Title"
    */
-  handleProfileFieldChanged(changeObj) {
+  handleProfileFieldChanged = changeObj => {
     const fMsg = changeObj['profile.focusMsg']
     if (fMsg || fMsg === '') {
       // focusMessage has some additional handling.. activity Logging and also
@@ -100,10 +81,10 @@ const UserProfileRoute = React.createClass({
         _.each(_.keys(changeObj), k => joyrideStore.completeTag(`mgbjr-CT-profile-set-field-${k}`))
       }
     })
-  },
+  }
 
   render() {
-    const { isSuperAdmin, user, ownsProfile, currUser, params } = this.props
+    const { isSuperAdmin, user, ownsProfile, currUser, params, projects } = this.props
     if (!user) return <ThingNotFound type="User" id={params.username} />
 
     return (
@@ -136,10 +117,10 @@ const UserProfileRoute = React.createClass({
           {/* User Activity Heatmap (TODO) */}
           {false && <ActivityHeatmap user={user} className="eight wide column" />}
           {/* Users who currUser is projects with -owned and -not-owned use pubsub */}
-          <UserColleaguesList user={user} narrowItem projects={this.data.projects} />
+          <UserColleaguesList user={user} narrowItem projects={projects} />
 
           {/* User Projects */}
-          <UserProjects user={user} width={16} projects={this.data.projects} />
+          <UserProjects user={user} width={16} projects={projects} />
 
           {/* User Skills */}
           <Grid.Column width={16} id="mgbjr-profile-skills">
@@ -153,9 +134,9 @@ const UserProfileRoute = React.createClass({
         </Grid>
       </Container>
     )
-  },
+  }
 
-  renderUserInfo(user, ownsProfile, width) {
+  renderUserInfo = (user, ownsProfile, width) => {
     const { avatar, name, mgb1name, title, bio, focusMsg } = user.profile
     const editsDisabled = !ownsProfile || user.suIsBanned
     const channelName = makeChannelName({ scopeGroupName: 'User', scopeId: name })
@@ -277,7 +258,22 @@ const UserProfileRoute = React.createClass({
         </Segment>
       </Grid.Column>
     )
-  },
-})
+  }
+}
 
-export default UserProfileRoute
+export default withTracker(props => {
+  const userId = props.user && props.user._id ? props.user._id : null
+  let findOpts = {
+    sort: projectSorters['createdNewest'],
+  }
+  const handleForProjects = Meteor.subscribe('projects.byUserId', userId)
+  const projectSelector = projectMakeSelector(userId)
+
+  const handleForClassrooms = Meteor.subscribe('classrooms.all')
+
+  return {
+    classrooms: Classrooms.find({}),
+    projects: Projects.find(projectSelector, findOpts).fetch(),
+    loading: userId && !handleForProjects.ready(),
+  }
+})(UserProfileRoute)

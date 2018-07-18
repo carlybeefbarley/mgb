@@ -11,7 +11,7 @@ import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
 import fpSuperAdmin from './fpSuperAdmin'
-import fpMobileMore from './fpMobileMore'
+// import fpMobileMore from './fpMobileMore'
 import fpSettings from './fpSettings'
 import fpProjects from './fpProjects'
 import fpAssets from './fpAssets'
@@ -19,8 +19,8 @@ import fpUsers from './fpUsers'
 import fpChat from './fpChat'
 import fpLearn from './fpLearn'
 import handleFlexPanelChange from './handleFlexPanelChange'
+import { withTracker } from 'meteor/react-meteor-data'
 
-import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
 const flexPanelViews = [
@@ -138,10 +138,8 @@ class Indicator extends React.Component {
   }
 }
 
-const FlexPanel = React.createClass({
-  mixins: [ReactMeteorData],
-
-  propTypes: {
+class FlexPanel extends React.PureComponent {
+  static propTypes = {
     fpIsFooter: PropTypes.bool.isRequired, // If true, then flexPanel is fixed page footer
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
@@ -158,24 +156,23 @@ const FlexPanel = React.createClass({
     flexPanelWidth: PropTypes.string.isRequired, // Typically something like "200px".
     isSuperAdmin: PropTypes.bool.isRequired, // Yes if one of core engineering team. Show extra stuff
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     settings: PropTypes.object, // Used so some panels can be hidden by user
     urlLocation: PropTypes.object,
-  },
+  }
 
-  statics: {
-    getDefaultPanelViewTag() {
-      return flexPanelViews[defaultPanelViewIndex].tag
-    },
-  },
+  getDefaultPanelViewTag = () => {
+    //statics?
+    return flexPanelViews[defaultPanelViewIndex].tag
+  }
 
-  getMeteorData() {
-    return {
-      fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
-    }
-  },
+  // getMeteorData() {
+  //   return {
+  //     fpFeatureLevel: getFeatureLevel(this.context.settings, makeLevelKey('FlexPanel')),
+  //   }
+  // },
 
   componentDidMount() {
     registerDebugGlobal('fp', this, __filename, 'The global FlexPanel instance')
@@ -186,44 +183,44 @@ const FlexPanel = React.createClass({
     if (flexPanelIsVisible && el) {
       joyrideStore.completeTag(`mgbjr-CT-flexPanel-${tag}-show`)
     }
-  },
+  }
 
-  _viewTagMatchesPropSelectedViewTag(viewTag) {
+  _viewTagMatchesPropSelectedViewTag = viewTag => {
     if (!this.props.selectedViewTag) return false
 
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     return selectedViewTagParts[0] === viewTag
-  },
+  }
 
-  _getSelectedFlexPanelChoice() {
+  _getSelectedFlexPanelChoice = () => {
     const defaultReturnValue = flexPanelViews[defaultPanelViewIndex]
     if (!this.props.selectedViewTag) return defaultReturnValue
 
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     // If the FlexPanel choice isn't recognized, just default to using our default one
     return _.find(flexPanelViews, ['tag', selectedViewTagParts[0]]) || defaultReturnValue
-  },
+  }
 
   // Return the suffix (if any) of this.props.selectedViewTag.. For example 'chats.general' will return "general";    but 'chats' will return ""
-  getSubNavParam() {
+  getSubNavParam = () => {
     const selectedViewTagParts = this.props.selectedViewTag.split('.')
     return selectedViewTagParts[1] || ''
-  },
+  }
 
-  handleChangeSubNavParam(newSubNavParamStr) {
+  handleChangeSubNavParam = newSubNavParamStr => {
     const { selectedViewTag } = this.props
     const selectedViewTagParts = selectedViewTag.split('.')
     const newFullViewTag = selectedViewTagParts[0] + '.' + newSubNavParamStr
     handleFlexPanelChange(newFullViewTag)
-  },
+  }
 
-  fpViewSelect(fpViewTag) {
+  fpViewSelect = fpViewTag => {
     const { handleFlexPanelToggle, flexPanelIsVisible } = this.props
     if (flexPanelIsVisible && this._viewTagMatchesPropSelectedViewTag(fpViewTag)) handleFlexPanelToggle()
     else handleFlexPanelChange(fpViewTag)
-  },
+  }
 
-  getFpButtonSpecialClassForTag(tag) {
+  getFpButtonSpecialClassForTag = tag => {
     const { joyride, hazUnreadChats } = this.props
 
     if (tag === 'chat' && hazUnreadChats.length > 0) return 'animated swing'
@@ -231,9 +228,9 @@ const FlexPanel = React.createClass({
     if (tag === 'learn' && joyride.state.isRunning) return 'animated swing'
 
     return ''
-  },
+  }
 
-  getFpButtonExtraLabelForTag(tag) {
+  getFpButtonExtraLabelForTag = tag => {
     const { joyride, hazUnreadChats } = this.props
 
     if (tag === 'chat' && hazUnreadChats.length > 0)
@@ -243,7 +240,7 @@ const FlexPanel = React.createClass({
       return <Indicator title={`${joyride.state.steps.length} steps in tutorial`} />
 
     return null
-  },
+  }
 
   render() {
     const {
@@ -254,7 +251,7 @@ const FlexPanel = React.createClass({
       flexPanelIsVisible,
       flexPanelWidth,
       fpIsFooter,
-      handleFlexPanelToggle,
+      // handleFlexPanelToggle,
       hazUnreadChats,
       isSuperAdmin,
       joyride,
@@ -266,7 +263,7 @@ const FlexPanel = React.createClass({
     } = this.props
 
     const isMobileUI = fpIsFooter
-    const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
+    const fpFeatureLevel = this.props.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
     const panelStyle = fpIsFooter
       ? {
           position: 'fixed',
@@ -357,6 +354,7 @@ const FlexPanel = React.createClass({
                   subNavParam={this.getSubNavParam()}
                   handleChangeSubNavParam={this.handleChangeSubNavParam}
                   location={this.context.urlLocation}
+                  monkeyContext={this.props.monkeyContext}
                 />
               )}
             </div>
@@ -394,6 +392,7 @@ const FlexPanel = React.createClass({
                 style={itemStyle}
                 className={itemClasses}
                 title={v.name}
+                // monkeyContext={this.props.monkeyContext}
                 onClick={this.fpViewSelect.bind(this, v.tag)}
               >
                 <i style={activeStyle} className={iconClasses} />
@@ -405,7 +404,16 @@ const FlexPanel = React.createClass({
         </div>
       </div>
     )
-  },
-})
+  }
+}
 
-export default _.flow(withStores({ joyride: joyrideStore }), responsiveComponent())(FlexPanel)
+export default _.flow(
+  withTracker(props => {
+    const context = props.monkeyContext //TODO: Fix this in the future, I'm not sure why we're using context anyway in this scenario.
+    return {
+      fpFeatureLevel: getFeatureLevel(context.settings, makeLevelKey('FlexPanel')),
+    }
+  }),
+  withStores({ joyride: joyrideStore }),
+  responsiveComponent(),
+)(FlexPanel)

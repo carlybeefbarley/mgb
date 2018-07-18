@@ -3,7 +3,6 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import { Divider, Dropdown, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import AssetList from '/client/imports/components/Assets/AssetList'
@@ -21,6 +20,22 @@ import { defaultAssetViewChoice } from '/client/imports/components/Assets/AssetC
 
 import ProjectSelector from '/client/imports/components/Assets/ProjectSelector'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
+
+/*************************************************************************************************
+ *************************************************************************************************
+ *************************************************************************************************
+ *************************************************************************************************
+ **** Some Super janky stuffy going on in here with the setState callbacks. This component was
+ **** written using react . createClass and mixins which are the devil. Also they are no longer supported
+ **** So with the mix of component state written into the data retrieval model it was not time
+ **** condusive to rewrite this entire component properly. I just feel that I need to explain my
+ **** horrible, horrible sins commited here, this was done to get the codebase off of react v15.
+ **** soo....
+ **** //TODO: Desperately needs rewrite 2018-07-17 Hudson.
+ *************************************************************************************************
+ *************************************************************************************************
+ *************************************************************************************************
+ */
 
 // This lets this flexPanel remember its recent state even beyond dismounts
 let _persistedState = null
@@ -73,17 +88,15 @@ const ShowFromWho = ({ value, currUser, otherUser, onChange }) => {
   )
 }
 
-const fpAssets = React.createClass({
-  mixins: [ReactMeteorData],
-
-  propTypes: {
+export default class fpAssets extends React.Component {
+  static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigating to in main page. Can be null/undefined. Can be same as currUser, or different user
     currUserProjects: PropTypes.array, // Projects list for currently logged in user
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
-  },
+  }
 
-  getInitialState: () => ({
+  state = {
     searchName: '',
     showFromUserId: _showFromAllValue,
     view: defaultAssetViewChoice, // Large. See assetViewChoices for explanation.
@@ -91,7 +104,7 @@ const fpAssets = React.createClass({
 
     project: null, // This will be a project OBJECT,not just a string. See projects.js
     projectName: ProjectSelector.ANY_PROJECT_PROJNAME, // projectName has some special values to disambiguate the cases of 'all' and 'none'
-  }),
+  }
 
   componentWillMount() {
     if (_persistedState) {
@@ -109,7 +122,9 @@ const fpAssets = React.createClass({
         }
       }
     }
-  },
+
+    this.setState(() => ({ data: this.getMeteorData() }))
+  }
 
   componentWillReceiveProps(nextProps) {
     if (
@@ -122,17 +137,64 @@ const fpAssets = React.createClass({
         this.setState({ showFromUserId: nextProps.currUser ? nextProps.currUser._id : _showFromAllValue })
       else this.setState({ showFromUserId: nextProps.user._id })
     }
-  },
+  }
 
   componentWillUnmount() {
     _persistedState = _.clone(this.state) // TODO: check if we must be careful with state.project
-  },
+    this.handleForAssets.stop()
+    this.handleForProjects.stop()
+  }
+
+  assetsReady = (assetSelector, assetSorter) => {
+    this.setState(prevState => {
+      return {
+        data: {
+          ...prevState.data,
+          assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(),
+          loading:
+            !this.handleForAssets.ready() ||
+            (this.handleForProjects !== null && !this.handleForProjects.ready()),
+        },
+      }
+    })
+  }
+
+  assetsStop = e => {
+    if (e) console.log(' fpAssets: Error unsubscribing from assets: ', e.message)
+  }
+
+  projectsReady = selectorForProjects => {
+    const { currUserProjects, user } = this.props
+    const userId = user && user._id ? user._id : null
+    this.setState(prevState => {
+      return {
+        data: {
+          ...prevState.data,
+          userProjects: userId ? Projects.find(selectorForProjects).fetch() : currUserProjects, // Can be null
+          loading:
+            !this.handleForAssets.ready() ||
+            (this.handleForProjects !== null && !this.handleForProjects.ready()),
+        },
+      }
+    })
+  }
+
+  projectsStop = () => {}
+
+  updateMeteorData = () => {
+    if (this.handleForAssets) this.handleForAssets.stop()
+    if (this.handleForProjects) this.handleForProjects.stop()
+    this.getMeteorData()
+  }
 
   /**
    * Always get the Assets stuff.
    * Optionally get the Project info - if this is a user-scoped view
    */
-  getMeteorData() {
+  getMeteorData = () => {
+    // Modified to run without getMeteorData from package to facilitate upgrade of react, needs to be cleaned up
+    // most likely scenario is to implement render props via special fpassets container.
+
     // Much of this is copied from UserAssetListRoute - repeats.. needs cleanup
 
     const { user, currUser, currUserProjects } = this.props
@@ -144,7 +206,10 @@ const fpAssets = React.createClass({
 
     const qOwnerId = project ? project.ownerId : showFromUserId === _showFromAllValue ? null : showFromUserId
     const qProjectName = project ? project.name : projectName
-    const handleForAssets = Meteor.subscribe(
+    const assetSorter = { updatedAt: -1 }
+    let assetSelector = assetMakeSelector(qOwnerId, kindsArray, searchName, qProjectName) // TODO: Bit of a gap here... username.projectname
+
+    this.handleForAssets = Meteor.subscribe(
       'assets.public',
       qOwnerId, // userId (null = all)
       kindsArray,
@@ -154,34 +219,46 @@ const fpAssets = React.createClass({
       false, // Show only Stable
       undefined, // Use default sort order
       20, // Limit
+      {
+        onReady: () => {
+          this.assetsReady(assetSelector, assetSorter)
+        },
+        onStop: this.assetsStop,
+      },
     )
-    const assetSorter = { updatedAt: -1 }
-    let assetSelector = assetMakeSelector(qOwnerId, kindsArray, searchName, qProjectName) // TODO: Bit of a gap here... username.projectname
 
-    // Load projects if it's not the current user
-    const handleForProjects =
-      userId && !isPageShowingCurrUser ? Meteor.subscribe('projects.byUserId', userId) : null
     const selectorForProjects = {
       $or: [{ ownerId: userId }, { memberIds: { $in: [userId] } }],
     }
+    // Load projects if it's not the current user
+    this.handleForProjects =
+      userId && !isPageShowingCurrUser
+        ? Meteor.subscribe('projects.byUserId', userId, {
+            onReady: () => {
+              this.projectsReady(selectorForProjects)
+            },
+            onStop: this.projectsStop,
+          })
+        : null
 
     return {
       assets: Azzets.find(assetSelector, { sort: assetSorter }).fetch(), // Note that the subscription we used excludes the content2 field which can get quite large
       userProjects: userId ? Projects.find(selectorForProjects).fetch() : currUserProjects, // Can be null
-      loading: !handleForAssets.ready() || (handleForProjects !== null && !handleForProjects.ready()),
+      loading:
+        !this.handleForAssets.ready() || (this.handleForProjects !== null && !this.handleForProjects.ready()),
     }
-  },
+  }
 
-  handleSearchGo(newSearchText) {
-    this.setState({ searchName: newSearchText })
-  },
+  handleSearchGo = newSearchText => {
+    this.setState({ searchName: newSearchText }, this.updateMeteorData)
+  }
 
-  handleChangeSelectedProjectName(pName, projObj) {
-    this.setState({ projectName: pName, project: projObj })
-  },
+  handleChangeSelectedProjectName = (pName, projObj) => {
+    this.setState({ projectName: pName, project: projObj }, this.updateMeteorData)
+  }
 
   // This is the callback from AssetsKindSelector
-  handleToggleKind(k, altKey) {
+  handleToggleKind = (k, altKey) => {
     // k is the string for the AssetKindsKey to toggle existence of in the array
     let newKindsString
     const kindsStr = this.state.kindsActive
@@ -201,11 +278,11 @@ const fpAssets = React.createClass({
       newKindsString = newKindsArray.join(safeAssetKindStringSepChar)
     }
     // Finally, special case the empty and full situations
-    this.setState({ kindsActive: newKindsString })
-  },
+    this.setState({ kindsActive: newKindsString }, this.updateMeteorData)
+  }
 
   render() {
-    const { assets, userProjects, loading } = this.data // list of assets provided via getMeteorData()
+    const { assets, userProjects, loading } = this.state.data // list of assets provided via getMeteorData()
     const { user, currUser } = this.props
     const { view, kindsActive, searchName, project, projectName, showFromUserId } = this.state
     const effectiveUser = user || currUser
@@ -242,7 +319,9 @@ const fpAssets = React.createClass({
             <AssetListChooseView
               sty={{ float: 'right' }}
               chosenView={view}
-              handleChangeViewClick={newView => this.setState({ view: newView })}
+              handleChangeViewClick={newView => {
+                this.setState({ view: newView }, this.updateMeteorData)
+              }}
             />
             <ShowFromWho
               sty={{ float: 'left' }}
@@ -250,7 +329,7 @@ const fpAssets = React.createClass({
               currUser={currUser}
               otherUser={user === currUser ? null : user}
               onChange={selectedUserId => {
-                this.setState({ showFromUserId: selectedUserId })
+                this.setState({ showFromUserId: selectedUserId }, this.updateMeteorData)
               }}
             />
             <div style={{ clear: 'both' }} />
@@ -279,7 +358,5 @@ const fpAssets = React.createClass({
         )}
       </div>
     )
-  },
-})
-
-export default fpAssets
+  }
+}

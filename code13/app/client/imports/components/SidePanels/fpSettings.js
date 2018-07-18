@@ -1,8 +1,8 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Segment, Header, Icon } from 'semantic-ui-react'
-import { ReactMeteorData } from 'meteor/react-meteor-data'
+import { Header, Icon } from 'semantic-ui-react'
+import { withTracker } from 'meteor/react-meteor-data'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 import {
@@ -29,42 +29,35 @@ const _sliderStyle = {
   marginLeft: '2px',
 }
 
-const fpSettings = React.createClass({
-  mixins: [ReactMeteorData],
-
-  propTypes: {
+class fpSettings extends React.PureComponent {
+  static propTypes = {
     currUser: PropTypes.object, // Currently Logged in user. Can be null/undefined
     user: PropTypes.object, // User object for context we are navigation to in main page. Can be null/undefined. Can be same as currUser, or different user
     panelWidth: PropTypes.string.isRequired, // Typically something like "200px".
     currentlyEditingAssetInfo: PropTypes.object.isRequired, // An object with some info about the currently edited Asset - as defined in App.js' this.state
-  },
+  }
 
-  contextTypes: {
+  static contextTypes = {
     settings: PropTypes.object,
-  },
+  }
 
-  getMeteorData() {
-    const foo = _.map(expectedToolbars.scopeNames, name => this.getLevelValFromSettings(name))
-    return { levels: foo } // This data isn't used, but because we referenced it in getMeteorData, there will be a forceUpdate() when settings change
-  },
-
-  setLevelFromNum(name, newLevelVal) {
+  setLevelFromNum = (name, newLevelVal) => {
     setFeatureLevel(this.context.settings, makeLevelKey(name), newLevelVal)
-  },
+  }
 
-  setLevelFromEvent(name, event) {
+  setLevelFromEvent = (name, event) => {
     const parsedVal = parseInt(event.target.value, 10)
     const newLevelVal = _.clamp(parsedVal || 1, 1, event.target.max)
     setFeatureLevel(this.context.settings, makeLevelKey(name), newLevelVal)
-  },
+  }
 
-  getLevelValFromSettings(name) {
+  getLevelValFromSettings = name => {
     return getFeatureLevel(this.context.settings, makeLevelKey(name))
-  },
+  }
 
-  resetToDefaults() {
+  resetToDefaults = () => {
     resetAllFeatureLevelsToDefaults(this.context.settings)
-  },
+  }
 
   render() {
     const makeSlider = name => {
@@ -142,7 +135,13 @@ const fpSettings = React.createClass({
         </button>
       </div>
     )
-  },
-})
+  }
+}
 
-export default fpSettings
+export default withTracker(props => {
+  const context = props.monkeyContext
+  const foo = _.map(expectedToolbars.scopeNames, name =>
+    getFeatureLevel(context.settings, makeLevelKey(name)),
+  )
+  return { levels: foo } // This data isn't used, but because we referenced it in here, there will be a forceUpdate() when settings change
+})(fpSettings)

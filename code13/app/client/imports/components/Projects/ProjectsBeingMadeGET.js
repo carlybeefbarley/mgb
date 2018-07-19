@@ -1,4 +1,4 @@
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Header, Icon, List } from 'semantic-ui-react'
@@ -72,7 +72,7 @@ class ProjectsBeingMadeGetUI extends React.Component {
   }
 }
 
-const ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
+const ProjectsBeingMadeGET = withTracker(({ numEntries }) => {
   const handleForProjects = Meteor.subscribe('projects.frontPageList', numEntries)
   const projectSelector = projectMakeFrontPageListSelector()
   const projectFindOptions = { limit: numEntries, sort: { updatedAt: -1 } }
@@ -80,6 +80,6 @@ const ProjectsBeingMadeGET = createContainer(({ numEntries }) => {
     projects: Projects.find(projectSelector, projectFindOptions).fetch(),
     loading: !handleForProjects.ready(),
   }
-}, ProjectsBeingMadeGetUI)
+})(ProjectsBeingMadeGetUI)
 
 export default ProjectsBeingMadeGET

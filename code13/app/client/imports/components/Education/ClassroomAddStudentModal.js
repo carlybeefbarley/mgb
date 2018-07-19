@@ -1,22 +1,8 @@
 import React from 'react'
 import _ from 'lodash'
-import {
-  Button,
-  Form,
-  Grid,
-  Header,
-  List,
-  Modal,
-  Icon,
-  Accordion,
-  Divider,
-  Input,
-  Segment,
-} from 'semantic-ui-react'
+import { Button, Form, List, Modal, Divider } from 'semantic-ui-react'
 import { showToast } from '/client/imports/modules'
-import UserList from '/client/imports/components/Users/UserList'
-import UserListRoute from '/client/imports/routes/Users/UserListRoute'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import validate from '/imports/schemas/validate'
 
@@ -354,11 +340,11 @@ class ClassroomAddStudentModal extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   // Handles all of the user subscription for this component.
   const handlerUsers = Meteor.subscribe('user', {}, { limit: MAX_USERS_TO_LOAD })
   const cursorUsers = Users.find({}, { fields: { username: 1, profile: 1 }, limit: MAX_USERS_TO_LOAD })
   const users = cursorUsers.fetch()
 
   return { ...props, users, userListReady: users && handlerUsers.ready() }
-}, ClassroomAddStudentModal)
+})(ClassroomAddStudentModal)

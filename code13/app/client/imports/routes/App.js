@@ -8,7 +8,8 @@ import { Button, Dropdown, Grid, Header, Icon, Message, Segment } from 'semantic
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
 
-import { responsiveComponent, withStores, withMeteorData } from '/client/imports/hocs'
+import { responsiveComponent, withStores } from '/client/imports/hocs'
+import { withTracker } from 'meteor/react-meteor-data'
 import { joyrideStore } from '/client/imports/stores'
 
 import { JoyrideRootHelper } from '/client/imports/components/Joyride'
@@ -549,7 +550,7 @@ class AppUI extends Component {
 }
 
 export default _.flow(
-  withMeteorData(({ params, location }) => {
+  withTracker(({ params, location }) => {
     const pathUserName = params.username // This is the username (profile.name) on the url /u/xxxx/...
     const pathUserId = params.id // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()

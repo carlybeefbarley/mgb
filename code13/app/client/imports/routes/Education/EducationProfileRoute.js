@@ -26,7 +26,7 @@ import QLink from '/client/imports/routes/QLink'
 import UX from '/client/imports/UX'
 import HoverImage from 'react-hover-image'
 import UserBioCard from '/client/imports/components/Users/UserBioCard'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { teacherRole, isUserTeacher } from '/imports/schemas/roles'
 import { Users, Classrooms } from '/imports/schemas'
 
@@ -261,7 +261,7 @@ class EducationProfileRoute extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const handleForUsers = Meteor.subscribe('user.byName', props.params.username)
   const user = Users.findOne({ username: props.params.username })
   const isTeacher = isUserTeacher(props.currUser)
@@ -270,4 +270,4 @@ export default createContainer(props => {
   const handleForClassroom = Meteor.subscribe('classrooms.byStudentId', props.currUser._id)
   const classroom = Classrooms.findOne()
   return { ...props, isTeacher, user, canEdit, classroom }
-}, EducationProfileRoute)
+})(EducationProfileRoute)

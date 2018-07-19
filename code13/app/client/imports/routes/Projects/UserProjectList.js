@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Card, Segment, Header, Divider, Menu } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
 import { browserHistory } from 'react-router'
 import Spinner from '/client/imports/components/Nav/Spinner'
@@ -170,7 +170,7 @@ class UserProjectListUI extends React.PureComponent {
 
 // TODO: Fix problem when an invalid user is in the path. Maybe fix that at the app.js level?
 
-const UserProjectList = createContainer(({ user, location }) => {
+const UserProjectList = withTracker(({ user, location }) => {
   const userId = user ? user._id : null
   const qN = _queryNormalized(location.query)
   let findOpts = {
@@ -190,6 +190,6 @@ const UserProjectList = createContainer(({ user, location }) => {
     projects: Projects.find(projectSelector, findOpts).fetch(),
     loading: !handleForProjects.ready(),
   }
-}, UserProjectListUI)
+})(UserProjectListUI)
 
 export default UserProjectList

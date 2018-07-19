@@ -1,18 +1,18 @@
 import React from 'react'
 import ProjectCard from './ProjectCard'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Projects } from '/imports/schemas'
 
 const ProjectCardLoading = props =>
   props.loading ? <div>Loading Project Info...</div> : <ProjectCard {...props} />
 
-const ProjectCardGET = createContainer(({ projectId }) => {
+const ProjectCardGET = withTracker(({ projectId }) => {
   const handle = Meteor.subscribe('projects.oneProject', { _id: projectId })
 
   return {
     project: Projects.findOne(projectId),
     loading: !handle.ready(),
   }
-}, ProjectCardLoading)
+})(ProjectCardLoading)
 
 export default ProjectCardGET

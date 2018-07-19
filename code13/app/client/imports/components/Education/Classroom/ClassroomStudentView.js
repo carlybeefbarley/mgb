@@ -6,11 +6,7 @@ import Spinner from '/client/imports/components/Nav/Spinner'
 import ReactQuill from 'react-quill'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
 import StudentListGET from '/client/imports/components/Education/StudentListGET'
-import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import { makeChannelName } from '/imports/schemas/chats'
-import { createContainer } from 'meteor/react-meteor-data'
-import { Classrooms, Users } from '/imports/schemas'
-import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 import QLink from '/client/imports/routes/QLink'
 
 export default class ClassroomStudentView extends React.Component {

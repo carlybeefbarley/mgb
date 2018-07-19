@@ -5,7 +5,7 @@ import UX from '/client/imports/UX'
 
 import { Grid, Header, List, Icon, Button, Segment } from 'semantic-ui-react'
 import QLink from '/client/imports/routes/QLink'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
 
@@ -46,7 +46,7 @@ const HomeMeetFriendsColumnUI = ({ loading, userList }) => (
     </Segment>
   </Grid.Column>
 )
-const HomeMeetFriendsColumn = createContainer(() => {
+const HomeMeetFriendsColumn = withTracker(() => {
   const usersHandle = Meteor.subscribe('users.frontPageList')
   let findOpts = {
     sort: userSorters['createdNewest'],
@@ -60,5 +60,5 @@ const HomeMeetFriendsColumn = createContainer(() => {
     userList: Users.find(selector, findOpts).fetch(),
     loading: !usersHandle.ready(),
   }
-}, HomeMeetFriendsColumnUI)
+})(HomeMeetFriendsColumnUI)
 export default HomeMeetFriendsColumn

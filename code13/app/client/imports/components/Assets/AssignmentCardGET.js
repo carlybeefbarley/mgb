@@ -1,14 +1,15 @@
 import React from 'react'
 import AssignmentCard from './AssignmentCard'
-import { createContainer } from 'meteor/react-meteor-data'
 import { isUserTeacher } from '/imports/schemas/roles'
+import { withTracker } from 'meteor/react-meteor-data'
+
 import { Azzets } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 const AssignmentCardLoading = props =>
   props.loading ? <Spinner loadingMsg="Loading Assignment..." /> : <AssignmentCard {...props} />
 
-export default createContainer(({ assignmentId }) => {
+export default withTracker(({ assignmentId }) => {
   const isTeacher = isUserTeacher(Meteor.user())
   const assignmentHandler = Meteor.subscribe('assets.public.byId', assignmentId)
   const assignmentAsset = Azzets.findOne(assignmentId)
@@ -18,4 +19,4 @@ export default createContainer(({ assignmentId }) => {
     loading: !assignmentHandler.ready(),
     isTeacher,
   }
-}, AssignmentCardLoading)
+})(AssignmentCardLoading)

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Accordion, Button, Header, Icon, Input, Segment, List, Modal, Popup } from 'semantic-ui-react'
@@ -426,7 +426,7 @@ class RelatedAssetsUI extends React.Component {
  * Need to query DB for projects by user ID, then filter projects by project name selected.
  * then pass that project name to this component.
  */
-const RelatedAssets = createContainer(props => {
+const RelatedAssets = withTracker(props => {
   const { user, currUser, currentlyEditingAssetInfo, location, params, projectName } = props
   const defaultProject = getContextualProjectName({ location, currentlyEditingAssetInfo, params })
   const handleForAssets = Meteor.subscribe(
@@ -450,6 +450,6 @@ const RelatedAssets = createContainer(props => {
     loading: !handleForAssets.ready(),
     assets: NameInfoAzzets.find().fetch(),
   }
-}, RelatedAssetsUI)
+})(RelatedAssetsUI)
 
 export default RelatedAssets

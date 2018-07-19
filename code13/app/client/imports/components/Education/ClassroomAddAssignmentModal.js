@@ -1,25 +1,5 @@
 import React from 'react'
-import _ from 'lodash'
-import {
-  Button,
-  Form,
-  Grid,
-  Header,
-  List,
-  Modal,
-  Icon,
-  Accordion,
-  Divider,
-  Input,
-  Segment,
-  Step,
-} from 'semantic-ui-react'
-import { showToast } from '/client/imports/modules'
-import UserList from '/client/imports/components/Users/UserList'
-import UserListRoute from '/client/imports/routes/Users/UserListRoute'
-import { createContainer } from 'meteor/react-meteor-data'
-import { Users } from '/imports/schemas'
-import validate from '/imports/schemas/validate'
+import { Button, Modal, Divider, Segment } from 'semantic-ui-react'
 import EditAssignment from '/client/imports/components/Assets/EditAssignment/EditAssignment'
 import AssetPathDetail from '/client/imports/components/Assets/AssetPathDetail'
 import Spinner from '/client/imports/components/Nav/Spinner'

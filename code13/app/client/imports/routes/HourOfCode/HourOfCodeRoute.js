@@ -3,7 +3,7 @@ import React, { Component } from 'react'
 import { Container, Divider, Icon, Image, Segment } from 'semantic-ui-react'
 import UX from '../../UX'
 
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 import { Azzets } from '/imports/schemas'
 import { AssetKindEnum, assetMakeSelector, assetSorters } from '/imports/schemas/assets'
@@ -225,7 +225,7 @@ class HourOfCodeRoute extends Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const userId = _.get(props, 'currUser._id')
 
   const handleForAssets = Meteor.subscribe(
@@ -251,4 +251,4 @@ export default createContainer(props => {
 
     loading: !handleForAssets.ready(),
   }
-}, HourOfCodeRoute)
+})(HourOfCodeRoute)

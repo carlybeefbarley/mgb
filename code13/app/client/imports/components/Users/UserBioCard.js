@@ -2,7 +2,7 @@ import React from 'react'
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import { Segment, Header, Button, Divider, TextArea } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 class UserBioCard extends React.Component {
   static propTypes = {
@@ -86,8 +86,8 @@ class UserBioCard extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const user = props.user || props.currUser
 
   return { ...props, user }
-}, UserBioCard)
+})(UserBioCard)

@@ -1,4 +1,4 @@
-import ReactTestUtils from 'react-addons-test-utils'
+import ReactTestUtils from 'react-dom/test-utils'
 const DRAG_THRESHOLD = 10
 const dragAndDropSimulator = {
   simulateDragAndDrop(src, target) {

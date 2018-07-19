@@ -7,7 +7,7 @@ import QLink from '/client/imports/routes/QLink'
 import { Users } from '/imports/schemas'
 import { badgeList } from '/imports/schemas/badges'
 import { Header, Container, Segment, Item } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 const BadgeHoldersListUI = ({ params, loading, holders }) => {
   if (loading) return null
@@ -47,7 +47,7 @@ BadgeHoldersListUI.propTypes = {
   user: PropTypes.object,
 }
 
-const BadgeHoldersListRoute = createContainer(({ params }) => {
+const BadgeHoldersListRoute = withTracker(({ params }) => {
   const { badgename } = params
   const handle = Meteor.subscribe('users.badge.holders', badgename)
 
@@ -55,6 +55,6 @@ const BadgeHoldersListRoute = createContainer(({ params }) => {
     loading: !handle.ready(),
     holders: Users.find({ badges: { $in: [badgename] } }, { sort: { badges_count: -1 } }).fetch(),
   }
-}, BadgeHoldersListUI)
+})(BadgeHoldersListUI)
 
 export default BadgeHoldersListRoute

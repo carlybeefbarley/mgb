@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import React from 'react'
 import { Button, Form, Grid, Header, List, Modal, Segment, TextArea, Divider } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
@@ -137,11 +137,11 @@ class TeacherDashboard extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const userId = Meteor.user()._id
   const classroomsHandler = Meteor.subscribe('classrooms.byUserId', userId)
   const classroomsCursor = Classrooms.find({ ownerId: userId })
   const classrooms = classroomsCursor.fetch()
 
   return { ...props, classrooms, loading: !classroomsHandler.ready() }
-}, TeacherDashboard)
+})(TeacherDashboard)

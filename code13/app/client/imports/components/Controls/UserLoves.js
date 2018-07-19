@@ -4,7 +4,7 @@ import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
 import './WorkState.css'
 import QLink from '/client/imports/routes/QLink'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
@@ -65,7 +65,7 @@ UserLovesUI.defaultProps = {
 
 // TODO: Only get the username list when the popup shows.. or find a cheaper cache for id->username
 
-const UserLoves = createContainer(props => {
+const UserLoves = withTracker(props => {
   const { seeLovers, currUser, asset } = props
   const canLove = Boolean(currUser)
   const userId = currUser ? currUser._id : null
@@ -94,7 +94,7 @@ const UserLoves = createContainer(props => {
         },
     loading: doGetUsernames ? !usersHandle.ready() : false,
   }
-}, UserLovesUI)
+})(UserLovesUI)
 
 UserLoves.propTypes = {
   currUser: PropTypes.object, // currently Logged In user (not always provided)

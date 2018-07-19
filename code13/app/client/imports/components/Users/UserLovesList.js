@@ -4,7 +4,8 @@ import React from 'react'
 import { Header, Icon } from 'semantic-ui-react'
 import UX from '/client/imports/UX'
 import QLink from '/client/imports/routes/QLink'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
+
 import { Activity } from '/imports/schemas'
 
 const UserLovesListUI = ({ user, loveAct }) => (
@@ -38,7 +39,7 @@ UserLovesListUI.PropTypes = {
   loveAct: PropTypes.array,
 }
 
-const UserLovesList = createContainer(props => {
+const UserLovesList = withTracker(props => {
   const userId = props.user._id ? props.user._id : null
   if (userId) {
     let handleActivity = Meteor.subscribe('activity.public.recent.userId')
@@ -52,5 +53,6 @@ const UserLovesList = createContainer(props => {
       loading: !handleActivity.ready(),
     }
   }
-}, UserLovesListUI)
+})(UserLovesListUI)
+
 export default UserLovesList

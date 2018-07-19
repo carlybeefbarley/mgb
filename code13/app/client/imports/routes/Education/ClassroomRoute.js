@@ -1,7 +1,7 @@
 import React from 'react'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import { Grid } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Classrooms, Users, Azzets, Projects } from '/imports/schemas'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { makeChannelName } from '/imports/schemas/chats'
@@ -35,7 +35,7 @@ class Classroom extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const userId = Meteor.user()._id
 
   const { classroomId } = props.params
@@ -108,4 +108,4 @@ export default createContainer(props => {
     handleAvatarChange,
   }
   return returnProps
-}, Classroom)
+})(Classroom)

@@ -5,7 +5,7 @@ import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesL
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserColleaguesList from '/client/imports/routes/Users/UserColleaguesList'
 import AssignmentsListGET from '/client/imports/components/Education/AssignmentsListGET'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Classrooms, Users } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 import QLink from '/client/imports/routes/QLink'
@@ -166,7 +166,7 @@ class StudentDashboard extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const userId = Meteor.user()._id
   const handle = Meteor.subscribe('classrooms.byUserId', userId)
   const cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId))
@@ -181,4 +181,4 @@ export default createContainer(props => {
   }
 
   return returnProps
-}, StudentDashboard)
+})(StudentDashboard)

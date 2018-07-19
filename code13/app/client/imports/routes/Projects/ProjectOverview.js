@@ -22,7 +22,7 @@ import { makeChannelName } from '/imports/schemas/chats'
 import { isUserSuperAdmin, doesUserHaveRole, roleTeacher } from '/imports/schemas/roles'
 import SpecialGlobals from '/imports/SpecialGlobals.js'
 import Hotjar from '/client/imports/helpers/hotjar.js'
-import { withMeteorData } from '../../hocs'
+import { withTracker } from 'meteor/react-meteor-data'
 import { getProjectAvatarUrl } from '../../helpers/assetFetchers'
 import AssignmentCardGET from '/client/imports/components/Assets/AssignmentCardGET'
 import AssignmentProjectListGET from '/client/imports/routes/Projects/AssignmentProjectListGET.js'
@@ -721,7 +721,7 @@ class ProjectOverview extends Component {
   }
 }
 
-export default withMeteorData(props => {
+export default withTracker(props => {
   const { projectName, username } = props.params // This is the data of the TARGET project, not the current user.
   // const handleForProjectOwner = Meteor.subscribe('user.byName', userName)
   // const projectOwner = Users.findOne({ username: userName })

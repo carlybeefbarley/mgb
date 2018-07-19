@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Header, List, Segment } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Flags } from '/imports/schemas'
 import UX from '/client/imports/UX'
 
@@ -56,12 +56,12 @@ const FlagsModerateUI = ({ loading, flagsList }) => (
   </div>
 )
 
-const FlagsModerate = createContainer(() => {
+const FlagsModerate = withTracker(() => {
   const flagsHandle = Meteor.subscribe('flagged.recent.unresolved', {})
 
   return {
     flagsList: Flags.find().fetch(),
     loading: !flagsHandle.ready(),
   }
-}, FlagsModerateUI)
+})(FlagsModerateUI)
 export default FlagsModerate

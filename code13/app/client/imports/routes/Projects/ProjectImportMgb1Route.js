@@ -14,7 +14,7 @@ import AssetCreateLink from '/client/imports/components/Assets/NewAsset/AssetCre
 // Data Container stuff
 import { Projects } from '/imports/schemas'
 import { projectMakeSelector } from '/imports/schemas/projects'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 
 // Let's be smart about generating and remembering the user's
 // default + desired assetPrefxes & mgb2projectnames for the new projects
@@ -345,7 +345,7 @@ const RelatedMgb2projects = ({ user, userProjects, mgb1Username, mgb1Projectname
   )
 }
 
-const ProjectImportMgb1Route = createContainer(({ user }) => {
+const ProjectImportMgb1Route = withTracker(({ user }) => {
   const userId = user ? user._id : null
 
   const handleForProjects = userId ? Meteor.subscribe('projects.byUserId', userId) : null
@@ -356,7 +356,7 @@ const ProjectImportMgb1Route = createContainer(({ user }) => {
     userProjects: Projects.find(projectSelector).fetch(),
     loadingUserProjects: !projectsReady,
   }
-}, ProjectImportMgb1RouteUI)
+})(ProjectImportMgb1RouteUI)
 
 // Export the UI, wrapped by the data container
 export default ProjectImportMgb1Route

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import InputSearchBox from '/client/imports/components/Controls/InputSearchBox'
 import { browserHistory } from 'react-router'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Button, Divider } from 'semantic-ui-react'
 import { Users } from '/imports/schemas'
 import { userSorters } from '/imports/schemas/users'
@@ -125,7 +125,7 @@ class UserListRouteUI extends React.Component {
   }
 }
 
-const UserListRoute = createContainer(({ user, location, initialLimit }) => {
+const UserListRoute = withTracker(({ user, location, initialLimit }) => {
   const qN = _queryNormalized(location.query)
   const findOpts = {
     sort: userSorters[qN.sort],
@@ -142,6 +142,6 @@ const UserListRoute = createContainer(({ user, location, initialLimit }) => {
     users: Users.find(selector, findOpts).fetch(),
     loading: !handle.ready(),
   }
-}, UserListRouteUI)
+})(UserListRouteUI)
 
 export default UserListRoute

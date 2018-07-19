@@ -2,7 +2,7 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Grid, Header, Card } from 'semantic-ui-react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import UserCard from '/client/imports/components/Users/UserCard'
 
@@ -44,7 +44,7 @@ const UserColleaguesListUI = ({ wrap, loading, userList, narrowItem, handleClick
   )
 
 // we are given props.projects and we need to subscribe to the relevant users objects
-const UserColleaguesList = createContainer(props => {
+const UserColleaguesList = withTracker(props => {
   let colleagueIds = []
   _.forEach(props.projects, project => {
     colleagueIds = _.union(colleagueIds, project.memberIds, [project.ownerId])
@@ -57,7 +57,7 @@ const UserColleaguesList = createContainer(props => {
     userList: _.sortBy(Users.find(selector).fetch(), u => _.toLower(u.username)),
     loading: !usersHandle.ready(),
   }
-}, UserColleaguesListUI)
+})(UserColleaguesListUI)
 
 UserColleaguesList.propTypes = {
   wrap: PropTypes.bool,

@@ -1,6 +1,6 @@
 import React from 'react'
 import _ from 'lodash'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import { Classrooms, Users } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 import StudentDashboard from '/client/imports/components/Education/StudentDashboard'
@@ -13,7 +13,7 @@ class EducationDashboardRoute extends React.Component {
   }
 }
 
-export default createContainer(props => {
+export default withTracker(props => {
   const handleAvatarChange = newUrl => {
     Meteor.call('User.updateProfile', props.currUser._id, { 'profile.avatar': newUrl })
   }
@@ -36,4 +36,4 @@ export default createContainer(props => {
   }
 
   return returnProps
-}, EducationDashboardRoute)
+})(EducationDashboardRoute)

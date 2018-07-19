@@ -7,7 +7,6 @@ import LoginLinks from '../Users/LoginLinks'
 import Recaptcha from '/client/imports/components/Recaptcha/Recaptcha'
 import { roleTeacher } from '/imports/schemas/roles'
 import { Classrooms } from '/imports/schemas'
-import { createContainer } from 'meteor/react-meteor-data'
 import { showToast } from '/client/imports/modules'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 

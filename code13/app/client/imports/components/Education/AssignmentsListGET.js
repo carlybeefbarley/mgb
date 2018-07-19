@@ -1,6 +1,6 @@
 import React from 'react'
 import AssignmentsList from './AssignmentsList'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
 import Spinner from '/client/imports/components/Nav/Spinner'
 import { Azzets, Classrooms } from '/imports/schemas'
 import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
@@ -8,7 +8,7 @@ import { classroomsMakeSelectorForStudent } from '/imports/schemas/classrooms'
 const AssignmentsListLoading = props =>
   props.loading ? <Spinner loadingMsg={`Loading Assignments...`} /> : <AssignmentsList {...props} />
 
-const AssignmentsListGET = createContainer(props => {
+const AssignmentsListGET = withTracker(props => {
   const userId = Meteor.user()._id
   const handle = Meteor.subscribe('classrooms.byUserId', userId)
   const cursor = Classrooms.find(classroomsMakeSelectorForStudent(userId))
@@ -29,6 +29,6 @@ const AssignmentsListGET = createContainer(props => {
   }
 
   return returnProps
-}, AssignmentsListLoading)
+})(AssignmentsListLoading)
 
 export default AssignmentsListGET

@@ -1,9 +1,10 @@
 import React from 'react'
-import { createContainer } from 'meteor/react-meteor-data'
+import { withTracker } from 'meteor/react-meteor-data'
+
 import SubmissionFeed from './SubmissionFeed'
 import { Projects, Users, Azzets, Classrooms } from '/imports/schemas'
 
-export default createContainer(props => {
+export default withTracker(props => {
   const userId = Meteor.user()._id
   const handleForClassrooms = Meteor.subscribe('classrooms.byUserId', userId)
   const cursorForClassrooms = Classrooms.find({
@@ -42,4 +43,4 @@ export default createContainer(props => {
   const assignments = cursorForAssignments.fetch()
 
   return { ...props, classrooms, projects, assignments }
-}, SubmissionFeed)
+})(SubmissionFeed)

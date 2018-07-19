@@ -1,9 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-
-import { createContainer } from 'meteor/react-meteor-data'
-
+import { withTracker } from 'meteor/react-meteor-data'
 import { Activity } from '/imports/schemas'
 import DashboardAction from './DashboardAction'
 
@@ -33,7 +31,7 @@ RecentAssetActionUI.propTypes = {
   }).isRequired,
 }
 
-const RecentAssetAction = createContainer(props => {
+const RecentAssetAction = withTracker(props => {
   const userId = _.get(props, 'currUser._id')
 
   let handleActivity = Meteor.subscribe('activity.public.assets.recent.userId', userId, 4)
@@ -46,7 +44,7 @@ const RecentAssetAction = createContainer(props => {
     loading: !handleActivity.ready(),
     ...props,
   }
-}, RecentAssetActionUI)
+})(RecentAssetActionUI)
 
 RecentAssetAction.propTypes = RecentAssetActionUI.propTypes
 

@@ -14,6 +14,9 @@ import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
 import { isSameUserId } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
 
+const CHAT_RATE_MAX_MSGS = 4 // 4 messages per minute.
+const CHAT_RATE_PERIOD = 60000 // 1 minute is the period of time we check for the given limit.
+
 /**
  * This function calls lookupIsUseridInProject() so it is server-side only
  *
@@ -29,7 +32,19 @@ function canUserReallySendToChannel(currUser, channelName) {
   // Now to look for the cases that currUserCanSend() isn't smart about
   // Note that suIsBanned (Suspended Account) is handled in Chats.send RPC
   const channelObj = parseChannelName(channelName)
+
+  // Has the user hit the chat rate limiter? Doesn't apply to admins, they can spam away.
+  if (
+    Chats.find({
+      toChannelName: channelObj.channelName,
+      createdAt: { $gt: new Date(new Date().getTime() - CHAT_RATE_PERIOD) },
+    }).fetch().length >= CHAT_RATE_MAX_MSGS &&
+    !isUserSuperAdmin(currUser)
+  ) {
+    return false
+  }
   // Access check for publication of channels
+
   switch (channelObj.scopeGroupName) {
     case 'Global':
       return true // It was checked for admin etc in currUserCanSend()
@@ -69,6 +84,8 @@ function _checkChatSendIsValid(currUser, channelName, message) {
 
   if (!canUserReallySendToChannel(currUser, channelName))
     throw new Meteor.Error(401, 'No access to write to that channel')
+
+  // if(checkUserIsSpammingChannel(currUser, channelName))
 
   if (
     currUser.suIsBanned // TODO: Allow only chat with Moderator on a TBD special channel

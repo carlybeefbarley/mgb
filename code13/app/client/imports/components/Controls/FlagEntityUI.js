@@ -3,6 +3,7 @@ import React from 'react'
 import { Segment, Popup, Button, Dropdown, Label, Divider, TextArea } from 'semantic-ui-react'
 import { FlagTypes, _parseTableNameToTable } from '/imports/schemas/flags'
 import _ from 'lodash'
+import { isUserSuperAdmin, isUserTeacher } from '/imports/schemas/roles'
 import { showToast } from '/client/imports/modules'
 
 class FlagEntity extends React.Component {
@@ -16,12 +17,20 @@ class FlagEntity extends React.Component {
     entity: PropTypes.object.isRequired,
     currUser: PropTypes.object,
   }
+
+  static contextTypes = {
+    urlLocation: PropTypes.object,
+  }
+
   render() {
     const { currUser, tableCollection, entity } = this.props
     const entityInfo = _parseTableNameToTable(tableCollection)
     const entityOwnerId = entity[entityInfo.ownerIdKey]
+    const isStudent = currUser && currUser.profile.institution && _.isEmpty(!currUser.permissions)
+
     return (
       currUser &&
+      !isStudent &&
       !entity.suFlagId &&
       !(entity.suIsBanned === true) &&
       currUser._id !== entityOwnerId && (
@@ -103,7 +112,7 @@ class FlagEntity extends React.Component {
 const _doReportEntity = (currUser, entity, tableCollection, selectedTags, userComments) => {
   let reportedEntity = {}
   let data = {}
-  if (!entity.suFlagId && currUser) {
+  if (!entity.suFlagId && currUser && (isUserSuperAdmin(currUser) || isUserTeacher(currUser))) {
     if (tableCollection === 'Chats') {
       reportedEntity = {
         table: 'Chats',

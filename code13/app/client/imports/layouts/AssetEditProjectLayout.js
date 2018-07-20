@@ -16,6 +16,8 @@ import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 import ChatPanel from '/client/imports/components/Chat/ChatPanel'
 import { makeChannelName } from '/imports/schemas/chats'
 
+import { isPathChallenge, isPathCodeTutorial } from '/imports/Skills/SkillNodes/SkillNodes'
+
 export default class AssetEditProjectContainer extends React.Component {
   renderProjectsList = currUserProjects => {
     const { assetStore } = this.props

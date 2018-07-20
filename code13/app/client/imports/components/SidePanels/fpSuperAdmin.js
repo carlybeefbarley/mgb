@@ -90,7 +90,8 @@ const UserAdmin = ({ user, extraUserInfo }) => {
       <Header sub>Public Info: {user.username}</Header>
       <List bulleted>
         {linkLi(`UserId: ${user._id}`)}
-        {linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, usrLink)}
+        {!_.isEmpty(user.permissions) &&
+          linkLi(`Roles: ${user.permissions ? _.join(user.permissions[0].roles, ',') : 'none'}`, usrLink)}
         {linkLi(`Self-claimed MGB1 names: '${user.profile.mgb1name || ''}'`, mgb1Link)}
         {linkLi(`ADMIN-verified MGB1 names: '${user.profile.mgb1namesVerified}'`, mgb1Link)}
         {linkLi(`Badges: ${_.join(user.badges, ', ')}`, `${usrLink}/badges`)}

@@ -589,7 +589,7 @@ const AssetEditRoute = React.createClass({
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator
               asset={asset}
-              canFork={currUser !== null}
+              canFork={currUser !== null && !SpecialGlobals.disabledAssets[asset.kind]}
               doForkAsset={this.doForkAsset}
               isForkPending={isForkPending}
             />

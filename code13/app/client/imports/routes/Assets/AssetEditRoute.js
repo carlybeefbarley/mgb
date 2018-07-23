@@ -1,13 +1,14 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message, Tab, Segment } from 'semantic-ui-react'
+import { Grid, Icon, Message, Modal, Tab, Segment } from 'semantic-ui-react'
 import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
+import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
@@ -402,9 +403,14 @@ const AssetEditRoute = React.createClass({
   },
 
   render() {
-    const { assetStore } = this.props
+    const { assetStore, currUser, currUserProjects, params: { projectName } } = this.props
+    const canCreate = !_.isEmpty(currUser)
+    const viewProps = {
+      showProjectSelector: false,
+      suggestedParams: { projectName },
+    }
 
-    const panes = _.map(assetStore.getOpenAssets(), asset => {
+    let panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
       return {
         menuItem: {
@@ -431,6 +437,21 @@ const AssetEditRoute = React.createClass({
       }
     })
 
+    panes.push({
+      menuItem: {
+        key: 'new-asset',
+        content: (
+          <span>
+            <Modal size="small" closeIcon trigger={<Icon color="green" name="add" disabled={!canCreate} />}>
+              <Modal.Content>
+                <AssetCreateNew currUser={currUser} currUserProjects={currUserProjects} {...viewProps} />
+              </Modal.Content>
+            </Modal>
+          </span>
+        ),
+      },
+    })
+
     // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
     // console.log('AssetEditRoute: PANES', panes)
     // console.log('THIS.DATA: ', this.data)
@@ -451,24 +472,18 @@ const AssetEditRoute = React.createClass({
     )
 
     return (
-      <AssetEditProjectLayout canEdit={canEdit} {...this.props}>
-        {params.assetId === __NO_ASSET__ ? (
-          noAssetPane
-        ) : (
-          <Tab
-            menu={{
-              color: canEdit ? null : 'yellow',
-              inverted: !canEdit,
-              attached: 'top',
-              tabular: true,
-              style: { overflowX: 'auto' },
-            }}
-            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-            onTabChange={this.handleTabChange}
-            panes={panes}
-          />
-        )}
-      </AssetEditProjectLayout>
+      <Tab
+        menu={{
+          attached: 'top',
+          tabular: true,
+          style: {
+            overflowX: 'auto',
+          },
+        }}
+        activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+        onTabChange={this.handleTabChange}
+        panes={panes}
+      />
     )
   },
 
@@ -509,6 +524,7 @@ const AssetEditRoute = React.createClass({
     return (
       <Grid
         padded
+        className="asset-edit-container"
         style={{
           background: '#fff',
           overflowX:

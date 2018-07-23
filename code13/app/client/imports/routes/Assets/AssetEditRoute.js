@@ -402,6 +402,14 @@ const AssetEditRoute = React.createClass({
     }
   },
 
+  handleOpenCreateNewAssetModal() {
+    this.setState({ isModalOpen: true })
+  },
+
+  onAssetCreate() {
+    this.setState({ isModalOpen: false })
+  },
+
   render() {
     const { assetStore, currUser, currUserProjects, params: { projectName } } = this.props
     const canCreate = !_.isEmpty(currUser)
@@ -442,9 +450,26 @@ const AssetEditRoute = React.createClass({
         key: 'new-asset',
         content: (
           <span>
-            <Modal size="small" closeIcon trigger={<Icon color="green" name="add" disabled={!canCreate} />}>
+            <Modal
+              size="small"
+              closeIcon
+              open={this.state.isModalOpen}
+              trigger={
+                <Icon
+                  color="green"
+                  name="add"
+                  disabled={!canCreate}
+                  onClick={this.handleOpenCreateNewAssetModal}
+                />
+              }
+            >
               <Modal.Content>
-                <AssetCreateNew currUser={currUser} currUserProjects={currUserProjects} {...viewProps} />
+                <AssetCreateNew
+                  onAssetCreate={this.onAssetCreate}
+                  currUser={currUser}
+                  currUserProjects={currUserProjects}
+                  {...viewProps}
+                />
               </Modal.Content>
             </Modal>
           </span>

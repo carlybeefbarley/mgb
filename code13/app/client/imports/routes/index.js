@@ -15,6 +15,7 @@ import DashboardRoute from './Dashboard/DashboardRoute'
 import EducationDashboardRoute from './Education/EducationDashboardRoute'
 import VideoRoute from './Video/VideoRoute'
 import NotificationsRoute from './Notifications/NotificationsRoute'
+import ChatReviewRoute from './Admin/ChatReviewRoute'
 
 import LearnRoute from './Learn/LearnRoute'
 import LearnSkillsRoute from './Learn/LearnSkillsRoute'
@@ -114,6 +115,7 @@ export function clientStartup() {
         <Route path="users" component={Users.UserListRoute} name="All Users" />
 
         <Route path="u/:username/import" component={Import} name="Bulk Import" />
+        <Route path="/chat-review" component={ChatReviewRoute} name="Chat Review" />
 
         {/* <Route path="user/:id" component={Users.Profile} name="Profile" />
         <Route path="u/:username" component={Users.Profile} name="Profile" /> */}

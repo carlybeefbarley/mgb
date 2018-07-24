@@ -62,6 +62,10 @@ Meteor.publish('chats.channelName', function(toChannelName, limit = 20) {
   return Chats.find(selector, options)
 })
 
+Meteor.publish('chats.bySelector', (selector, options) => {
+  return Chats.find(selector, options)
+})
+
 //
 //    CHAT Indexes
 //

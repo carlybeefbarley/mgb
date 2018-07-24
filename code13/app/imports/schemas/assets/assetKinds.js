@@ -27,6 +27,7 @@ export const AssetKinds = {
   graphic: {
     name: 'Graphic',
     selfPlural: false,
+
     longName: 'Graphic',
     icon: 'image',
     color: 'orange',
@@ -38,6 +39,7 @@ export const AssetKinds = {
   actor: {
     name: 'Actor',
     selfPlural: false,
+
     longName: 'Actor',
     icon: 'child',
     color: 'teal',
@@ -49,6 +51,7 @@ export const AssetKinds = {
   actormap: {
     name: 'ActorMap',
     selfPlural: false,
+
     longName: 'Map using Actors - makes games without coding',
     icon: 'map',
     color: 'blue',
@@ -60,6 +63,7 @@ export const AssetKinds = {
   map: {
     name: 'Map',
     selfPlural: false,
+
     longName: 'Game Level Map (TMX style for game coding)',
     icon: 'map outline',
     color: 'olive',
@@ -123,6 +127,7 @@ export const AssetKinds = {
   music: {
     name: 'Music',
     selfPlural: true,
+
     longName: 'Music',
     icon: 'music',
     color: 'blue',
@@ -133,6 +138,7 @@ export const AssetKinds = {
   code: {
     name: 'Code',
     selfPlural: true,
+
     longName: 'Code Script',
     icon: 'code',
     color: 'green',
@@ -144,6 +150,7 @@ export const AssetKinds = {
   game: {
     name: 'GameConfig',
     selfPlural: false,
+
     longName: 'Game definition',
     icon: 'gamepad',
     color: 'brown',
@@ -155,10 +162,11 @@ export const AssetKinds = {
   tutorial: {
     name: 'Tutorial',
     selfPlural: false,
+
     longName: 'Tutorial definition',
     icon: 'student',
     color: 'black',
-    requiresUserRole: null,
+    requiresUserRole: roleSuperAdmin,
     description: 'The tutorials that you use in MGB are defined in Tutorial Assets',
     explanation:
       'Tutorials in MGB are JSON files. You can see how the built-in tutorials work, or make your own to share',

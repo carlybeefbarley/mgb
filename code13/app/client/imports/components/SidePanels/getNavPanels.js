@@ -140,6 +140,17 @@ const getNavPanels = (currUser, showAll, props) => {
   const rightItemsLoggedIn = (
     <Menu.Menu position="right">
       {/* Note that className="left" used below because semantic doesnt want to play nice and use direction="left" */}
+      {isUserTeacher(currUser) ? (
+        <Dropdown
+          simple
+          item
+          text="Chat Review"
+          icon={null}
+          onClick={() => {
+            utilPushTo(null, '/chat-review', null)
+          }}
+        />
+      ) : null}
 
       {/* PROJECTS */}
       <Dropdown

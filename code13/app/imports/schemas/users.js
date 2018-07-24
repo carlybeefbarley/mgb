@@ -21,6 +21,7 @@ export const schema = {
   ],
   profile: optional({
     // TODO: Flatten this out since user.profile is handled specially by Meteor and has security problems
+    muted: optional(Boolean),
     name: optional(String),
     latestNewsTimestampSeen: optional(String),
     avatar: optional(String), // url for the image that is the user Avatar
@@ -161,6 +162,9 @@ Meteor.methods({
       edit_time[editType] += timeSec
       Users.update({ _id: Meteor.userId() }, { $set: { edit_time } })
     }
+  },
+  'User.muteChat'(currUser, targetUserId, muted) {
+    Users.update({ _id: targetUserId }, { $set: { 'profile.muted': muted } })
   },
 })
 

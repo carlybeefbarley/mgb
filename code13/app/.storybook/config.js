@@ -1,6 +1,8 @@
 import { addDecorator, configure } from '@storybook/react'
 import { withKnobsOptions } from '@storybook/addon-knobs'
 import { setOptions } from '@storybook/addon-options'
+import * as semanticStyles from '/client/imports/styles/semantic-ui-less/semantic.less'
+
 
 // ----------------------------------------
 // Addons

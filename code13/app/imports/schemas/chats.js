@@ -347,6 +347,7 @@ function _userIsStaffUser(currUser) {
  */
 export function currUserCanSend(currUser, channelName) {
   const channelObj = parseChannelName(channelName)
+  if (_.get(currUser, 'profile.muted', false) && !_userIsSuperAdmin(currUser)) return false
   if (!channelObj) return false // Can't parse it..
   if (channelObj.scopeGroupName === 'Global') {
     const chatChannel = ChatChannels[channelObj.scopeId]

@@ -22,6 +22,7 @@ import { isUserTeacher, isUserSuperAdmin } from '/imports/schemas/roles'
 import { utilPushTo } from '/client/imports/routes/QLink'
 import { Tracker } from 'meteor/tracker'
 
+
 const headerStyle = {
   color: 'lightgrey',
   fontSize: '2.5em',
@@ -81,7 +82,6 @@ export default class ChatReviewRoute extends Component {
   stopHandlers = () => {
     _.forEach(this.handlers, handler => handler.stop())
   }
-
   createSelectorForChats = () => {
     const { selectorData, allUsers, dateRangeNow } = this.state
     var selector = {
@@ -241,6 +241,7 @@ export default class ChatReviewRoute extends Component {
           this.setState({ dropdownUsers: dropdownStudents })
         }
       }
+
     })
   }
 
@@ -297,7 +298,6 @@ export default class ChatReviewRoute extends Component {
       Meteor.call('Chat.delete', chat._id)
     }
   }
-
   renderChats = () => {
     const { filteredChats } = this.state
 

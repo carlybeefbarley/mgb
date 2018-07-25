@@ -44,10 +44,13 @@ export default class ChatReviewRoute extends Component {
     allUsers: false,
     dateRangeNow: false,
     selectedUsers: [],
+    selectorData: {},
+    selector: {},
     dropdownUsers: [],
     chats: [],
     filteredChats: [],
   }
+  handlers = []
   componentDidMount() {
     this.redirectOnPermissions()
     // Calling trackers immediately upon a component mounting results in the handler hanging, dunno why.
@@ -55,11 +58,28 @@ export default class ChatReviewRoute extends Component {
     setTimeout(this.setDefaultUsers, 100)
   }
 
+  componentWillUnmount() {
+    if (this.usersComputation) this.usersComputation.stop()
+    if (this.chatsComputation) this.chatsComputation.stop()
+    if (this.defaultUsersComputation) this.defaultUsersComputation.stop()
+
+    // clean up in case we miss some handlers.
+    this.stopHandlers()
+  }
+
   redirectOnPermissions = () => {
     const { currUser } = this.props
     if (!isUserTeacher(currUser) || !isUserSuperAdmin(currUser)) {
       utilPushTo(null, `/`, null)
     }
+  }
+
+  addToHandlers = handler => {
+    this.handlers.push(handler)
+  }
+
+  stopHandlers = () => {
+    _.forEach(this.handlers, handler => handler.stop())
   }
 
   createSelectorForChats = () => {
@@ -133,10 +153,11 @@ export default class ChatReviewRoute extends Component {
 
   getChats = () => {
     const { chatsSelector } = this.state
-
+    if (this.chatsComputation) this.chatsComputation.stop()
     // Subscribe to the chats selected and automatically update state when we get (new) data
-    Tracker.autorun(() => {
+    this.chatsComputation = Tracker.autorun(() => {
       this.chatsHandler = Meteor.subscribe('chats.bySelector', chatsSelector, { limit: 50 })
+      this.addToHandlers(this.chatsHandler)
 
       if (this.chatsHandler.ready()) {
         const chats = Chats.find(chatsSelector).fetch()
@@ -149,35 +170,30 @@ export default class ChatReviewRoute extends Component {
   }
 
   getUsers = () => {
-    const { allUsers } = this.state
+    if (this.usersComputation) this.usersComputation.stop()
     // Subscribe to the users selected and automatically update state when we get (new) data
-    if (allUsers) {
-      this.getAllChatUsers()
-    } else {
-      Tracker.autorun(() => {
-        const { dropdownUsers } = this.state
+    this.usersComputation = Tracker.autorun(comp => {
+      // if (this.usersHandler) this.usersHandler.stop()
+      const { allUsers, chats, dropdownUsers } = this.state
+      var selectedUsers = null
+
+      if (allUsers) {
+        selectedUsers = _.uniq(
+          _.flattenDeep(
+            _.map(chats, chat => {
+              return chat.byUserName
+            }),
+          ),
+        )
+      } else {
         // sort the select users into a simple array of names.
-        const selectedUsers = _.map(dropdownUsers, user => {
+        selectedUsers = _.map(dropdownUsers, user => {
           return user.value
         })
-        this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50)
-        if (this.usersHandler.ready()) {
-          // Tracker automatically sends out new state when this subscription is ready or changes.
-          this.setState({ users: Users.find({ username: { $in: selectedUsers } }).fetch() })
-        }
-      })
-    }
-  }
+      }
 
-  getAllChatUsers = () => {
-    Tracker.autorun(() => {
-      const { chats } = this.state
-      const selectedUsers = _.map(chats, chat => {
-        return chat.byUserName
-      })
-
-      this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50)
-
+      this.usersHandler = Meteor.subscribe('users.byNameList', selectedUsers, 50)
+      this.addToHandlers(this.usersHandler)
       if (this.usersHandler.ready()) {
         // Tracker automatically sends out new state when this subscription is ready or changes.
         this.setState({ users: Users.find({ username: { $in: selectedUsers } }).fetch() })
@@ -188,11 +204,13 @@ export default class ChatReviewRoute extends Component {
   setDefaultUsers = () => {
     const { currUser } = this.props
     const userId = currUser._id
+    if (this.defaultUsersComputation) this.defaultUsersComputation.stop()
     // Tracker does magical things automatically, I really dislike that but it works.
     // Here it is automatically hooking into the Meteor.subscribe calls to provide reactive data.
-    Tracker.autorun(() => {
+    this.defaultUsersComputation = Tracker.autorun(() => {
       // Subscribe to this users classrooms
       this.classroomsHandler = Meteor.subscribe('classrooms.byTeacherId', userId)
+      this.addToHandlers(this.classroomsHandler)
 
       if (this.classroomsHandler.ready()) {
         const classrooms = Classrooms.find({
@@ -209,6 +227,7 @@ export default class ChatReviewRoute extends Component {
         )
         // Subscribe to those users we just created an array of.
         this.studentUsersHandler = Meteor.subscribe('users.getByIdList', studentUserIds)
+        this.addToHandlers(this.studentUsersHandler)
 
         if (this.studentUsersHandler.ready()) {
           // Find all of the users that match the previously created list of Ids
@@ -283,39 +302,61 @@ export default class ChatReviewRoute extends Component {
     const { filteredChats } = this.state
 
     if (filteredChats.length) {
+      // Sort the chats by date and then reverse them so the most recent appear at the top of the list
+      const sortedChats = _.reverse(
+        _.sortBy(filteredChats, chat => {
+          return chat.createdAt
+        }),
+      )
       return (
         <Segment raised>
-          <List relaxed divided>
-            {_.map(filteredChats, chat => (
+          <List relaxed="very" divided>
+            {_.map(sortedChats, chat => (
               <List.Item key={chat._id}>
-                <Image avatar src={this.getUserAvatarUrl(chat.byUserId)} />
-                <List.Content>
-                  <List.Header>{`${chat.byUserName} - in ${this.getFriendlyChatName(
-                    chat.toChannelName,
-                  )}`}</List.Header>
-                  <List.Description content={new Date(chat.createdAt).toLocaleString()} />
-                  <br />
-                  {chat.message}
-                  {chat.isDeleted ? <span style={{ color: 'red' }}>(Deleted)</span> : ''}
-                </List.Content>
-                <Button.Group size="mini" floated="right" compact>
-                  <Button
-                    content={this.isUserMuted(chat.byUserId) ? 'Muted' : 'Unmuted'}
-                    color={this.isUserMuted(chat.byUserId) ? 'red' : 'green'}
-                    icon={this.isUserMuted(chat.byUserId) ? 'volume off' : 'volume up'}
-                    // floated="right"
-                    onClick={() => {
-                      this.handleMute(chat.byUserId, this.isUserMuted(chat.byUserId))
-                    }}
-                  />
-                  {/* No Banhammer for now */}
-                  {/* <Button size="mini" content="BAN" color="red" icon="ban" floated="right" /> */}
-                  <Button
-                    icon={chat.isDeleted ? 'check' : 'delete'}
-                    content={chat.isDeleted ? 'Restore' : 'Delete'}
-                    onClick={() => this.toggleDeleteChat(chat)}
-                  />
-                </Button.Group>
+                <Grid>
+                  <Grid.Row>
+                    <Grid.Column width={1}>
+                      <Image src={this.getUserAvatarUrl(chat.byUserId)} />
+                    </Grid.Column>
+
+                    <Grid.Column width={11}>
+                      <Header
+                        as="h4"
+                        content={`${chat.byUserName} - in ${this.getFriendlyChatName(chat.toChannelName)}`}
+                        subheader={new Date(chat.createdAt).toLocaleString()}
+                      />
+                    </Grid.Column>
+
+                    <Grid.Column width={4}>
+                      <Button.Group size="mini" floated="right" compact>
+                        <Button
+                          content={this.isUserMuted(chat.byUserId) ? 'Muted' : 'Unmuted'}
+                          color={this.isUserMuted(chat.byUserId) ? 'red' : 'green'}
+                          icon={this.isUserMuted(chat.byUserId) ? 'volume off' : 'volume up'}
+                          onClick={() => {
+                            this.handleMute(chat.byUserId, this.isUserMuted(chat.byUserId))
+                          }}
+                        />
+                        {/* No Banhammer for now */}
+                        {/* <Button size="mini" content="BAN" color="red" icon="ban" floated="right" /> */}
+                        <Button
+                          icon={chat.isDeleted ? 'check' : 'delete'}
+                          content={chat.isDeleted ? 'Restore' : 'Delete'}
+                          onClick={() => this.toggleDeleteChat(chat)}
+                        />
+                      </Button.Group>
+                    </Grid.Column>
+                  </Grid.Row>
+
+                  {/* Second Row   */}
+                  <Grid.Row>
+                    <Grid.Column width={1} />
+                    <Grid.Column width={15}>
+                      {chat.message}
+                      {chat.isDeleted ? <span style={{ color: 'red' }}> (Deleted)</span> : ''}
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
               </List.Item>
             ))}
           </List>

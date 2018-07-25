@@ -174,16 +174,15 @@ Meteor.methods({
     const isAdminDelete = !isSameUserId(chat.byUserId, this.userId) && isUserSuperAdmin(Meteor.user())
 
     if (chat.isDeleted) throw new Meteor.Error(409, 'Cannot delete message if it has already been deleted')
-    const changedData = {
+    var changedData = {
       isDeleted: true,
       updatedAt: new Date(),
+      prvBannedMessage: chat.message,
     }
     if (isAdminDelete) {
-      changedData.prvBannedMessage = chat.message
       changedData.message = '(Removed by Admin)'
     }
     if (isUsersWall) {
-      changedData.prvBannedMessage = chat.message
       changedData.message = '(Removed by Wall Owner)'
     }
     const nDeleted = Chats.update({ _id: chatId }, { $set: changedData })
@@ -211,7 +210,7 @@ Meteor.methods({
 
     if (!chat.isDeleted) throw new Meteor.Error(409, 'Cannot restore message if it has not been deleted')
     const changedData = {
-      message: Chats.findOne({ _id: chatId }).prvBannedMessage,
+      message: Chats.findOne({ _id: chatId }).prvBannedMessage || '',
       isDeleted: false,
       updatedAt: new Date(),
     }

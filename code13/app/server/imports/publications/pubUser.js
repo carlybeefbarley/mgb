@@ -53,6 +53,15 @@ Meteor.publish('users.byName', function(nameSearch, limitCount, userSortType) {
   return Users.find(selector, findOpts)
 })
 
+Meteor.publish('users.byNameList', function(nameList, limit) {
+  let selector = { username: { $in: nameList }, isDeactivated: { $ne: true } }
+  let findOpts = {
+    fields: fieldsUserPublic,
+  }
+  if (limit) findOpts.limit = limit
+  return Users.find(selector, findOpts)
+})
+
 // This is used for example by the project membership list. There is no limit, so no sort is supported. The client can sort
 Meteor.publish('users.getByIdList', function(idArray) {
   const selector = { _id: { $in: idArray } }

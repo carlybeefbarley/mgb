@@ -52,7 +52,7 @@ export default class ChatReviewRoute extends Component {
     this.redirectOnPermissions()
     // Calling trackers immediately upon a component mounting results in the handler hanging, dunno why.
     // This small delay prevents that from happening.
-    setTimeout(this.getClassrooms, 100)
+    setTimeout(this.setDefaultUsers, 100)
   }
 
   redirectOnPermissions = () => {
@@ -137,6 +137,7 @@ export default class ChatReviewRoute extends Component {
     // Subscribe to the chats selected and automatically update state when we get (new) data
     Tracker.autorun(() => {
       this.chatsHandler = Meteor.subscribe('chats.bySelector', chatsSelector, { limit: 50 })
+
       if (this.chatsHandler.ready()) {
         const chats = Chats.find(chatsSelector).fetch()
         this.setState({ chats, loadingChats: false }, this.filterChats)
@@ -165,7 +166,7 @@ export default class ChatReviewRoute extends Component {
     })
   }
 
-  getClassrooms = () => {
+  setDefaultUsers = () => {
     const { currUser } = this.props
     const userId = currUser._id
     // Tracker does magical things automatically, I really dislike that but it works.
@@ -251,6 +252,14 @@ export default class ChatReviewRoute extends Component {
     }
   }
 
+  toggleDeleteChat = chat => {
+    if (chat.isDeleted) {
+      Meteor.call('Chat.restore', chat._id)
+    } else {
+      Meteor.call('Chat.delete', chat._id)
+    }
+  }
+
   renderChats = () => {
     const { filteredChats } = this.state
 
@@ -268,19 +277,26 @@ export default class ChatReviewRoute extends Component {
                   <List.Description content={new Date(chat.createdAt).toLocaleString()} />
                   <br />
                   {chat.message}
+                  {chat.isDeleted ? <span style={{ color: 'red' }}>(Deleted)</span> : ''}
                 </List.Content>
-                <Button
-                  size="mini"
-                  content={this.isUserMuted(chat.byUserId) ? 'Unmute' : 'Mute'}
-                  color={this.isUserMuted(chat.byUserId) ? 'red' : 'green'}
-                  icon={this.isUserMuted(chat.byUserId) ? 'volume off' : 'volume up'}
-                  floated="right"
-                  onClick={() => {
-                    this.handleMute(chat.byUserId, this.isUserMuted(chat.byUserId))
-                  }}
-                />
-                {/* No Banhammer for now */}
-                {/* <Button size="mini" content="BAN" color="red" icon="ban" floated="right" /> */}
+                <Button.Group size="mini" floated="right" compact>
+                  <Button
+                    content={this.isUserMuted(chat.byUserId) ? 'Muted' : 'Unmuted'}
+                    color={this.isUserMuted(chat.byUserId) ? 'red' : 'green'}
+                    icon={this.isUserMuted(chat.byUserId) ? 'volume off' : 'volume up'}
+                    // floated="right"
+                    onClick={() => {
+                      this.handleMute(chat.byUserId, this.isUserMuted(chat.byUserId))
+                    }}
+                  />
+                  {/* No Banhammer for now */}
+                  {/* <Button size="mini" content="BAN" color="red" icon="ban" floated="right" /> */}
+                  <Button
+                    icon={chat.isDeleted ? 'check' : 'delete'}
+                    content={chat.isDeleted ? 'Restore' : 'Delete'}
+                    onClick={() => this.toggleDeleteChat(chat)}
+                  />
+                </Button.Group>
               </List.Item>
             ))}
           </List>

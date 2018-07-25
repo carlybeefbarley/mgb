@@ -13,6 +13,7 @@ import { check } from 'meteor/check'
 import { lookupIsUseridInProject } from '/imports/schemas/projects-server'
 import { isSameUserId } from '/imports/schemas/users'
 import { isUserSuperAdmin } from '/imports/schemas/roles'
+import { isUserTeacher } from './roles'
 
 /**
  * This function calls lookupIsUseridInProject() so it is server-side only
@@ -160,7 +161,14 @@ Meteor.methods({
     const isUsersWall =
       Meteor.user().username === channelInfo.scopeId && channelInfo.scopeGroupName === 'User'
 
-    if (!(isSameUserId(chat.byUserId, this.userId) || isUserSuperAdmin(Meteor.user()) || isUsersWall))
+    if (
+      !(
+        isSameUserId(chat.byUserId, this.userId) ||
+        isUserSuperAdmin(Meteor.user()) ||
+        isUsersWall ||
+        isUserTeacher(Meteor.user())
+      )
+    )
       throw new Meteor.Error(401, 'Access not permitted')
 
     const isAdminDelete = !isSameUserId(chat.byUserId, this.userId) && isUserSuperAdmin(Meteor.user())
@@ -192,11 +200,18 @@ Meteor.methods({
     const chat = Chats.findOne({ _id: chatId })
     if (!chat) throw new Meteor.Error(404, 'Chat Id does not exist')
 
-    if (!(isSameUserId(chat.byUserId, this.userId) || isUserSuperAdmin(Meteor.user())))
+    if (
+      !(
+        isSameUserId(chat.byUserId, this.userId) ||
+        isUserSuperAdmin(Meteor.user()) ||
+        isUserTeacher(Meteor.user())
+      )
+    )
       throw new Meteor.Error(401, 'Access not permitted')
 
     if (!chat.isDeleted) throw new Meteor.Error(409, 'Cannot restore message if it has not been deleted')
     const changedData = {
+      message: Chats.findOne({ _id: chatId }).prvBannedMessage,
       isDeleted: false,
       updatedAt: new Date(),
     }

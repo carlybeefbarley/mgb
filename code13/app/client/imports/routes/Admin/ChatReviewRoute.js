@@ -149,16 +149,35 @@ export default class ChatReviewRoute extends Component {
   }
 
   getUsers = () => {
-    const { dropdownUsers } = this.state
-    // sort the select users into a simple array of names.
-    const selectedUsers = _.map(dropdownUsers, user => {
-      return user.value
-    })
-
+    const { allUsers } = this.state
     // Subscribe to the users selected and automatically update state when we get (new) data
+    if (allUsers) {
+      this.getAllChatUsers()
+    } else {
+      Tracker.autorun(() => {
+        const { dropdownUsers } = this.state
+        // sort the select users into a simple array of names.
+        const selectedUsers = _.map(dropdownUsers, user => {
+          return user.value
+        })
+        this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50)
+        if (this.usersHandler.ready()) {
+          // Tracker automatically sends out new state when this subscription is ready or changes.
+          this.setState({ users: Users.find({ username: { $in: selectedUsers } }).fetch() })
+        }
+      })
+    }
+  }
 
+  getAllChatUsers = () => {
     Tracker.autorun(() => {
+      const { chats } = this.state
+      const selectedUsers = _.map(chats, chat => {
+        return chat.byUserName
+      })
+
       this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50)
+
       if (this.usersHandler.ready()) {
         // Tracker automatically sends out new state when this subscription is ready or changes.
         this.setState({ users: Users.find({ username: { $in: selectedUsers } }).fetch() })

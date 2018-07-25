@@ -17,9 +17,10 @@ import {
   Checkbox,
   Grid,
 } from 'semantic-ui-react'
-import { Chats, Users } from '/imports/schemas'
+import { Chats, Users, Classrooms } from '/imports/schemas'
 import { isUserTeacher, isUserSuperAdmin } from '/imports/schemas/roles'
 import { utilPushTo } from '/client/imports/routes/QLink'
+import { Tracker } from 'meteor/tracker'
 
 const headerStyle = {
   color: 'lightgrey',
@@ -36,6 +37,7 @@ const chatChannelOptions = [
 
 export default class ChatReviewRoute extends Component {
   state = {
+    students: [],
     chatFilter: '',
     chatsSelector: { createdAt: { $gt: new Date(Date.now() - 24 * 3600 * 1000) } },
     loadingChats: false,
@@ -48,6 +50,9 @@ export default class ChatReviewRoute extends Component {
   }
   componentDidMount() {
     this.redirectOnPermissions()
+    // Calling trackers immediately upon a component mounting results in the handler hanging, dunno why.
+    // This small delay prevents that from happening.
+    setTimeout(this.getClassrooms, 100)
   }
 
   redirectOnPermissions = () => {
@@ -77,7 +82,7 @@ export default class ChatReviewRoute extends Component {
     if (selectorData.selectedUsers && selectorData.selectedUsers.length && !allUsers) {
       selector.byUserName.$in = selectorData.selectedUsers
     } else if (!allUsers) {
-      // if you arent searching for all users and you have nobody selected then you get
+      // if you aren't searching for all users and you have nobody selected then you get
       // to search for an invalid user name and get no results.
       selector.byUserName.$in = ['###############']
     } else if (allUsers) {
@@ -100,9 +105,9 @@ export default class ChatReviewRoute extends Component {
       delete selector.createdAt.$gt
     }
 
-    // Subscribe us to that selector! and dont do it more than every half second, no need to spam subscriptions.
     this.setState({ chatsSelector: selector }, () => {
-      // All meteor data is pulled via this function.
+      // Once the appropriate selector is created, go ahead and ask meteor to subscribe to the data via that selector.
+      // 'get' functions are debounced to prevent subscription spam.
       this.getChatsDebounced()
       this.getUsersDebounced()
     })
@@ -115,7 +120,6 @@ export default class ChatReviewRoute extends Component {
   }
 
   setValue = (e, { name, value, checked }) => {
-    // console.log(checked)
     if (checked === true || checked === false) {
       this.setState(prevState => {
         return { ...prevState, [name]: checked }
@@ -128,37 +132,76 @@ export default class ChatReviewRoute extends Component {
   }
 
   getChats = () => {
-    const { chatsSelector, prevChatsSelector } = this.state
+    const { chatsSelector } = this.state
 
-    // No need to rerun the subscription is we are just using the same selector
-    if (prevChatsSelector === chatsSelector) return
-    this.setState({ prevChatsSelector: chatsSelector })
-
-    // unsubscribe to the old list of chats first if we were already subbed
-    if (this.chatsHandler) this.chatsHandler.stop()
-
-    // subscribe to the new selector
-    this.chatsHandler = Meteor.subscribe('chats.bySelector', chatsSelector, { limit: 50 }, () => {
-      // Once we have successfully subscribed, we need to update our state and let the ui know we are no longer
-      // just loading chats
-      const chats = Chats.find(chatsSelector).fetch()
-      this.setState({ chats, loadingChats: false }, this.filterChats)
+    // Subscribe to the chats selected and automatically update state when we get (new) data
+    Tracker.autorun(() => {
+      this.chatsHandler = Meteor.subscribe('chats.bySelector', chatsSelector, { limit: 50 })
+      if (this.chatsHandler.ready()) {
+        const chats = Chats.find(chatsSelector).fetch()
+        this.setState({ chats, loadingChats: false }, this.filterChats)
+      } else if (!this.chatsHandler.ready()) {
+        // let the UI know we're loading the chat messages
+        this.setState({ loadingChats: true })
+      }
     })
-    // let the UI know we're loading the chat messages
-    this.setState({ loadingChats: true })
   }
 
   getUsers = () => {
     const { dropdownUsers } = this.state
+    // sort the select users into a simple array of names.
     const selectedUsers = _.map(dropdownUsers, user => {
       return user.value
     })
-    if (this.usersHandler) this.usersHandler.stop()
-    this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50, null, () => {
-      const users = Users.find({ username: { $in: selectedUsers } }).fetch()
-      this.setState(prevState => {
-        return { users }
-      })
+
+    // Subscribe to the users selected and automatically update state when we get (new) data
+
+    Tracker.autorun(() => {
+      this.usersHandler = Meteor.subscribe('users.byName', selectedUsers, 50)
+      if (this.usersHandler.ready()) {
+        // Tracker automatically sends out new state when this subscription is ready or changes.
+        this.setState({ users: Users.find({ username: { $in: selectedUsers } }).fetch() })
+      }
+    })
+  }
+
+  getClassrooms = () => {
+    const { currUser } = this.props
+    const userId = currUser._id
+    // Tracker does magical things automatically, I really dislike that but it works.
+    // Here it is automatically hooking into the Meteor.subscribe calls to provide reactive data.
+    Tracker.autorun(() => {
+      // Subscribe to this users classrooms
+      this.classroomsHandler = Meteor.subscribe('classrooms.byTeacherId', userId)
+
+      if (this.classroomsHandler.ready()) {
+        const classrooms = Classrooms.find({
+          $or: [{ ownerId: userId }, { teacherIds: userId }],
+        }).fetch()
+
+        // Transform this users classrooms into a single array of the _id all of the students, in every classroom, with no duplicates.
+        const studentUserIds = _.uniq(
+          _.flattenDeep(
+            _.map(classrooms, classroom => {
+              return classroom.studentIds
+            }),
+          ),
+        )
+        // Subscribe to those users we just created an array of.
+        this.studentUsersHandler = Meteor.subscribe('users.getByIdList', studentUserIds)
+
+        if (this.studentUsersHandler.ready()) {
+          // Find all of the users that match the previously created list of Ids
+          const students = Users.find({ _id: { $in: studentUserIds } }).fetch()
+          // Map these user objects into a dropdown-friendly version
+          const dropdownStudents = _.map(students, student => {
+            return { text: student.username, key: student.username, value: student.username }
+          })
+          // Inject this dropdown-friendly array of objects into our list of dropdown users.
+          // for easy access to students in your classrooms.
+          this.setState({ dropdownUsers: dropdownStudents })
+        }
+      }
     })
   }
 
@@ -183,9 +226,7 @@ export default class ChatReviewRoute extends Component {
 
   handleMute = (target, muted) => {
     const { currUser } = this.props
-    Meteor.call('User.muteChat', currUser, target, !muted, () => {
-      this.getUsersDebounced()
-    })
+    Meteor.call('User.muteChat', currUser, target, !muted)
   }
 
   getUserAvatarUrl = userId => {

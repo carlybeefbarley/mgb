@@ -541,6 +541,36 @@ class ProjectOverview extends Component {
                       )})
                     </small>
                   </Header>
+                  {canEdit && (
+                    <Button
+                      color={showAddUserSearch ? 'black' : 'green'}
+                      icon={showAddUserSearch ? 'checkmark' : 'add user'}
+                      content={showAddUserSearch ? "I'm done" : 'Add Members'}
+                      floated="right"
+                      disabled={isDeletePending}
+                      onClick={() => {
+                        this.setState({ showAddUserSearch: !showAddUserSearch })
+                      }}
+                    />
+                  )}
+                  <Divider fitted hidden clearing />
+                  <p>Project Members may create, edit or delete Assets in this Project.</p>
+                  {showAddUserSearch && (
+                    <UserListRoute
+                      location={{ ...location, query: { ...location.query, limit: 13 } }}
+                      handleClickUser={this.handleClickUser}
+                      excludeUserIdsArray={[project.ownerId, ...project.memberIds]}
+                      renderVertical
+                    />
+                  )}
+
+                  <ProjectMembersGET
+                    project={project}
+                    enableRemoveButton={canEdit}
+                    enableLeaveButton={currUser ? currUser._id : null}
+                    handleRemove={this.handleRemoveMemberFromProject}
+                    handleLeave={this.handleMemberLeaveFromProject}
+                  />
                 </div>
               </Segment>
             </Grid.Column>

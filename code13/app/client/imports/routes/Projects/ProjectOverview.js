@@ -429,7 +429,8 @@ class ProjectOverview extends Component {
                 >
                   <Button labelPosition="left" icon="chat" content="Project Chat" />
                 </QLink>
-                {this.canEdit(project, currUser, loading) && (
+                {this.canEdit(project, currUser, loading) &&
+                currUser._id === project.ownerId && (
                   <Form>
                     <Form.Button
                       style={{ marginTop: '1em' }}

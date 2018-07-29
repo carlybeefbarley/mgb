@@ -100,7 +100,7 @@ export const ActivityTypes = {
   'project.destroy': { icon: 'red sitemap', pri: 4, description: 'Destroyed an Empty Project' },
   /* 'project.removeMember': { icon: 'sitemap', pri: 4, description: 'Removed a Membeer from a Project' }, */
   'project.leaveMember': { icon: 'sitemap', pri: 4, description: 'Left a Project' },
-  'project.workState': { icon: 'orange checkmark', pri: 6, description: 'Changed Project Work State'},
+  'project.workState': { icon: 'orange checkmark', pri: 6, description: 'Changed Project Work State' },
   // Helper functions that handles unknown asset kinds and gets good defaults for unknown items
   getIconClass(key) {
     return (ActivityTypes.hasOwnProperty(key) ? ActivityTypes[key].icon : 'warning sign') + ' icon'
@@ -319,21 +319,53 @@ export const feedActivityTypesByMe = ['project.addMember', 'project.removeMember
 
 export const feedActivityTypesByName = ['user.message', 'user.messageAt']
 
-export const getFeedSelector = (userId, userName) => {
-  // guntis - actually we can simplify this query if each activity would have toUserId fields
-  // the problem with current design is that toOwnerId don't always mean that this was user action. For example adding/removing from project doesn't save user to toOwnerId
-  const byOthersArr = []
-  feedActivityTypesByOthers.forEach(type => byOthersArr.push({ activityType: type }))
-  const byOthersQuery = { $and: [{ toOwnerId: userId }, { $or: byOthersArr }] }
-  const byMeArr = []
-  feedActivityTypesByMe.forEach(type => byMeArr.push({ activityType: type }))
-  const byMeQuery = { $and: [{ toUserId: userId }, { $or: byMeArr }] }
+// DEPRECATED 2018-07-28 16:03:17- Hudson
+// Kept in case something breaks and a references is needed to make
+// the CORRECT selector instead of this, thing...
 
-  // Guntis - commenting out this part of query as it duplicates with chat notifications.
-  // But keeping it here if we decide to get it back
-  // const byNameArr = []
-  // feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
-  // const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
-  // return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
-  return { $or: [byOthersQuery, byMeQuery] }
+// export const oldgetFeedSelector = (userId, userName) => {
+//   // guntis - actually we can simplify this query if each activity would have toUserId fields
+//   // the problem with current design is that toOwnerId don't always mean that this was user action. For example adding/removing from project doesn't save user to toOwnerId
+//   const byOthersArr = []
+//   const byMeArr = []
+//   // Added all feed types from "by others" to byOthers Array
+//   feedActivityTypesByOthers.forEach(type => byOthersArr.push({ activityType: type }))
+//   // Added all feed type from "by me" to byMe Array
+//   feedActivityTypesByMe.forEach(type => byMeArr.push({ activityType: type }))
+
+//   const byOthersQuery = { $and: [{ toOwnerId: userId }, { $or: byOthersArr }] }
+//   const byMeQuery = { $and: [{ toUserId: userId }, { $or: byMeArr }] }
+
+//   // Guntis - commenting out this part of query as it duplicates with chat notifications.
+//   // But keeping it here if we decide to get it back
+//   // const byNameArr = []
+//   // feedActivityTypesByName.forEach(type => byNameArr.push({ activityType: type }))
+//   // const byNameQuery = { $and: [{ toUserName: userName }, { $or: byNameArr }] }
+//   // return { $or: [byOthersQuery, byMeQuery, byNameQuery] }
+//   return { $or: [byOthersQuery, byMeQuery] }
+//}
+
+/**
+ * Returns a selector for a list of activity documents excluding chats, which
+ * are no longer part of the activity collection.
+ *
+ * @param {String} userId The user that you would like to get notifications for
+ * @param {String} userName Same as above but as the users profile.name field.
+ */
+export const getFeedSelector = (userId, userName) => {
+  // Merge the activity types of byMe and byOthers
+  const byTypes = _.union(feedActivityTypesByMe, feedActivityTypesByOthers)
+
+  // Select for documents where the activityType field matches ANY of the types we've specified/
+  const typesSelector = { activityType: { $in: byTypes } }
+
+  // Selector to make sure the document is for the user provided. There are multiple fields that denote this
+  // attribute and they are toOwnerId and toUserId, we want to check them both.
+  const userSelector = { $or: [{ toUserName: userName }, { toUserId: userId }] }
+
+  // We want to select for our User $and by the types we're looking for.
+  const selector = { $and: [userSelector, typesSelector] }
+
+  // return a selector that selects for our User(by _id) OR UserName(string) AND our types selector.
+  return selector
 }

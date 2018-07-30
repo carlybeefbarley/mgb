@@ -12,17 +12,14 @@ const AboutHeader = () => (
       <Header.Subheader>
         Actively developed by <UserLink u="dgolds" />
         {', '}
-        <UserLink u="stauzs" />
-        {', '}
-        <UserLink u="guntis" />
-        {', '}
         <UserLink u="Bouhm" />
         {', '}
         <UserLink u="ccoms" />
         {', '}
-        <UserLink u="leah" />
+        <UserLink u="Hudson" />{' '}
+        {/* <UserLink u="leah" />
         {' and '}
-        <UserLink u="levithomason" />
+        <UserLink u="levithomason" /> */}
       </Header.Subheader>
     </Header>
     <p>
@@ -32,9 +29,9 @@ const AboutHeader = () => (
       <QLink query={{ _fp: 'chat' }}>
         <Icon name="chat" />chat panel
       </QLink>{' '}
-      on the right hand side of the screen
+      on the right hand side of the screen. We'd love to hear what you think as we roll out some fun changes!
     </p>
-    <List className="bulleted">
+    <List>
       <List.Item>
         We are testing with Chrome, Firefox and Safari, but for best results now, use{' '}
         <a href="https://www.google.com/chrome/"> Google's Chrome browser</a> on Windows/Mac/Linux.

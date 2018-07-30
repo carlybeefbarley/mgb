@@ -6,47 +6,12 @@ import AboutHeader from './AboutHeader'
 
 const RenderRoadmap = () => (
   <div>
-    <h2>Features Planned for 2018 Q1</h2>
+    <h2>Features Planned for 2018</h2>
     <List>
       <List.Item
         icon={{ color: 'green', name: 'plus' }}
-        header="Tutorial Overhaul"
-        description="Better interface, reduce popups, reduce steps, and more robust navigation control."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Starter Assets/Projects"
-        description="New accounts will include default projects. !vault will include forkable projects."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Produce Videos"
-        description="Help and tutorial videos. Deep link into related sections of the app."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Notification System"
-        description="We'll begin by streamlining the activity feed from a global feed to more relevant updates."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Better Project Experience"
-        description="Allow opening/editing multiple assets simultaneously.  Quickly add new assets to a project."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Chat Overhaul"
-        description="Better interface, longer messages, better formatting, autocomplete, emojis, and more :)"
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Improve ActorMap Game Engine"
-        description="Several bug fixes and improvements will be made to the ActorMap Game Engine."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
-        header="Squelch Spam and Bots"
-        description="Improve spam and bot prevention and removal mechanisms."
+        header="Work with Class over Summer"
+        description="Testing our education views with an actual classroom of kids using MGB to create games"
       />
     </List>
     <p>
@@ -63,10 +28,10 @@ const RoadmapRoute = () => (
     <Segment basic>
       <Container>
         <Header as="h1" icon="road" content="Roadmap" />
-        <AboutHeader />
         <p>
           See the latest changes on the <QLink to="/whats-new">What's New</QLink> page.
         </p>
+        <AboutHeader />
         <RenderRoadmap />
       </Container>
     </Segment>

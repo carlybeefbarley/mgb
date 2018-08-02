@@ -1,6 +1,5 @@
 import _ from 'lodash'
 import React from 'react'
-import getNavPanels from '/client/imports/components/SidePanels/getNavPanels'
 
 // This code is used by the Joyride/Tutorial systems to make it easier to write tutorials.
 //

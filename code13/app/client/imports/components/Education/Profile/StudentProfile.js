@@ -4,6 +4,7 @@ import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrCh
 import UserBioCard from '/client/imports/components/Users/UserBioCard'
 import QLink from '/client/imports/routes/QLink'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
+import BadgesSegment from '/client/imports/components/Dashboard/Badges/BadgesSegment'
 
 export default class StudentProfile extends React.Component {
   render() {
@@ -113,6 +114,14 @@ export default class StudentProfile extends React.Component {
                   <Segment raised color="yellow" style={secondRowStyle}>
                     <Header as="h3" content={`${user && user.username}'s Published Games`} />
                     <UserProfileGamesList user={currUser} currUser={currUser} />
+                  </Segment>
+                </Grid.Column>
+              </Grid.Row>
+              <Grid.Row>
+                <Grid.Column width={16}>
+                  <Segment color="red">
+                    <Header raised as="h3" content={`${user && user.username}'s Published Games`} />
+                    <BadgesSegment currUser={user} />
                   </Segment>
                 </Grid.Column>
               </Grid.Row>

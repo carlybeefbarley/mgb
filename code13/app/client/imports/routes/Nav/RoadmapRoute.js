@@ -1,8 +1,12 @@
 import React from 'react'
 import Footer from '/client/imports/components/Footer/Footer'
 import QLink from '/client/imports/routes/QLink'
-import { Segment, Container, Header, List } from 'semantic-ui-react'
+import { Segment, Container, Header, List, Grid } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
+
+// New imports for updated roadmap/info sections
+import HeroLayout from '/client/imports/layouts/HeroLayout'
+import UX from '/client/imports/UX'
 
 const RenderRoadmap = () => (
   <div>
@@ -24,19 +28,36 @@ const RenderRoadmap = () => (
 )
 
 const RoadmapRoute = () => (
-  <div>
-    <Segment basic>
-      <Container>
-        <Header as="h1" icon="road" content="Roadmap" />
-        <p>
-          See the latest changes on the <QLink to="/whats-new">What's New</QLink> page.
-        </p>
-        <AboutHeader />
-        <RenderRoadmap />
-      </Container>
-    </Segment>
-    <Footer />
-  </div>
+  <HeroLayout
+    heroContent={
+      <Grid>
+        <Grid.Column width={3} />
+        <Grid.Column width={10}>
+          <Grid.Row textAlign="center">
+            <Header as="h1" icon="road" inverted content="Roadmap" />
+          </Grid.Row>
+          <Grid.Row>
+            <Segment raised color="blue">
+              {/* Old Roadmap content...needs a lot of work */}
+
+              {/* <Segment basic>
+          <Container>
+            <Header as="h1" icon="road" content="Roadmap" />
+            <p>
+              See the latest changes on the <QLink to="/whats-new">What's New</QLink> page.
+            </p>
+            <AboutHeader />
+            <RenderRoadmap />
+          </Container>
+        </Segment> 
+        <Footer /> */}
+            </Segment>
+          </Grid.Row>
+        </Grid.Column>
+        <Grid.Column width={3} />
+      </Grid>
+    }
+  />
 )
 
 export default RoadmapRoute

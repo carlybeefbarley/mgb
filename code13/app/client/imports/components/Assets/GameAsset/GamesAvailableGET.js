@@ -61,7 +61,7 @@ const GamesAvailableGet = React.createClass({
     if (_.isEmpty(games)) {
       return (
         <Segment style={{ flex: 1, margin: 0 }}>
-          <p>There are no published games in this project, yet.</p>
+          <p>There are no published games here, yet.</p>
           {canEdit && (
             <p>
               <Icon name="lightbulb" /> Add a Code game asset to get started.

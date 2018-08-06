@@ -96,7 +96,7 @@ export default class StudentProfile extends React.Component {
               <Grid.Column width={16}>
                 <Segment raised color="yellow" style={secondRowStyle}>
                   <Header as="h3" content={`${user && user.username}'s Published Games`} />
-                  <UserProfileGamesList user={currUser} currUser={currUser} />
+                  <UserProfileGamesList user={user} currUser={currUser} />
                 </Segment>
               </Grid.Column>
             </Grid.Row>

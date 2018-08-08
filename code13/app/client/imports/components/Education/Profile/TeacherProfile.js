@@ -3,6 +3,8 @@ import { Grid, Header, List, Segment } from 'semantic-ui-react'
 import ImageShowOrChange from '/client/imports/components/Controls/ImageShowOrChange'
 import UserBioCard from '/client/imports/components/Users/UserBioCard'
 import UserProfileGamesList from '/client/imports/routes/Users/UserProfileGamesList'
+import BadgesSegment from '/client/imports/components/Dashboard/Badges/BadgesSegment'
+import UserProfileBadgeList from '/client/imports/components/Badges/UserProfileBadgeList'
 
 export default class TeacherProfile extends React.Component {
   render() {
@@ -40,7 +42,6 @@ export default class TeacherProfile extends React.Component {
 
     const rowStyle = {
       minHeight: '18em',
-      maxHeight: '18em',
       marginBottom: '2em',
     }
 
@@ -88,7 +89,15 @@ export default class TeacherProfile extends React.Component {
               <Grid.Column width={16}>
                 <Segment raised color="yellow" style={rowStyle}>
                   <Header as="h3" content={`${user && user.username}'s Published Games`} />
-                  <UserProfileGamesList user={currUser} currUser={currUser} />
+                  <UserProfileGamesList user={user} currUser={user} />
+                </Segment>
+              </Grid.Column>
+            </Grid.Row>
+            <Grid.Row>
+              <Grid.Column width={16}>
+                <Segment raised color="red">
+                  <Header as="h3" content={`${user && user.username}'s Badges`} />
+                  <BadgesSegment currUser={user} />
                 </Segment>
               </Grid.Column>
             </Grid.Row>

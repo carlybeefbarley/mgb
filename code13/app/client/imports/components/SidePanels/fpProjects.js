@@ -59,7 +59,7 @@ const _propTypes = {
 
 const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
   if (!currUser) return <Message content="User not found - no projects to show" />
-console.log(params)
+
   return (
     <div>
       <QLink to={`/u/${currUser.profile.name}/projects`}>

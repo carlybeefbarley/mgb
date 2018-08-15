@@ -1,22 +1,23 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Grid, Icon, Message, Modal, Tab, Segment } from 'semantic-ui-react'
-import { utilPushTo, utilShowChatPanelChannel } from '../QLink'
+import { Header, Grid, Icon, Message, Tab, Segment, Modal, Dropdown, Button } from 'semantic-ui-react'
+import QLink, { utilPushTo, utilShowChatPanelChannel } from '../QLink'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 
 import Spinner from '/client/imports/components/Nav/Spinner'
 import ThingNotFound from '/client/imports/components/Controls/ThingNotFound'
 import AssetEditProjectLayout from '/client/imports/layouts/AssetEditProjectLayout'
-import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew'
+import AssetCreateNewModal from '/client/imports/components/Assets/NewAsset/AssetCreateNewModal'
 import Helmet from 'react-helmet'
 
 import AssetEdit from '/client/imports/components/Assets/AssetEdit'
+import AssetCreateNew from '/client/imports/components/Assets/NewAsset/AssetCreateNew.js'
 import { AssetKinds } from '/imports/schemas/assets'
 
 import { isSameUserId } from '/imports/schemas/users'
 import { logActivity } from '/imports/schemas/activity'
-import { ActivitySnapshots, Activity } from '/imports/schemas'
+import { ActivitySnapshots, Activity, Projects } from '/imports/schemas'
 import { defaultAssetLicense } from '/imports/Enums/assetLicenses'
 import { makeAssetInfoFromAsset } from '/imports/schemas/assets/assets-client'
 import { showToast } from '/client/imports/modules'
@@ -42,7 +43,7 @@ import { makeChannelName, ChatSendMessageOnChannelName } from '/imports/schemas/
 import urlMaker from '/client/imports/routes/urlMaker'
 import { getAssetHandlerWithContent2 } from '/client/imports/helpers/assetFetchers'
 import { assetStore, joyrideStore } from '/client/imports/stores'
-import { __NO_ASSET__ } from '/client/imports/stores/assetStore'
+import { __NO_PROJECT__, __NO_ASSET__ } from '/client/imports/stores/assetStore'
 
 import { canUserEditAssetIfUnlocked, fAllowSuperAdminToEditAnything } from '/imports/schemas/roles'
 
@@ -51,7 +52,6 @@ import { learnSkill, forgetSkill } from '/imports/schemas/skills'
 import UserLoves from '/client/imports/components/Controls/UserLoves'
 import FlagEntity from '/client/imports/components/Controls/FlagEntityUI'
 import ResolveReportEntity from '/client/imports/components/Controls/FlagResolve'
-import SpecialGlobals from '../../../../imports/SpecialGlobals'
 import { withStores } from '/client/imports/hocs'
 
 const FLUSH_TIMER_INTERVAL_MS = 6000 // Milliseconds between timed flush attempts (TODO: Put in SpecialGlobals)
@@ -410,13 +410,75 @@ const AssetEditRoute = React.createClass({
     this.setState({ isModalOpen: false })
   },
 
-  render() {
-    const { assetStore, currUser, currUserProjects, params: { projectName } } = this.props
-    const canCreate = !_.isEmpty(currUser)
-    const viewProps = {
-      showProjectSelector: false,
-      suggestedParams: { projectName },
+  getProjectData(ownerId, name) {
+    const data = Projects.find({ ownerId, name }).fetch()
+    return data
+  },
+
+  projectChangeHandler(e, object) {
+    const { assetStore, currUser } = this.props
+    const valueID = object.value
+    const valueText = object.options[_.findIndex(object.options, { value: valueID })].text
+    assetStore.setProject(valueText)
+    utilPushTo(
+      location.query,
+      `/u/${currUser.username}/asset/${this.getAssetIdOrRouteByProject(valueText)}`,
+      {
+        project: valueText,
+      },
+    )
+  },
+
+  getAssetIdOrRouteByProject(project) {
+    const { assetStore } = this.props
+    let val = assetStore.getFirstAssetInProject(project)
+    if (val !== __NO_ASSET__) {
+      return val._id
+    } else {
+      return val
     }
+  },
+
+  renderProjectsList(currUserProjects) {
+    const { assetStore, params, location } = this.props
+    const assets = Object.assign(assetStore.assets())
+    const project = this.getProjectData(params.username, location.query.project)
+
+    let data = [],
+      keys = Object.keys(assets)
+
+    for (let index in keys) {
+      if (keys[index] === __NO_PROJECT__) {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: '_',
+          icon: 'sitemap',
+        })
+      } else if (_.find(currUserProjects, { name: keys[index] })) {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: _.find(currUserProjects, { name: keys[index] })._id,
+          icon: 'sitemap',
+        })
+      } else {
+        data.push({
+          key: keys[index],
+          text: keys[index],
+          value: project._id,
+          icon: 'sitemap',
+        })
+      }
+    }
+
+    return data
+  },
+
+  render() {
+    const { assetStore, currUser, currUserProjects, params } = this.props
+    const { asset } = this.data
+    const projectName = asset && !_.isEmpty(asset.projectNames) ? asset.projectNames[0] : null
 
     let panes = _.map(assetStore.getOpenAssets(), asset => {
       // console.log('render open asset', asset)
@@ -445,54 +507,6 @@ const AssetEditRoute = React.createClass({
       }
     })
 
-    panes.push({
-      menuItem: {
-        key: 'new-asset',
-        content: (
-          <span
-            style={{
-              position: 'absolute',
-              top: 0,
-              right: 0,
-              bottom: 0,
-              left: 0,
-              textAlign: 'center',
-              lineHeight: '3em',
-              verticalAlign: 'middle',
-            }}
-            onClick={this.handleOpenCreateNewAssetModal}
-          >
-            <Modal
-              size="small"
-              open={this.state.isModalOpen}
-              trigger={<Icon title="Create New Asset" color="green" name="add" disabled={!canCreate} />}
-            >
-              <Modal.Content>
-                <Icon
-                  name="close"
-                  onClick={this.handleCloseCreateNewAssetModal}
-                  style={{
-                    color: 'white',
-                    cursor: 'pointer',
-                    position: 'absolute',
-                    top: 0,
-                    right: 0,
-                    margin: '-1.5em',
-                  }}
-                />
-                <AssetCreateNew
-                  onAssetCreate={this.handleCloseCreateNewAssetModal}
-                  currUser={currUser}
-                  currUserProjects={currUserProjects}
-                  {...viewProps}
-                />
-              </Modal.Content>
-            </Modal>
-          </span>
-        ),
-      },
-    })
-
     // console.log('AssetEditRoute: ASSETS', assetStore.getOpenAssets())
     // console.log('AssetEditRoute: PANES', panes)
     // console.log('THIS.DATA: ', this.data)
@@ -503,28 +517,101 @@ const AssetEditRoute = React.createClass({
   },
 
   resolveProjectRender(panes) {
-    const { params } = this.props
-    const canEdit = this.canCurrUserEditThisAsset()
+    const { currUserProjects, currUser, params, location, assetStore } = this.props
+    // Set the default name/option for the projects dropdown list
+    const projectName = assetStore.project() || __NO_PROJECT__
+    const canCreate = !_.isEmpty(currUser)
+    const viewProps = {
+      showProjectSelector: false,
+      suggestedParams: { projectName },
+    }
+
     const noAssetPane = (
-      <Segment size="large" basic>
-        You don't currently have any assets open for this project. Click on an asset in the assets menu to
-        begin editing.
+      <Segment style={{ marginTop: '2em', textAlign: 'center' }} size="large" basic>
+        <Header icon color="grey">
+          <Icon name="folder open outline" size="large" />
+          <Header.Content>
+            You do not have any assets open for this project. <br /> Click on an any asset from the flex panel
+            to begin editing.
+          </Header.Content>
+        </Header>
       </Segment>
     )
 
     return (
-      <Tab
-        menu={{
-          attached: 'top',
-          tabular: true,
-          style: {
-            overflowX: 'auto',
-          },
-        }}
-        activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
-        onTabChange={this.handleTabChange}
-        panes={panes}
-      />
+      <div style={{ position: 'relative' }}>
+        {params.assetId === __NO_ASSET__ ? (
+          noAssetPane
+        ) : (
+          <Tab
+            menu={{
+              attached: 'top',
+              tabular: true,
+              style: { overflowX: 'auto', maxWidth: 'calc(100% - 12em)' },
+            }}
+            activeIndex={_.findIndex(assetStore.getOpenAssets(), { _id: params.assetId })}
+            onTabChange={this.handleTabChange}
+            panes={panes}
+          />
+        )}
+        {params.assetId === __NO_ASSET__ ||
+          (projectName !== __NO_PROJECT__ && (
+            <div style={{ position: 'absolute', top: 0, right: 0, padding: '0.5em' }}>
+              <Modal
+                size="small"
+                open={this.state.isModalOpen}
+                trigger={
+                  <Button
+                    icon
+                    compact
+                    size="tiny"
+                    title="create new asset"
+                    onClick={this.handleOpenCreateNewAssetModal}
+                    disabled={!canCreate}
+                  >
+                    <Icon color="green" name="add" />
+                  </Button>
+                }
+              >
+                <Modal.Content>
+                  <Icon
+                    name="close"
+                    onClick={this.handleCloseCreateNewAssetModal}
+                    style={{
+                      color: 'white',
+                      cursor: 'pointer',
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      margin: '-1.5em',
+                    }}
+                  />
+
+                  <AssetCreateNew
+                    onAssetCreate={this.handleCloseCreateNewAssetModal}
+                    currUser={currUser}
+                    currUserProjects={currUserProjects}
+                    {...viewProps}
+                  />
+                </Modal.Content>
+              </Modal>
+              <Button
+                primary
+                compact
+                active={location && location.search === '?_fp=project'}
+                size="tiny"
+                as={QLink}
+                floated="right"
+                query={{
+                  _fp: `project`,
+                }}
+                title="Show project assets in flex panel"
+              >
+                <Icon name="folder" /> Project Assets
+              </Button>
+            </div>
+          ))}
+      </div>
     )
   },
 
@@ -565,7 +652,6 @@ const AssetEditRoute = React.createClass({
     return (
       <Grid
         padded
-        className="asset-edit-container"
         style={{
           background: '#fff',
           overflowX:
@@ -646,7 +732,7 @@ const AssetEditRoute = React.createClass({
             asset.skillPath.length > 0 && <ChallengeState ownername={asset.dn_ownerName} />}
             <AssetForkGenerator
               asset={asset}
-              canFork={currUser !== null && !SpecialGlobals.disabledAssets[asset.kind]}
+              canFork={currUser !== null}
               doForkAsset={this.doForkAsset}
               isForkPending={isForkPending}
             />

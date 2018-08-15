@@ -17,10 +17,10 @@ const ChatIcon = ({ hazUnreadChats, projId }) => {
   )
 }
 
-const ProjectMenu = ({ projects, ownedFlag, currUserId, hazUnreadChats }) => {
+const ProjectMenu = ({ projects, ownedFlag, currUser, hazUnreadChats }) => {
   if (!projects || projects.length === 0) return Empty
 
-  const wantedProjects = _.filter(projects, p => (p.ownerId === currUserId) === ownedFlag)
+  const wantedProjects = _.filter(projects, p => (p.ownerId === currUser._id) === ownedFlag)
   const retval =
     wantedProjects.length === 0
       ? Empty
@@ -58,8 +58,8 @@ const _propTypes = {
 }
 
 const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
-  if (!currUser) return <Message content="Not Logged in - no projects to show" />
-
+  if (!currUser) return <Message content="User not found - no projects to show" />
+console.log(params)
   return (
     <div>
       <QLink to={`/u/${currUser.profile.name}/projects`}>
@@ -70,7 +70,7 @@ const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
           projects={currUserProjects}
           ownedFlag
           hazUnreadChats={hazUnreadChats}
-          currUserId={currUser._id}
+          currUser={currUser}
         />
       </Menu>
 
@@ -82,7 +82,7 @@ const fpProjects = ({ currUser, currUserProjects, hazUnreadChats }) => {
           projects={currUserProjects}
           ownedFlag={false}
           hazUnreadChats={hazUnreadChats}
-          currUserId={currUser._id}
+          currUser={currUser}
         />
       </Menu>
     </div>

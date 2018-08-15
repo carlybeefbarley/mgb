@@ -461,6 +461,7 @@ class AppUI extends Component {
             currentlyEditingAssetInfo={currentlyEditingAssetInfo}
             fpIconColumnWidthInPixels={fpIconColumnWidthInPixels}
             fpFlexPanelContentWidthInPixels={fpFlexPanelContentWidthInPixels}
+            params={params}
           />
         )}
 

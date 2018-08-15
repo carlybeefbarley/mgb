@@ -6,7 +6,7 @@ import { Label } from 'semantic-ui-react'
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 
 import { responsiveComponent, withStores } from '/client/imports/hocs'
-import { joyrideStore } from '/client/imports/stores'
+import { assetStore, joyrideStore } from '/client/imports/stores'
 import { getFeatureLevel } from '/imports/schemas/settings-client'
 import { expectedToolbars } from '/client/imports/components/Toolbar/expectedToolbars'
 
@@ -14,6 +14,7 @@ import fpSuperAdmin from './fpSuperAdmin'
 import fpMobileMore from './fpMobileMore'
 import fpSettings from './fpSettings'
 import fpProjects from './fpProjects'
+import fpProjAssets from './fpProjAssets'
 import fpAssets from './fpAssets'
 import fpUsers from './fpUsers'
 import fpChat from './fpChat'
@@ -23,8 +24,19 @@ import handleFlexPanelChange from './handleFlexPanelChange'
 import { ReactMeteorData } from 'meteor/react-meteor-data'
 import { makeLevelKey } from '/client/imports/components/Toolbar/Toolbar'
 
-const flexPanelViews = [
+var flexPanelViews = [
   // default_level is defined in expectedToolbars.js (probably = 6)
+
+  {
+    tag: 'project',
+    lev: 1,
+    name: 'project',
+    icon: 'folder',
+    header: 'Project',
+    el: fpProjAssets,
+    superAdminOnly: false,
+    mobileUI: false,
+  },
   {
     tag: 'chat',
     lev: 1,
@@ -58,6 +70,8 @@ const flexPanelViews = [
 
   // Experimental UI for mobile
   //{ tag: 'more',      lev: 8,  name: 'more',     icon: 'ellipsis horizontal', header: 'More', el: fpMobileMore, superAdminOnly: false, mobileUI: true  },
+  // Replaced due to redundancy
+  /*
   {
     tag: 'projects',
     lev: 5,
@@ -68,6 +82,7 @@ const flexPanelViews = [
     superAdminOnly: false,
     mobileUI: false,
   },
+  */
   {
     tag: 'users',
     lev: 7,
@@ -245,8 +260,54 @@ const FlexPanel = React.createClass({
     return null
   },
 
+  renderFlexPanelItem(v) {
+    const { currUserProjects, fpIsFooter, isSuperAdmin, selectedViewTag, params } = this.props
+    const isMobileUI = fpIsFooter
+    const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
+
+    const active = this._viewTagMatchesPropSelectedViewTag(v.tag)
+    if (isMobileUI && !v.mobileUI) return null
+    if (v.lev > fpFeatureLevel && selectedViewTag !== v.tag) return null
+    if (v.superAdminOnly && !isSuperAdmin) return null
+    if (fpIsFooter && v.lev > 4) return null
+    if (v.tag === 'projects' && (!currUserProjects || !currUserProjects.length)) return null
+    if (v.tag === 'project' && (params && !params.assetId)) return null
+
+    const itemClasses = cx(active && 'active selected', 'item')
+    const itemStyle = active
+      ? {
+          background: '#f3f4f5',
+          fontWeight: 700,
+        }
+      : {
+          boxShadow: 'none',
+        }
+
+    const activeStyle = {
+      opacity: active ? 0.9 : 0.7,
+    }
+
+    const iconClasses = cx(v.icon, this.getFpButtonSpecialClassForTag(v.tag), 'icon')
+
+    return (
+      <a
+        id={`mgbjr-flexPanelIcons-${v.tag}`}
+        key={v.tag}
+        style={itemStyle}
+        className={itemClasses}
+        title={v.name}
+        onClick={this.fpViewSelect.bind(this, v.tag)}
+      >
+        <i style={activeStyle} className={iconClasses} />
+        <span style={activeStyle}>{fpIsFooter ? null : v.name}</span>
+        {this.getFpButtonExtraLabelForTag(v.tag)}
+      </a>
+    )
+  },
+
   render() {
     const {
+      assetStore,
       chatChannelTimestamps,
       currentlyEditingAssetInfo,
       currUser,
@@ -254,19 +315,36 @@ const FlexPanel = React.createClass({
       flexPanelIsVisible,
       flexPanelWidth,
       fpIsFooter,
-      handleFlexPanelToggle,
       hazUnreadChats,
       isSuperAdmin,
       joyride,
       requestChatChannelTimestampsNow,
-      selectedViewTag,
       user,
       fpIconColumnWidthInPixels,
       fpFlexPanelContentWidthInPixels,
+      params,
     } = this.props
 
-    const isMobileUI = fpIsFooter
-    const fpFeatureLevel = this.data.fpFeatureLevel || DEFAULT_FLEXPANEL_FEATURELEVEL
+    const miniNavClassNames = fpIsFooter
+      ? 'ui blue borderless labeled icon bottom fixed six item fluid menu'
+      : 'ui blue borderless labeled icon right fixed vertical horizontally fitted menu'
+    const miniNavStyle = _.assign(
+      {
+        background: '#e2e3e4',
+        border: 'none',
+        boxShadow: 'none',
+      },
+      fpIsFooter
+        ? {
+            height: fpIconColumnWidthInPixels + 'px',
+            zIndex: 300, // Temp Hack
+          }
+        : {
+            // This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
+            width: fpIconColumnWidthInPixels + 'px',
+          },
+    )
+
     const panelStyle = fpIsFooter
       ? {
           position: 'fixed',
@@ -290,26 +368,6 @@ const FlexPanel = React.createClass({
           background: '#f3f4f5',
           borderLeft: '2px solid #ddd',
         }
-
-    const miniNavClassNames = fpIsFooter
-      ? 'ui blue borderless labeled icon bottom fixed six item fluid menu'
-      : 'ui blue borderless labeled icon right fixed vertical horizontally fitted menu'
-    const miniNavStyle = _.assign(
-      {
-        background: '#e2e3e4',
-        border: 'none',
-        boxShadow: 'none',
-      },
-      fpIsFooter
-        ? {
-            height: fpIconColumnWidthInPixels + 'px',
-            zIndex: 300, // Temp Hack
-          }
-        : {
-            // This is the Rightmost column of the FlexPanel (just icons, always shown). It is logically nested within the outer panel
-            width: fpIconColumnWidthInPixels + 'px',
-          },
-    )
 
     const panelScrollContainerStyle = {
       position: 'fixed',
@@ -345,6 +403,7 @@ const FlexPanel = React.createClass({
                 <div className="ui fluid label">TODO: {flexPanelHeader} FlexPanel</div>
               ) : (
                 <ElementFP
+                  assetStore={assetStore}
                   currUser={currUser}
                   currUserProjects={currUserProjects}
                   user={user}
@@ -357,6 +416,7 @@ const FlexPanel = React.createClass({
                   subNavParam={this.getSubNavParam()}
                   handleChangeSubNavParam={this.handleChangeSubNavParam}
                   location={this.context.urlLocation}
+                  params={params}
                 />
               )}
             </div>
@@ -364,43 +424,7 @@ const FlexPanel = React.createClass({
         )}
         <div id="mgbjr-flexPanelIcons" className={miniNavClassNames} style={miniNavStyle}>
           {flexPanelViews.map(v => {
-            const active = this._viewTagMatchesPropSelectedViewTag(v.tag)
-            if (isMobileUI && !v.mobileUI) return null
-            if (v.lev > fpFeatureLevel && selectedViewTag !== v.tag) return null
-            if (v.superAdminOnly && !isSuperAdmin) return null
-            if (fpIsFooter && v.lev > 4) return null
-            if (v.tag === 'projects' && (!currUserProjects || !currUserProjects.length)) return null
-
-            const itemClasses = cx(active && 'active selected', 'item')
-            const itemStyle = active
-              ? {
-                  background: '#f3f4f5',
-                  fontWeight: 700,
-                }
-              : {
-                  boxShadow: 'none',
-                }
-
-            const activeStyle = {
-              opacity: active ? 0.9 : 0.7,
-            }
-
-            const iconClasses = cx(v.icon, this.getFpButtonSpecialClassForTag(v.tag), 'icon')
-
-            return (
-              <a
-                id={`mgbjr-flexPanelIcons-${v.tag}`}
-                key={v.tag}
-                style={itemStyle}
-                className={itemClasses}
-                title={v.name}
-                onClick={this.fpViewSelect.bind(this, v.tag)}
-              >
-                <i style={activeStyle} className={iconClasses} />
-                <span style={activeStyle}>{fpIsFooter ? null : v.name}</span>
-                {this.getFpButtonExtraLabelForTag(v.tag)}
-              </a>
-            )
+            return this.renderFlexPanelItem(v)
           })}
         </div>
       </div>
@@ -408,4 +432,4 @@ const FlexPanel = React.createClass({
   },
 })
 
-export default _.flow(withStores({ joyride: joyrideStore }), responsiveComponent())(FlexPanel)
+export default _.flow(withStores({ joyride: joyrideStore, assetStore }), responsiveComponent())(FlexPanel)

@@ -73,6 +73,10 @@ const ShowFromWho = ({ value, currUser, otherUser, onChange }) => {
   )
 }
 
+// Has two views:
+// Public: Original view for searching all public assets
+// Project: Project context view more useful for working with assets within a project
+
 const fpAssets = React.createClass({
   mixins: [ReactMeteorData],
 
@@ -238,6 +242,7 @@ const fpAssets = React.createClass({
               showCompact
               kindsActive={kindsActive}
               handleToggleKindCallback={this.handleToggleKind}
+              showActorMap={currUser && currUser.profile.showActorMap}
             />
             <AssetListChooseView
               sty={{ float: 'right' }}

@@ -38,7 +38,9 @@ const AssetCreateSelectKind = React.createClass({
 
     return (
       <div id="mgbjr-create-asset-select-kinds">
-        {AssetKindKeys.map(k => {
+        {_.filter(AssetKindKeys, kind => {
+          return !((kind === 'actor' || kind === 'actormap') && currUser && !currUser.profile.showActorMap)
+        }).map(k => {
           const ak = AssetKinds[k]
           const isActive = k === selectedKind
           const elemId = `mgbjr-create-asset-select-kind-${k}`

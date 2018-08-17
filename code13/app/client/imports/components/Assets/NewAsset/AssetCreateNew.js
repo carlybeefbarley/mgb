@@ -86,9 +86,9 @@ class AssetCreateNew extends Component {
   }
 
   handleCreateAssetClick = () => {
-    const { currUser, assetStore } = this.props
+    const { currUser, assetStore, onAssetCreate } = this.props
     const { selectedKind, newAssetName, selectedProject } = this.state
-
+    onAssetCreate && onAssetCreate()
     this.setState(
       {
         buttonActionPending: true,

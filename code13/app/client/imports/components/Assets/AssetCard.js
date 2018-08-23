@@ -145,19 +145,23 @@ const AssetCard = React.createClass({
         <Card.Content style={{ padding: '0.5em' }}>
           {viewOpts.showWorkstate && (
             <span style={{ float: 'right' }}>
-              <span onMouseUp={_preventOnMouseUpClickSteal}>
-                <UserLoves
-                  currUser={currUser}
-                  asset={asset}
+              {asset.heartedBy_count > 0 && (
+                <span onMouseUp={_preventOnMouseUpClickSteal}>
+                  <UserLoves
+                    currUser={currUser}
+                    asset={asset}
+                    size={viewOpts.showExtra ? null : 'small'}
+                    seeLovers={false}
+                  />
+                </span>
+              )}
+              {asset.workState !== 'unknown' && (
+                <WorkState
+                  workState={asset.workState}
                   size={viewOpts.showExtra ? null : 'small'}
-                  seeLovers={false}
+                  canEdit={false}
                 />
-              </span>
-              <WorkState
-                workState={asset.workState}
-                size={viewOpts.showExtra ? null : 'small'}
-                canEdit={false}
-              />
+              )}
             </span>
           )}
 

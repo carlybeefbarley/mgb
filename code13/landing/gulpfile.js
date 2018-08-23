@@ -23,12 +23,12 @@ const makePath = (...paths) => paths.join('/').replace(/\/\//g, '/')
 const srcPath = (...paths) => makePath('src', ...paths)
 const distPath = (...paths) => makePath('dist', ...paths)
 const cdnPath = (...paths) => makePath('cdn', ...paths)
-const meteorBuildPath = (...paths) => makePath('../app/.meteor/local/build/programs/web.browser', ...paths)
+const meteorBuildPath = (...paths) => makePath('../app/.meteor/local/build/programs/web.browser/', ...paths)
 
 const paths = {
   fonts: {
-    src: meteorBuildPath('app/lib/semantic-ui/src/themes/default/assets/fonts/icons.*'),
-    dest: distPath('lib/semantic-ui/src/themes/default/assets/fonts'),
+    src: meteorBuildPath('app/fonts/semantic-ui/icons.*'),
+    dest: distPath('fonts/semantic-ui'),
   },
   html: {
     src: srcPath('**/*.html'),

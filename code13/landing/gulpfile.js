@@ -243,7 +243,7 @@ gulp.task('publish:make-cdn-files', () => {
 // ----------------------------------------
 gulp.task('serve', () => {
   g.connect.server({
-    port: 3000,
+    port: 3030,
     host: '0.0.0.0',
     root: distPath(),
     livereload: true

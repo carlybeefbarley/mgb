@@ -55,19 +55,21 @@ const ProjectCard = (props, context) => {
         />
       </Card.Content>
       <Card.Content>
-        <span style={{ float: 'right' }}>
-          <WorkState
-            workState={workState}
-            handleChange={
-              !handleFieldChanged ? (
-                undefined
-              ) : (
-                newWorkState => handleFieldChanged({ workState: newWorkState })
-              )
-            }
-            canEdit={canEdit}
-          />
-        </span>
+        {workState !== 'unknown' && (
+          <span style={{ float: 'right' }}>
+            <WorkState
+              workState={workState}
+              handleChange={
+                !handleFieldChanged ? (
+                  undefined
+                ) : (
+                  newWorkState => handleFieldChanged({ workState: newWorkState })
+                )
+              }
+              canEdit={canEdit}
+            />
+          </span>
+        )}
 
         <Card.Header title={name} content={name} />
 

@@ -166,6 +166,9 @@ class EditCode extends React.Component {
 
       // for showing HoC video modal
       showVideoModal: true,
+
+      // for collapsible console 
+      isConsoleCollapsed: true
     }
 
     this.errorMessageCache = {}
@@ -2864,6 +2867,10 @@ class EditCode extends React.Component {
     this.forceUpdate()
   }
 
+  handleToggleConsole = () => {
+    this.setState({ isConsoleCollapsed: !this.state.isConsoleCollapsed})
+  }
+
   handleAutoRun = () => {
     this.isAutoRun = false
   }
@@ -2878,9 +2885,8 @@ class EditCode extends React.Component {
     const isPlaying = this.state.isPlaying
 
     const stringReferences = this.getStringReferences()
-    const infoPaneOpts = this.isGuest
-      ? _infoPaneModes[3]
-      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts =
+      this.isGuest || this.isTutorialView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3023,7 +3029,7 @@ class EditCode extends React.Component {
               </span>
               {!isPopup && this.renderGameScreen()}
             </div>
-            <div style={{ flex: '0 1 4em', height: '100%' }}>
+            <div style={{ flex: '1', height: '100%' }}>
               {this.refs.gameScreen && (
                 <ConsoleMessageViewer
                   messages={this.state.consoleMessages}
@@ -3203,9 +3209,8 @@ class EditCode extends React.Component {
   renderGameScreen = () => {
     const { asset, hourOfCodeStore: { state: { currStepId } } } = this.props
 
-    const infoPaneOpts = this.isGuest
-      ? _infoPaneModes[3]
-      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts =
+      this.isGuest || this.isTutorialView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const isPopup = this.state.isPopup || !infoPaneOpts.col2
 
@@ -3262,14 +3267,11 @@ class EditCode extends React.Component {
         style={{
           display: 'flex',
           flexFlow: 'column',
-          height: 'inherit',
-          overflowY: 'auto',
+          height: '100%',
+          overflowY: 'hidden',
         }}
       >
-        <div
-          id="tutorial-container"
-          style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}
-        >
+        <div id="tutorial-container" style={{ overflowY: 'auto', flex: 1, height: 'calc(100% - 2.5em)' }}>
           {this.isCodeTutorial && (
             <CodeTutorials
               style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
@@ -3301,17 +3303,14 @@ class EditCode extends React.Component {
             />
           )}
         </div>
-        <div style={{ flex: '0 1 4em', height: '100%' }}>
+        <div style={ this.state.isConsoleCollapsed ? {flex: 0} : { flex:1}}>
           {this.renderGameScreen()}
           <ConsoleMessageViewer
             messages={this.state.consoleMessages}
             gotoLinehandler={this.gotoLineHandler.bind(this)}
             clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
             isTutorialView={this.isTutorialView}
-            style={{
-              maxHeight: '100px',
-              marginBottom: '2em',
-            }}
+            handleToggleConsole={this.handleToggleConsole}
           />
         </div>
       </div>
@@ -3329,9 +3328,8 @@ class EditCode extends React.Component {
 
     this.codeMirror && this.codeMirror.setOption('readOnly', !this.props.canEdit)
 
-    const infoPaneOpts = this.isGuest
-      ? _infoPaneModes[3]
-      : this.isTutorialView ? _infoPaneModes[0] : _infoPaneModes[this.state.infoPaneMode]
+    const infoPaneOpts =
+      this.isGuest || this.isTutorialView ? _infoPaneModes[3] : _infoPaneModes[this.state.infoPaneMode]
 
     const tbConfig = this.generateToolbarConfig()
 

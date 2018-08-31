@@ -36,7 +36,11 @@ export default class ConsoleMessageViewer extends React.Component {
     if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, filename)
   }
 
+  // Auto open console if there are console messages
   handleOpenConsole = () => {
+    if (!this.props.messages) return
+
+    if (!this.state.showConsole) this.props.handleToggleConsole()
     this.setState({ showConsole: true })
   }
 

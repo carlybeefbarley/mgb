@@ -133,6 +133,9 @@ class EditCode extends React.Component {
 
     this.userSkills = context.skills
 
+    // Console ref
+    this.mgbConsole
+
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
       consoleMessages: [],
@@ -167,8 +170,8 @@ class EditCode extends React.Component {
       // for showing HoC video modal
       showVideoModal: true,
 
-      // for collapsible console 
-      isConsoleCollapsed: true
+      // for collapsible console
+      isConsoleCollapsed: true,
     }
 
     this.errorMessageCache = {}
@@ -1982,6 +1985,7 @@ class EditCode extends React.Component {
       })
 
     !this.isGuest && !this.isTutorialView && this.tabs.openTabByKey('code-runner')
+    this.mgbConsole.handleOpenConsole()
   }
 
   handleStop = options => {
@@ -2868,7 +2872,7 @@ class EditCode extends React.Component {
   }
 
   handleToggleConsole = () => {
-    this.setState({ isConsoleCollapsed: !this.state.isConsoleCollapsed})
+    this.setState({ isConsoleCollapsed: !this.state.isConsoleCollapsed })
   }
 
   handleAutoRun = () => {
@@ -3032,6 +3036,7 @@ class EditCode extends React.Component {
             <div style={{ flex: '1', height: '100%' }}>
               {this.refs.gameScreen && (
                 <ConsoleMessageViewer
+                  ref={c => this.mgbConsole = c}
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
@@ -3244,7 +3249,9 @@ class EditCode extends React.Component {
             <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
             {this.renderGameScreen()}
             <ConsoleMessageViewer
+              ref={c => this.mgbConsole = c}
               messages={this.state.consoleMessages}
+              isPlaying={this.state.isPlaying}
               gotoLinehandler={this.gotoLineHandler.bind(this)}
               clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
               style={{
@@ -3283,7 +3290,6 @@ class EditCode extends React.Component {
               userSkills={this.userSkills}
               quickSave={this.quickSave.bind(this)}
               runCode={this.handleRun}
-              handleOpenConsole={this.handleOpenConsole}
               highlightLines={this.highlightLines.bind(this)}
               assetId={asset._id}
               asset={asset}
@@ -3299,14 +3305,15 @@ class EditCode extends React.Component {
               userSkills={this.userSkills}
               runChallengeDate={this.state.runChallengeDate}
               runCode={this.handleRun}
-              handleOpenConsole={this.handleOpenConsole}
             />
           )}
         </div>
-        <div style={ this.state.isConsoleCollapsed ? {flex: 0} : { flex:1}}>
+        <div style={this.state.isConsoleCollapsed ? { flex: 0 } : { flex: 1 }}>
           {this.renderGameScreen()}
           <ConsoleMessageViewer
+            ref={c => this.mgbConsole = c}
             messages={this.state.consoleMessages}
+            isPlaying={this.state.isPlaying}
             gotoLinehandler={this.gotoLineHandler.bind(this)}
             clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
             isTutorialView={this.isTutorialView}

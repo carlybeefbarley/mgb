@@ -133,9 +133,6 @@ class EditCode extends React.Component {
 
     this.userSkills = context.skills
 
-    // Console ref
-    this.mgbConsole
-
     this.state = {
       _preventRenders: false, // We use this as a way to batch updates.
       consoleMessages: [],
@@ -170,8 +167,7 @@ class EditCode extends React.Component {
       // for showing HoC video modal
       showVideoModal: true,
 
-      // for collapsible console
-      isConsoleCollapsed: true,
+      showConsole: false
     }
 
     this.errorMessageCache = {}
@@ -1985,7 +1981,6 @@ class EditCode extends React.Component {
       })
 
     !this.isGuest && !this.isTutorialView && this.tabs.openTabByKey('code-runner')
-    this.mgbConsole.handleOpenConsole()
   }
 
   handleStop = options => {
@@ -2872,7 +2867,7 @@ class EditCode extends React.Component {
   }
 
   handleToggleConsole = () => {
-    this.setState({ isConsoleCollapsed: !this.state.isConsoleCollapsed })
+    this.setState({ showConsole: !this.state.showConsole })
   }
 
   handleAutoRun = () => {
@@ -2945,7 +2940,7 @@ class EditCode extends React.Component {
               overflowY: 'auto',
             }}
           >
-            <div style={{ overflowY: 'auto', flex: '1 1 auto', height: 'calc(100% - 2.5em)' }}>
+            <div style={{ overflowY: 'auto' }}>
               <span style={{ float: 'right', position: 'relative' }}>
                 {isPlaying &&
                 this.props.canEdit && (
@@ -3033,15 +3028,14 @@ class EditCode extends React.Component {
               </span>
               {!isPopup && this.renderGameScreen()}
             </div>
-            <div style={{ flex: '1', height: '100%' }}>
+            <div style={{ height: '100%' }}>
               {this.refs.gameScreen && (
                 <ConsoleMessageViewer
-                  ref={c => this.mgbConsole = c}
                   messages={this.state.consoleMessages}
                   gotoLinehandler={this.gotoLineHandler.bind(this)}
                   clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
                   style={{
-                    maxHeight: '100px',
+                    maxHeight: '150px',
                     marginBottom: '1em',
                   }}
                 />
@@ -3249,9 +3243,7 @@ class EditCode extends React.Component {
             <Toolbar actions={this} config={tbConfig} name="EditCode" ref="toolbar" />
             {this.renderGameScreen()}
             <ConsoleMessageViewer
-              ref={c => this.mgbConsole = c}
               messages={this.state.consoleMessages}
-              isPlaying={this.state.isPlaying}
               gotoLinehandler={this.gotoLineHandler.bind(this)}
               clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
               style={{
@@ -3269,6 +3261,8 @@ class EditCode extends React.Component {
   }
 
   renderTutorial = (asset, currUser) => {
+    const consoleSty = this.state.showConsole ? { flex: 1 } : { flex: 0 }
+
     return (
       <div
         style={{
@@ -3278,7 +3272,10 @@ class EditCode extends React.Component {
           overflowY: 'hidden',
         }}
       >
-        <div id="tutorial-container" style={{ overflowY: 'auto', flex: 1, height: 'calc(100% - 2.5em)' }}>
+        <div
+          id="tutorial-container"
+          style={{ overflowY: 'auto', flex: 1, height: 'calc(100% - 2.5em)' }}
+        >
           {this.isCodeTutorial && (
             <CodeTutorials
               style={{ backgroundColor: 'rgba(0,255,0,0.02)', height: 'calc(100% - 2.5em)' }}
@@ -3308,17 +3305,41 @@ class EditCode extends React.Component {
             />
           )}
         </div>
-        <div style={this.state.isConsoleCollapsed ? { flex: 0 } : { flex: 1 }}>
+        <div style={consoleSty}>
           {this.renderGameScreen()}
-          <ConsoleMessageViewer
-            ref={c => this.mgbConsole = c}
-            messages={this.state.consoleMessages}
-            isPlaying={this.state.isPlaying}
-            gotoLinehandler={this.gotoLineHandler.bind(this)}
-            clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
-            isTutorialView={this.isTutorialView}
-            handleToggleConsole={this.handleToggleConsole}
-          />
+
+          <div style={{ height: '100%' }}>
+            <div style={{ padding: 0 }} onClick={this.handleToggleConsole}>
+              {this.state.showConsole ? (
+                <Button compact fluid size="mini" icon="chevron down" />
+              ) : (
+                <Button compact fluid size="mini" icon="chevron up" />
+              )}
+            </div>
+            <div
+              style={
+                this.state.showConsole ? (
+                  { display: 'block', position: 'relative', height: '100%' }
+                ) : (
+                  { display: 'none' }
+                )
+              }
+            >
+            <ConsoleMessageViewer
+              messages={this.state.consoleMessages}
+              gotoLinehandler={this.gotoLineHandler.bind(this)}
+              clearConsoleHandler={this._consoleClearAllMessages.bind(this)}
+              style={{
+                position: 'absolute',
+                top: 0,
+                bottom: 0,
+                left: 0,
+                right: 0,
+                margin: 0
+              }}
+            />
+          </div>
+        </div>
         </div>
       </div>
     )

@@ -5,10 +5,6 @@ import React from 'react'
 import moment from 'moment'
 
 export default class ConsoleMessageViewer extends React.Component {
-  state = {
-    showConsole: false,
-  }
-
   componentDidUpdate() {
     this.refs.msgContainer.scrollTop = this.refs.msgContainer.scrollHeight
   }
@@ -36,22 +32,7 @@ export default class ConsoleMessageViewer extends React.Component {
     if (this.props.gotoLinehandler) this.props.gotoLinehandler(msg.line, filename)
   }
 
-  // Auto open console if there are console messages
-  handleOpenConsole = () => {
-    if (!this.props.messages) return
-
-    if (!this.state.showConsole) this.props.handleToggleConsole()
-    this.setState({ showConsole: true })
-  }
-
-  handleToggleConsole = () => {
-    this.setState({ showConsole: !this.state.showConsole })
-    this.props.handleToggleConsole()
-  }
-
   smartRender = () => {
-    if (!this.props.messages) return null
-
     let fmt = {
       log: { style: {}, icon: '' },
       debug: { style: {}, icon: '' },
@@ -90,64 +71,11 @@ export default class ConsoleMessageViewer extends React.Component {
     })
   }
 
-  renderAccordion = (style, messages, clearConsoleHandler) => {
-    return (
-      <div style={{ height: '100%' }}>
-        <div style={{ padding: 0 }} onClick={this.handleToggleConsole}>
-          {this.state.showConsole ? (
-            <Button compact fluid size="mini" icon="chevron down" />
-          ) : (
-            <Button compact fluid size="mini" icon="chevron up" />
-          )}
-        </div>
-        <div
-          style={
-            this.state.showConsole ? (
-              { display: 'block', position: 'relative', height: '100%' }
-            ) : (
-              { display: 'none' }
-            )
-          }
-        >
-          <div style={{ position: 'absolute', top: 0, bottom: 0, right: 0, left: 0, ...style }}>
-            <div className="header" style={{ position: 'absolute', top: 0, right: '1em', zIndex: 9 }}>
-              {messages.length > 0 &&
-              clearConsoleHandler && (
-                <i
-                  style={{ cursor: 'pointer' }}
-                  className="ui ban outline icon"
-                  title="clear console"
-                  onClick={clearConsoleHandler}
-                />
-              )}
-            </div>
-            <div
-              id="mgbjr-EditCode-console"
-              className="ui secondary segment"
-              style={{
-                height: '100%',
-                width: '100%',
-                overflow: 'auto',
-                margin: 0,
-              }}
-              ref="msgContainer"
-            >
-              <div className="message-container">{this.smartRender()}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
   render() {
-    const { messages, clearConsoleHandler, style, isTutorialView } = this.props
-    if (!messages) return null
+    const { messages, clearConsoleHandler, style } = this.props
 
-    return isTutorialView ? (
-      this.renderAccordion(style, messages, clearConsoleHandler)
-    ) : (
-      <div style={{ position: 'relative', ...style }}>
+    return (
+      <div style={{ position: 'relative', height: '100%' }}>
         <div className="header" style={{ position: 'absolute', top: 0, right: '1em', zIndex: 9 }}>
           {messages.length > 0 &&
           clearConsoleHandler && (
@@ -159,18 +87,7 @@ export default class ConsoleMessageViewer extends React.Component {
             />
           )}
         </div>
-        <div
-          id="mgbjr-EditCode-console"
-          className="ui secondary segment"
-          style={{
-            position: 'absolute',
-            top: 0,
-            bottom: 0,
-            left: 0,
-            right: 0,
-          }}
-          ref="msgContainer"
-        >
+        <div id="mgbjr-EditCode-console" className="ui secondary segment" style={style} ref="msgContainer">
           <div className="message-container">{this.smartRender()}</div>
         </div>
       </div>

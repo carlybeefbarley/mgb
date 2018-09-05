@@ -224,16 +224,16 @@ gulp.task('publish:make-cdn-files', () => {
       // rev-all by default does not update versioned asset names in absolute urls
       // instead, we prefix all asset urls with the absolute urls and use a relative url for og:image
       // this results in all assets having the correct absolute url
-      .pipe(
-        g.revAll.revision({
-          prefix:
-            'https://' +
-            [MGB_LANDING_HOST, MGB_LANDING_BASE_URL]
-              .filter(Boolean)
-              .join('')
-              .replace(/\/\/+/g, '/')
-        })
-      )
+      // .pipe(
+      //   g.revAll.revision({
+      //     prefix:
+      //       'https://' +
+      //       [MGB_LANDING_HOST, MGB_LANDING_BASE_URL]
+      //         .filter(Boolean)
+      //         .join('')
+      //         .replace(/\/\/+/g, '/')
+      //   })
+      // )
       .pipe(gulp.dest(cdnPath()))
   )
 })

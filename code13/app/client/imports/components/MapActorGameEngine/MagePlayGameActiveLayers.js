@@ -161,12 +161,12 @@ const MagePlayGameActiveLayers = {
   respawnRequiredActorsForMap() {
     // See the complementary code in playSpawnNewActor()
     if (this.respawnMemoryAutoRespawningActors[this.map.name]) {
-      throw new Error('@dgolds 10/12/16 debugger: step through first time')
-      // var a = this.respawnMemoryAutoRespawningActors[this.map.name]
-      // for (let i in a) {
-      //   var ob = a[i]
-      //   if (ob.actorname) this.playSpawnNewActor(ob.actorname, ob.x, ob.y, false, true, i)
-      // }
+      //throw new Error('@dgolds 10/12/16 debugger: step through first time')
+      var a = this.respawnMemoryAutoRespawningActors[this.map.name]
+      for (let i in a) {
+        var ob = a[i]
+        if (ob.actorname) this.playSpawnNewActor(ob.actorname, ob.x, ob.y, false, true, i)
+      }
     }
   },
 

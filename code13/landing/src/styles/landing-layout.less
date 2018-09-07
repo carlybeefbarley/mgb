@@ -1,15 +1,20 @@
-@import "mixins";
+@import 'mixins';
 
 // Keep colors in sync with GetStarted.css .hero colors
-@mgb-gradient-1: #68256D;
-@mgb-gradient-2: #0070B0;
-@mgb-gradient-3: #0080FF;
+@mgb-gradient-1: #68256d;
+@mgb-gradient-2: #0070b0;
+@mgb-gradient-3: #0080ff;
 @mgb-gradient-fallback: mix(@mgb-gradient-1, @mgb-gradient-3);
 
 .mgb-gradient(@deg: 180deg) {
   // fallback
   background: @mgb-gradient-fallback;
-  background-image: linear-gradient(@deg, @mgb-gradient-1, @mgb-gradient-2 80%, @mgb-gradient-3);
+  background-image: linear-gradient(
+    @deg,
+    @mgb-gradient-1,
+    @mgb-gradient-2 80%,
+    @mgb-gradient-3
+  );
 }
 
 /***************************************
@@ -106,7 +111,7 @@ section:not(:last-child),
       font-size: 1.5rem;
       margin: 0;
       padding: 0 0.3em;
-      color: #FFF;
+      color: #fff;
       font-weight: 300;
     }
 
@@ -138,6 +143,113 @@ section:not(:last-child),
       }
     }
   }
+}
+
+/***************************************
+ *               Pages                  *
+ ***************************************/
+
+.mgb-page {
+  .mgb-gradient();
+  position: relative;
+  padding-top: 60px; // space for top fixed menu
+}
+
+.mgb-header {
+  position: relative;
+  text-align: center;
+  margin: 1em 0 2em 0 !important;
+
+  .mgb-header-underline {
+    margin: 0 auto;
+    height: 1px;
+    width: 3em;
+    border-top: 2px solid white;
+  }
+}
+
+.mgb-centered {
+  margin: 0 auto;
+}
+
+.mgb-about-mgb {
+  margin: 0 auto;
+  max-width: 50%;
+  margin-bottom: 5em;
+}
+
+.mgb-about-content {
+  color: white;
+  font-size: 1.5em;
+}
+
+.mgb-faq-content {
+  color: white;
+  font-size: 1.5em;
+  margin-left: 1em;
+}
+
+.mgb-faq-pin {
+  position: absolute;
+  top: 46%;
+  left: 49%;
+
+  border-radius: 50%;
+  border: 8px solid red;
+  width: 8px;
+  height: 8px;
+}
+
+.mgb-faq-pin::after {
+  position: absolute;
+  content: '';
+  width: 0px;
+  height: 0px;
+  bottom: -28px;
+  left: -8px;
+  border: 8px solid transparent;
+  border-top: 17px solid red;
+}
+
+/***************************************
+ *             Contact                  *
+ ***************************************/
+.mgb-contact-form {
+  label {
+    font-weight: bold;
+  }
+
+  input[type='text'],
+  input[type='email'] {
+    width: 100%;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+  }
+
+  input:invalid:not(:focus) {
+    outline: 1px solid #f00;
+  }
+
+  textarea {
+    width: 100%;
+    height: 150px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+  }
+}
+
+.mgb-email-confirm-container {
+  text-align: center;
+  margin-top: 5%;
+  height: 55vh;
 }
 
 /***************************************
@@ -209,7 +321,11 @@ section:not(:last-child),
  ***************************************/
 .mgb-alternating {
   //.mgb-gradient(180deg);
-  background-image: radial-gradient(@mgb-gradient-3, @mgb-gradient-2 60%, @mgb-gradient-1 120%);
+  background-image: radial-gradient(
+    @mgb-gradient-3,
+    @mgb-gradient-2 60%,
+    @mgb-gradient-1 120%
+  );
   overflow: hidden;
 
   .mgb-alternating-media {

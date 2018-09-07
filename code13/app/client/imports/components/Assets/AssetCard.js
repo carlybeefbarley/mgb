@@ -138,26 +138,30 @@ const AssetCard = React.createClass({
         className={cx(classNames, 'animated fadeIn')}
       >
         {/* className here because Card.Content is functional and doesn't support no refs */}
-        <div className="content" ref="thumbnailCanvas">
+        <div className="content" style={{ padding: '0' }} ref="thumbnailCanvas">
           {viewOpts.showImg && <Thumbnail constrainHeight="155px" asset={asset} />}
         </div>
 
-        <Card.Content>
+        <Card.Content style={{ padding: '0.5em' }}>
           {viewOpts.showWorkstate && (
             <span style={{ float: 'right' }}>
-              <span onMouseUp={_preventOnMouseUpClickSteal}>
-                <UserLoves
-                  currUser={currUser}
-                  asset={asset}
+              {asset.heartedBy_count > 0 && (
+                <span onMouseUp={_preventOnMouseUpClickSteal}>
+                  <UserLoves
+                    currUser={currUser}
+                    asset={asset}
+                    size={viewOpts.showExtra ? null : 'small'}
+                    seeLovers={false}
+                  />
+                </span>
+              )}
+              {asset.workState !== 'unknown' && (
+                <WorkState
+                  workState={asset.workState}
                   size={viewOpts.showExtra ? null : 'small'}
-                  seeLovers={false}
+                  canEdit={false}
                 />
-              </span>
-              <WorkState
-                workState={asset.workState}
-                size={viewOpts.showExtra ? null : 'small'}
-                canEdit={false}
-              />
+              )}
             </span>
           )}
 
@@ -186,7 +190,19 @@ const AssetCard = React.createClass({
             </Popup>
           )}
 
-          {viewOpts.showExtra && <Card.Header title={shownAssetName} content={shownAssetName} />}
+          {viewOpts.showExtra && (
+            <Card.Header
+              style={{
+                fontSize: '1em',
+                width: '11em',
+                whiteSpace: 'nowrap',
+                overflow: 'hidden',
+                textOverflow: 'ellipsis',
+              }}
+              title={shownAssetName}
+              content={shownAssetName}
+            />
+          )}
 
           {viewOpts.showMeta && (
             <Card.Meta>

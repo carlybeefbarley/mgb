@@ -267,28 +267,30 @@
     </div>
   </section>
 
-
+  <!-- CONTACT -->
   <section id="contact">
-    <div class="ui text container">
-      <h1 class="ui center aligned icon header">
-        <span class="content">Sign Up Today!</span>
-      </h1>
-      <img class="ui large centered image" src="~/app/images/mascots/team.png" />
-      <div class="ui section divider"></div>
-
-      <div class="ui labeled button fluid" tabindex="0">
-        <a class="ui big primary button fluid" href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know more about classes with My Game Builder.">
+    <div class="ui text container ">
+      <h1 class="ui header">Contact Us</h1>
+      <form class="mgb-contact-form" action="https://enformed.io/g8yx672n" method="POST">
+        <label for="EMAIL">EMAIL</label><br>
+        <input name="email" type="email" required><br><br>
+        <label for="COMMENT">COMMENT</label><br>
+        <textarea name="comment" rows="4" cols="50" required>I would like to know more about classes with My Game Builder.</textarea><br>
+        <button type="submit" class="ui primary button">
           <i class="mail icon"></i>
-          Email
-        </a>
-        <div class="ui big primary fluid button inline" onclick="document.getElementById('phonenumber').innerText='('+'4'+(1+1)+(1+4)+')'+' '+' '+(2+1)+9+'0'+'-'+(3+1)+(3+2+1+2)+'3'+(11+5-6-3-2)">
-          <i class="phone icon"></i>
-          <span id="phonenumber">Phone</span>
-        </div>
+          Send
+        </button>
+
+        <!-- Enformed Setup -->
+        <input type="hidden" name="*redirect" value="localhost:3030/Bellevue/email-confirmation" />
+        <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
+        <input type="hidden" name="*honeypot" />
+        <input type="hidden" name="*reply" value="email" />
+      </form><br>
+      <div class="ui labeled button fluid " tabindex="0 ">
       </div>
     </div>
   </section>
-
 
   <!-- FOOTER -->
   <footer class="ui inverted vertical segment">

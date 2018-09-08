@@ -1,15 +1,20 @@
-@import "mixins";
+@import 'mixins';
 
 // Keep colors in sync with GetStarted.css .hero colors
-@mgb-gradient-1: #68256D;
-@mgb-gradient-2: #0070B0;
-@mgb-gradient-3: #0080FF;
+@mgb-gradient-1: #68256d;
+@mgb-gradient-2: #0070b0;
+@mgb-gradient-3: #0080ff;
 @mgb-gradient-fallback: mix(@mgb-gradient-1, @mgb-gradient-3);
 
 .mgb-gradient(@deg: 180deg) {
   // fallback
   background: @mgb-gradient-fallback;
-  background-image: linear-gradient(@deg, @mgb-gradient-1, @mgb-gradient-2 80%, @mgb-gradient-3);
+  background-image: linear-gradient(
+    @deg,
+    @mgb-gradient-1,
+    @mgb-gradient-2 80%,
+    @mgb-gradient-3
+  );
 }
 
 /***************************************
@@ -106,7 +111,7 @@ section:not(:last-child),
       font-size: 1.5rem;
       margin: 0;
       padding: 0 0.3em;
-      color: #FFF;
+      color: #fff;
       font-weight: 300;
     }
 
@@ -209,7 +214,11 @@ section:not(:last-child),
  ***************************************/
 .mgb-alternating {
   //.mgb-gradient(180deg);
-  background-image: radial-gradient(@mgb-gradient-3, @mgb-gradient-2 60%, @mgb-gradient-1 120%);
+  background-image: radial-gradient(
+    @mgb-gradient-3,
+    @mgb-gradient-2 60%,
+    @mgb-gradient-1 120%
+  );
   overflow: hidden;
 
   .mgb-alternating-media {
@@ -241,6 +250,30 @@ section:not(:last-child),
       right: 0;
     }
   }
+}
+
+/***************************************
+*                 Images               *
+***************************************/
+
+.mgb-profile-image {
+  border-radius: 9999999999999px;
+}
+
+.mgb-city-banner-container {
+  text-align: center;
+  height: 20vw;
+  overflow: hidden;
+  margin: 0vh 0 8vh 0;
+  border: #0004 5px solid;
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.mgb-city-banner {
+  width: 100%;
+  top: -25vh;
+  position: relative;
 }
 
 /***************************************

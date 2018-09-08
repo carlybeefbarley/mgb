@@ -76,7 +76,7 @@ section:not(:last-child),
   padding-top: 60px; // space for top fixed menu
 
   // allow particle interaction through hero
-  pointer-events: none;
+  // pointer-events: none;
   user-select: none;
 
   // restore pointer events where clicks are needed (particle container, game container)
@@ -440,4 +440,14 @@ footer {
   padding: 6vh 0 3vh !important;
   color: rgba(255, 255, 255, 0.5) !important;
   font-size: 0.9em !important;
+}
+
+/****************************************
+*               Misc Styles             *
+****************************************/
+.mgb-link {
+  color: black;
+  &:hover {
+    color: white;
+  }
 }

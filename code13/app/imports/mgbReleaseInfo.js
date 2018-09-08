@@ -15,6 +15,49 @@ export const olderHistoryPath = '/releaseHistory.json'
 const mgbReleaseInfo = {
   releases: [
     {
+      timestamp: 'Tuesday Aug 23 2018 09:00:00 GMT-0800 (PST)',
+
+      id: {
+        ver: '0.4.8',
+        state: 'Beta',
+        iteration: '5038',
+      },
+
+      releaseManagement: {
+        eng: 'Bouhm',
+      },
+
+      changes: [
+        {
+          type: 'improvement',
+          changeName: 'Editor Tabs',
+          changeSummary: 'More space for editors. Related assets for projects moved to the flex panel.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'ActorMap optional',
+          changeSummary: 'ActorMap is no longer hidden. Users can use ActorMap by enabling it in Settings.',
+          otherUrls: [],
+        },
+        {
+          type: 'improvement',
+          changeName: 'Asset Card UI & Simplified WorkStates',
+          changeSummary:
+            'Reduced and simplified workstates. Asset cards are less cluttered and properly deal with long asset names.',
+          otherUrls: [],
+        },
+        {
+          featureTag: 'bugfix',
+          type: 'bugfix',
+          changeName: 'ActorMap callDoBlit',
+          changeSummary:
+            'Fixed callDoBlit() bug for ActorMap games related to loading dropped items in a map.',
+          otherUrls: [],
+        },
+      ],
+    },
+    {
       timestamp: 'Tuesday July 10 2018 09:00:00 GMT-0800 (PST)',
 
       id: {

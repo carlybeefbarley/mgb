@@ -2,18 +2,33 @@ import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
 import { Icon, Popup } from 'semantic-ui-react'
-import './WorkState.css'
+//import './WorkState.css'
 import QLink from '/client/imports/routes/QLink'
 import { createContainer } from 'meteor/react-meteor-data'
 import { Users } from '/imports/schemas'
 import { showToast } from '/client/imports/modules'
 import { logActivity } from '/imports/schemas/activity'
 
-const UserLoveIcon = ({ size, onIconClick, currUserLoves }) => (
-  <Icon name={currUserLoves ? 'heart' : 'empty heart'} size={size} onClick={onIconClick} color="red" />
+const UserLoveIcon = ({ size, circular, onIconClick, currUserLoves }) => (
+  <Icon
+    circular={circular}
+    name={currUserLoves ? 'heart' : 'empty heart'}
+    size={!circular && size}
+    onClick={onIconClick}
+    color="red"
+  />
 )
 
-const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, currUserLoves, asset }) => (
+const UserLovesUI = ({
+  seeLovers,
+  userList,
+  size,
+  popupPosition,
+  circular,
+  onIconClick,
+  currUserLoves,
+  asset,
+}) => (
   <Popup
     on="hover"
     size="small"
@@ -21,8 +36,9 @@ const UserLovesUI = ({ seeLovers, userList, size, popupPosition, onIconClick, cu
     position={popupPosition}
     trigger={
       <span>
-        <small>{asset.heartedBy_count} </small>
+        {!circular && <small>{asset.heartedBy_count} </small>}
         <UserLoveIcon
+          circular={circular}
           currUserLoves={currUserLoves}
           size={size}
           onIconClick={!(asset.suIsBanned === true) && !asset.suFlagId ? onIconClick : null}

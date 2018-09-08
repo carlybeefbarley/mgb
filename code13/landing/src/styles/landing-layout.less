@@ -146,6 +146,113 @@ section:not(:last-child),
 }
 
 /***************************************
+ *               Pages                  *
+ ***************************************/
+
+.mgb-page {
+  .mgb-gradient();
+  position: relative;
+  padding-top: 60px; // space for top fixed menu
+}
+
+.mgb-header {
+  position: relative;
+  text-align: center;
+  margin: 1em 0 2em 0 !important;
+
+  .mgb-header-underline {
+    margin: 0 auto;
+    height: 1px;
+    width: 3em;
+    border-top: 2px solid white;
+  }
+}
+
+.mgb-centered {
+  margin: 0 auto;
+}
+
+.mgb-about-mgb {
+  margin: 0 auto;
+  max-width: 50%;
+  margin-bottom: 5em;
+}
+
+.mgb-about-content {
+  color: white;
+  font-size: 1.5em;
+}
+
+.mgb-faq-content {
+  color: white;
+  font-size: 1.5em;
+  margin-left: 1em;
+}
+
+.mgb-faq-pin {
+  position: absolute;
+  top: 46%;
+  left: 49%;
+
+  border-radius: 50%;
+  border: 8px solid red;
+  width: 8px;
+  height: 8px;
+}
+
+.mgb-faq-pin::after {
+  position: absolute;
+  content: '';
+  width: 0px;
+  height: 0px;
+  bottom: -28px;
+  left: -8px;
+  border: 8px solid transparent;
+  border-top: 17px solid red;
+}
+
+/***************************************
+ *             Contact                  *
+ ***************************************/
+.mgb-contact-form {
+  label {
+    font-weight: bold;
+  }
+
+  input[type='text'],
+  input[type='email'] {
+    width: 100%;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+  }
+
+  input:invalid:not(:focus) {
+    outline: 1px solid #f00;
+  }
+
+  textarea {
+    width: 100%;
+    height: 150px;
+    padding: 6px 10px;
+    box-sizing: border-box;
+    border: 2px solid #ccc;
+    border-radius: 4px;
+    background-color: #f8f8f8;
+    resize: none;
+  }
+}
+
+.mgb-email-confirm-container {
+  text-align: center;
+  margin-top: 5%;
+  height: 55vh;
+}
+
+/***************************************
  *            Piled Section            *
  ***************************************/
 .mgb-piled-container {
@@ -253,27 +360,64 @@ section:not(:last-child),
 }
 
 /***************************************
-*                 Images               *
+*                 Banner               *
 ***************************************/
-
-.mgb-profile-image {
-  border-radius: 9999999999999px;
-}
 
 .mgb-city-banner-container {
   text-align: center;
-  height: 20vw;
   overflow: hidden;
   margin: 0vh 0 8vh 0;
-  border: #0004 5px solid;
+  border: 5px solid rgba(0, 0, 0, 0.25);
   border-left: 0px;
   border-right: 0px;
 }
 
 .mgb-city-banner {
-  width: 100%;
-  top: -25vh;
+  height: 25vh;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg');
+  background-size: 100%;
+  background-position-y: 35%;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+}
+
+.mgb-banner-header {
   position: relative;
+  top: 50%;
+  font-size: 8rem;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+@media only screen and (max-width: @tabletBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: none;
+  }
+  .mgb-city-banner-container {
+    border: none;
+  }
+}
+
+@media only screen and (min-width: @tabletBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+@media only screen and (min-width: @computerBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+@media only screen and (min-width: @largeMonitorBreakpoint) {
+  .mgb-banner-header {
+    font-size: 8rem;
+    display: block;
+  }
 }
 
 /***************************************

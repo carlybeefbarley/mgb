@@ -1,29 +1,36 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { workStateNames, workStateIcons } from '/imports/Enums/workStates'
-import { Header, Icon, List, Popup } from 'semantic-ui-react'
-import './WorkState.css'
+import {
+  workStates,
+  workStateColors,
+  workStateIcons,
+  statusIcons,
+  assignmentStatuses,
+  statusTitles,
+} from '/imports/Enums/workStates'
+import { Header, Label, Icon, List, Popup } from 'semantic-ui-react'
+//import './WorkState.css'
 
 // Note that this is a Stateless function:
 //   See https://facebook.github.io/react/docs/reusable-components.html
 
-export const WorkStateIcon = ({ workState, size, onIconClick, labelStyle }) => (
+export const WorkStateIcon = ({ circular, workState, size, onIconClick, color, labelStyle }) => (
   <Icon
-    name={workStateIcons[workState]}
-    circular
+    circular={circular}
+    name={workStateIcons[workState] ? workStateIcons[workState] : workStateIcons['unknown']}
     style={labelStyle}
-    color="black"
-    size={size}
+    color={color}
+    size={!circular && size}
     onClick={onIconClick}
-    className={`mgb-workstate-${workState}`}
+    className={`workstate-icon mgb-workstate-${workState}`}
   />
 )
 
 const _hiddenWorkstateStyle = { opacity: 0.1 }
 export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   <div style={style}>
-    {_.map(workStateNames, (workState, idx) => (
+    {_.map(workStates, (workState, idx) => (
       <WorkState
         key={workState}
         workState={workState}
@@ -36,40 +43,118 @@ export const WorkStateMultiSelect = ({ style, hideMask, handleChangeMask }) => (
   </div>
 )
 
-const WorkState = ({ workState, canEdit, size, popupPosition, handleChange, labelStyle, onIconClick }) => (
-  <Popup
-    on="hover"
-    hoverable={canEdit} // So mouse-over popup keeps it visible for Edit for example
-    position={popupPosition}
-    trigger={
-      <span>
-        <WorkStateIcon size={size} workState={workState} labelStyle={labelStyle} onIconClick={onIconClick} />
-      </span>
-    }
-  >
-    <div>
-      <Header content="Quality level" />
-      <List selection>
-        {_.map(
-          workStateNames,
-          name =>
-            (canEdit || name == workState) && (
-              <List.Item
-                key={name}
-                active={name == workState}
-                onClick={e => {
-                  e.preventDefault()
-                  canEdit && handleChange && handleChange(name)
-                }}
-              >
-                <WorkStateIcon size="large" workState={name} />
-                <List.Content verticalAlign="middle">&nbsp;{name}</List.Content>
-              </List.Item>
-            ),
+const WorkState = ({
+  workState,
+  isAssignment,
+  canEdit,
+  size,
+  popupPosition,
+  handleChange,
+  labelStyle,
+  circular,
+  onIconClick,
+  iconOnly,
+  isTeacher,
+  handleWorkStateCancel,
+}) => (
+  <span>
+    {_.includes(workStates, workState) &&
+      (isAssignment ? (
+        <WorkStateStatus
+          size={size}
+          iconOnly={iconOnly}
+          isTeacher={isTeacher}
+          canEdit={canEdit}
+          workState={workState}
+          color={workStateColors[workState]}
+          handleWorkStateCancel={handleWorkStateCancel}
+        />
+      ) : (
+        <Popup
+          on="hover"
+          hoverable={!!canEdit} // So mouse-over popup keeps it visible for Edit for example
+          position={popupPosition}
+          trigger={
+            <span>
+              <WorkStateIcon
+                circular={circular}
+                color={workStateColors[workState]}
+                size={size}
+                workState={workState}
+                labelStyle={labelStyle}
+                onIconClick={onIconClick}
+              />
+            </span>
+          }
+        >
+          <div>
+            <Header content="Quality level" />
+            <List selection>
+              {_.map(
+                workStates,
+                name =>
+                  (canEdit || name == workState) && (
+                    <List.Item
+                      key={name}
+                      active={name == workState}
+                      onClick={e => {
+                        e.preventDefault()
+                        canEdit && handleChange && handleChange(name)
+                      }}
+                    >
+                      <WorkStateIcon color={workStateColors[name]} size="large" workState={name} />
+                      <List.Content verticalAlign="middle">&nbsp;{name}</List.Content>
+                    </List.Item>
+                  ),
+              )}
+            </List>
+          </div>
+        </Popup>
+      ))}
+  </span>
+)
+
+const WorkStateStatus = ({
+  workState,
+  labelStyle,
+  color,
+  iconOnly,
+  isTeacher,
+  canEdit,
+  handleWorkStateCancel,
+  size,
+}) => (
+  <span>
+    {iconOnly ? (
+      <Icon
+        circular
+        inverted
+        fitted
+        size="small"
+        title={statusTitles[assignmentStatuses[workState]]}
+        color={color}
+        name={statusIcons[assignmentStatuses[workState]]}
+      />
+    ) : (
+      <Label
+        className="workstate-label"
+        style={{ verticalAlign: 'middle', margin: '5px', ...labelStyle }}
+        color={color}
+        size={size ? size : 'large'}
+        title={statusTitles[assignmentStatuses[workState]]}
+      >
+        <Icon name={statusIcons[assignmentStatuses[workState]]} />
+        {assignmentStatuses[workState]}
+        {workState === 'broken' ? (
+          canEdit && <Icon title="Cancel" color="red" onClick={() => handleWorkStateCancel()} name="delete" />
+        ) : (
+          isTeacher && (
+            <Icon title="Cancel" color="red" onClick={() => handleWorkStateCancel()} name="delete" />
+          )
         )}
-      </List>
-    </div>
-  </Popup>
+      </Label>
+    )}
+  </span>
 )
 
 WorkState.propTypes = {

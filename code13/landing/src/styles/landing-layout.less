@@ -76,7 +76,7 @@ section:not(:last-child),
   padding-top: 60px; // space for top fixed menu
 
   // allow particle interaction through hero
-  pointer-events: none;
+  // pointer-events: none;
   user-select: none;
 
   // restore pointer events where clicks are needed (particle container, game container)
@@ -149,6 +149,12 @@ section:not(:last-child),
  *               Pages                  *
  ***************************************/
 
+.mgb-page {
+  .mgb-gradient();
+  position: relative;
+  padding-top: 60px; // space for top fixed menu
+}
+
 .mgb-header {
   position: relative;
   text-align: center;
@@ -185,7 +191,7 @@ section:not(:last-child),
 
 .mgb-faq-pin {
   position: absolute;
-  top: 50%;
+  top: 46%;
   left: 49%;
 
   border-radius: 50%;
@@ -238,6 +244,12 @@ section:not(:last-child),
     background-color: #f8f8f8;
     resize: none;
   }
+}
+
+.mgb-email-confirm-container {
+  text-align: center;
+  margin-top: 5%;
+  height: 55vh;
 }
 
 /***************************************
@@ -348,6 +360,67 @@ section:not(:last-child),
 }
 
 /***************************************
+*                 Banner               *
+***************************************/
+
+.mgb-city-banner-container {
+  text-align: center;
+  overflow: hidden;
+  margin: 0vh 0 8vh 0;
+  border: 5px solid rgba(0, 0, 0, 0.25);
+  border-left: 0px;
+  border-right: 0px;
+}
+
+.mgb-city-banner {
+  height: 25vh;
+  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg');
+  background-size: 100%;
+  background-position-y: 35%;
+  background-repeat: no-repeat;
+  background-clip: content-box;
+}
+
+.mgb-banner-header {
+  position: relative;
+  top: 50%;
+  font-size: 8rem;
+  color: white;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+}
+
+@media only screen and (max-width: @tabletBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: none;
+  }
+  .mgb-city-banner-container {
+    border: none;
+  }
+}
+
+@media only screen and (min-width: @tabletBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+@media only screen and (min-width: @computerBreakpoint) {
+  .mgb-banner-header {
+    font-size: 4rem;
+    display: block;
+  }
+}
+
+@media only screen and (min-width: @largeMonitorBreakpoint) {
+  .mgb-banner-header {
+    font-size: 8rem;
+    display: block;
+  }
+}
+
+/***************************************
  *           For Everyone              *
  ***************************************/
 .mgb-for-everyone-main {
@@ -367,4 +440,14 @@ footer {
   padding: 6vh 0 3vh !important;
   color: rgba(255, 255, 255, 0.5) !important;
   font-size: 0.9em !important;
+}
+
+/****************************************
+*               Misc Styles             *
+****************************************/
+.mgb-link {
+  color: black;
+  &:hover {
+    color: white;
+  }
 }

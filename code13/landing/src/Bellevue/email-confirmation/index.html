@@ -37,6 +37,7 @@
 <body>
 
   <!-- MENU -->
+
   <div class="mgb-main-menu ui inverted borderless top fixed menu" style="background: transparent;">
     <a class="item" href="{{ MGB_APP_URL }}">
       <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/01w.png" />
@@ -63,56 +64,18 @@
 
   <!-- PAGE -->
   <section class="mgb-page">
-    <div class="ui container mgb-centered">
-      <h1 class="ui inverted header mgb-header">
-        ABOUT US
-        <div class="mgb-header-underline">
+    <div class="mgb-email-confirm-container">
+      <div class="ui container mgb-centered">
+        <div class="ui positive message">
+          <div class="content">
+            <h1 class="ui header">Thank you for showing interest in <span style="color:#49a4ff ">MyGameBuilder</span>!</h1>
+            <br>
+            <h3 class="ui header">Your email has been submitted successfully. We will get back to you shortly.</h3>
+          </div>
         </div>
-      </h1>
-      <div class="mgb-about-mgb">
-
-        <h2 class=" ui header inverted mgb-header ">With <span style="color:#49a4ff ">MyGameBuilder</span> you can learn
-          to code with the help of our tutorials and mentors and start building games all within the browser.
-        </h2>
-      </div>
-
-      <div class="ui middle aligned equal width stackable grid ">
-        <div class="eight wide computer six wide tablet column ">
-          <h3 class="ui header inverted">MYGAMEBUILDER</h3>
-          <p class="mgb-about-content ">MyGameBuilder (2007) was originally a flash-based web application that allowed users
-            to easily build games all within the browser. It had a sizable, active community of users that strove to become
-            better game builders. The new MyGameBuilder goes beyond and focuses on creating a learning environment for coding,
-            while improving on the engagement of the community.
-          </p>
-        </div>
-        <div class="eight wide computer ten wide tablet column ">
-          <img class="large ui centered image " src="~/app/images/mascots/team.png">
-        </div>
-      </div>
-
-      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right ">
-        <div class="eight wide computer ten wide tablet column ">
-          <img class="large ui centered image " src="https://semantic-ui.com/images/wireframe/image.png ">
-        </div>
-        <div class="eight wide computer six wide tablet column ">
-          <h3 class="ui header inverted">THE TEAM</h3>
-          <p class="mgb-about-content ">Our team is made up of experienced developers with a passion for learning and teaching.
-            We believe the best way to learn is by doing, and MyGameBuilder is the perfect platform for doers. We want to
-            share the joy of coding through engaging activities and stimulating exercises.
-          </p>
-        </div>
-      </div>
-
-      <div class="ui middle aligned equal width stackable grid ">
-        <div class="eight wide computer six wide tablet column ">
-          <h3 class="ui header inverted">THE FOUNDER</h3>
-          <p class="mgb-about-content ">David Golds is the founder of MyGameBuilder. The original MyGameBuilder started as
-            a hobby project and grew to become much more through the experince David gained from senior positions at Microsoft
-            and VMWare. </p>
-        </div>
-        <div class="eight wide computer ten wide tablet column ">
-          <img class="large  centered  ui image " src="https://semantic-ui.com/images/wireframe/image.png ">
-        </div>
+        <a class="ui primary button" href="{{ MGB_LANDING_BASE_URL }}">
+          Return
+        </a>
       </div>
     </div>
   </section>

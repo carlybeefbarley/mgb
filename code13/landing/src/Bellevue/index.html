@@ -38,7 +38,7 @@
 
   <!-- MENU -->
   <div class="mgb-main-menu ui inverted borderless top fixed menu">
-    <a class="item" href="{{ MGB_APP_URL }}">
+    <a class="item" href="/Bellevue">
       <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/01w.png" />
     </a>
     <a class="item" href="/Bellevue/programs">
@@ -75,11 +75,15 @@
     </div> -->
 
     <div class="mgb-city-banner-container mgb-city-banner">
+<<<<<<< HEAD
       <!-- <div class="mgb-city-banner"></div> -->
       <!-- <img class="mgb-city-banner" src="https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg" alt="" /> -->
       <div class="mgb-banner-header">My Game Builder
         <br>
         <br>
+=======
+      <div class="mgb-banner-header">My Game Builder<br><br>
+>>>>>>> 051c93af75cf44eb19621df825c6809f1bb38368
         <h2>Bellevue</h2>
       </div>
 
@@ -160,7 +164,22 @@
   <!-- TRIAL FORM -->
   <section class="mgb-videos">
     <div class="ui container">
+      <div class="mgb-signup-form">
 
+        <h1 class="ui inverted header huge">
+          Get a free trial today
+          <span class="sub header">
+            Your first month is <em>100%</em> free. Decide that you love our courses later, get started <em>today!</em>
+          </span>
+        </h1>
+        <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
+
+          <div class="field">
+            <label style="text-align: left;">Full Name</label>
+            <input name="firstName" type="text" placeholder="Parent's First Name">
+          </div>
+
+<<<<<<< HEAD
       <h1 class="ui inverted header huge">
         Get a free trial today
         <span class="sub header">
@@ -179,29 +198,30 @@
             <div class="field">
               <input name="lastName" type="text" placeholder="Parent's Last Name">
             </div>
+=======
+          <div class="field">
+            <input name="lastName" type="text" placeholder="Parent's Last Name">
+>>>>>>> 051c93af75cf44eb19621df825c6809f1bb38368
           </div>
-        </div>
-        <div class="field">
-          <label style="text-align: left;">Contact Info</label>
-          <div class="two fields">
-            <div class="field twelve wide">
-              <input name="email" type="email" placeholder="Email Address">
-            </div>
-            <div class="field four wide">
-              <input name="phone" type="text" placeholder="Phone #">
-            </div>
+
+          <div class="field">
+            <label style="text-align: left;">Contact Info</label>
+            <input name="email" type="email" placeholder="Email Address">
           </div>
-        </div>
-        <div class="field">
-          <label style="text-align: left;">Message</label>
-          <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here...">I would like to get started with My Game Builder.</textarea>
-        </div>
+          <div class="field">
+            <input name="phone" type="text" placeholder="Phone #">
+          </div>
+          <div class="field">
+            <label style="text-align: left;">Message</label>
+            <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here...">I would like to get started with My Game Builder.</textarea>
+          </div>
 
-        <div class="ui divider"></div>
+          <div class="ui divider"></div>
 
-        <input type="submit" value="Sign Me Up!" tabindex="0" class="ui button primary huge">
-        <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
-      </form>
+          <input type="submit" value="Sign Me Up!" tabindex="0" class="ui button primary huge">
+          <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
+        </form>
+      </div>
     </div>
   </section>
 

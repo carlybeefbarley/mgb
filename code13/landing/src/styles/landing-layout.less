@@ -1,4 +1,4 @@
-@import 'mixins';
+@import "mixins";
 
 // Keep colors in sync with GetStarted.css .hero colors
 @mgb-gradient-1: #68256d;
@@ -202,7 +202,7 @@ section:not(:last-child),
 
 .mgb-faq-pin::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 0px;
   height: 0px;
   bottom: -28px;
@@ -219,8 +219,8 @@ section:not(:last-child),
     font-weight: bold;
   }
 
-  input[type='text'],
-  input[type='email'] {
+  input[type="text"],
+  input[type="email"] {
     width: 100%;
     padding: 6px 10px;
     box-sizing: border-box;
@@ -375,16 +375,17 @@ section:not(:last-child),
 .mgb-city-banner {
   position: relative;
   height: 40vh;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg');
-  background-size: 100%;
-  background-position-y: 35%;
+  background-image: url(/img/fake-carly.jpg);
+  background-size: 80%;
+  min-width: 100%
+  // background-position-y: 35%;
   background-repeat: no-repeat;
   background-clip: content-box;
 }
 
 .mgb-city-banner:after {
   position: absolute;
-  content: '';
+  content: "";
   display: block;
   top: 0;
   left: 0;

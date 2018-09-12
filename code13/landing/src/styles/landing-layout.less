@@ -373,7 +373,8 @@ section:not(:last-child),
 }
 
 .mgb-city-banner {
-  height: 25vh;
+  position: relative;
+  height: 40vh;
   background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg');
   background-size: 100%;
   background-position-y: 35%;
@@ -381,12 +382,24 @@ section:not(:last-child),
   background-clip: content-box;
 }
 
+.mgb-city-banner:after {
+  position: absolute;
+  content: '';
+  display: block;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(255, 255, 255, 0.2);
+}
+
 .mgb-banner-header {
   position: relative;
-  top: 50%;
+  top: 25%;
   font-size: 8rem;
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);
+  z-index: 9;
 }
 
 @media only screen and (max-width: @tabletBreakpoint) {

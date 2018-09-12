@@ -375,27 +375,27 @@ section:not(:last-child),
 .mgb-city-banner {
   position: relative;
   height: 40vh;
-  background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/93/Bellevue_at_Dawn.jpg');
+  background-image: url('/img/banner-stock-bellevue-cropped.jpg');
   background-size: 100%;
   background-position-y: 35%;
   background-repeat: no-repeat;
   background-clip: content-box;
 }
 
-.mgb-city-banner:after {
-  position: absolute;
-  content: '';
-  display: block;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(255, 255, 255, 0.2);
-}
+// .mgb-city-banner:after {
+//   position: absolute;
+//   content: '';
+//   display: block;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background: rgba(255, 255, 255, 0.2);
+// }
 
 .mgb-banner-header {
   position: relative;
-  top: 25%;
+  top: calc(50% - 4rem);
   font-size: 8rem;
   color: white;
   text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.5);

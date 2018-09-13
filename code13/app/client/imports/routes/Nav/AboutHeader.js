@@ -10,19 +10,10 @@ const AboutHeader = () => (
       MyGameBuilder is now in public BETA
       <br />
       <Header.Subheader>
-        Actively developed by <UserLink u="dgolds" />
-        {', '}
-        <UserLink u="stauzs" />
-        {', '}
-        <UserLink u="guntis" />
-        {', '}
+        Actively developed by
         <UserLink u="Bouhm" />
-        {', '}
-        <UserLink u="ccoms" />
-        {', '}
-        <UserLink u="leah" />
         {' and '}
-        <UserLink u="levithomason" />
+        <UserLink u="ccoms" />
       </Header.Subheader>
     </Header>
     <p>

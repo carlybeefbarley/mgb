@@ -1,4 +1,4 @@
-@import "mixins";
+@import 'mixins';
 
 // Keep colors in sync with GetStarted.css .hero colors
 @mgb-gradient-1: #68256d;
@@ -47,11 +47,6 @@ section:not(:last-child),
 /***************************************
  *                Menu                 *
  ***************************************/
-.mgb-centered-logo {
-  height: 5em;
-  background-color: black;
-}
-
 .mgb-main-menu {
   // allow particle interaction through the menu
   // restore pointer events for things inside menu items
@@ -63,13 +58,13 @@ section:not(:last-child),
   // Heads up!
   // Keep in sync with NavPanel.js const logoImageStyle
   // !important to override the theme, similar to inline styles in NavPanel.js
-  // .mgb-menu-logo {
-  //   // display: block !important;
-  //   // match height of avatar image, allow width to fit
-  //   width: auto !important;
-  //   height: 5em !important;
-  //   filter: brightness(1.7) !important;
-  // }
+  .mgb-menu-logo {
+    display: block !important;
+    // match height of avatar image, allow width to fit
+    width: auto !important;
+    height: 2em !important;
+    filter: brightness(1.7) !important;
+  }
 }
 
 /***************************************
@@ -78,7 +73,7 @@ section:not(:last-child),
 .mgb-hero {
   .mgb-gradient();
   position: relative;
-  // padding-top: 60px; // space for top fixed menu
+  padding-top: 47px; // space for top fixed menu
 
   // allow particle interaction through hero
   // pointer-events: none;
@@ -151,7 +146,46 @@ section:not(:last-child),
 }
 
 /***************************************
- *               Pages                  *
+ *          Front Page Info             *
+ ***************************************/
+.mgb-bellevue-main {
+  min-height: 100vh;
+
+  .mgb-gradient();
+  position: relative;
+  padding-top: 47px; // space for top fixed menu
+}
+
+.mgb-info-container {
+  display: flex !important;
+}
+
+.mgb-info-icon {
+}
+
+.mgb-info-content {
+  padding: 40px 20px 10px;
+  flex: 1;
+  margin: 0 1.5em 0 1.5em !important;
+  vertical-align: top;
+  text-align: center;
+}
+
+@media screen and (max-width: 700px) {
+  .mgb-info-container {
+    flex-basis: 100%;
+    flex-flow: column;
+    align-items: center;
+  }
+
+  .mgb-info-content {
+    width: 85%;
+    margin: 1.5em !important;
+  }
+}
+
+/***************************************
+ *               Pages                *
  ***************************************/
 
 .mgb-page {
@@ -177,9 +211,14 @@ section:not(:last-child),
   margin: 0 auto;
 }
 
-.mgb-about-mgb {
-  margin: 0 auto;
-  max-width: 50%;
+.programs {
+  min-height: 61vh;
+}
+
+.mgb-about-blurb {
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.35);
+  padding: 2px;
   margin-bottom: 5em;
 }
 
@@ -207,7 +246,7 @@ section:not(:last-child),
 
 .mgb-faq-pin::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 0px;
   height: 0px;
   bottom: -28px;
@@ -219,14 +258,31 @@ section:not(:last-child),
 /***************************************
  *             Contact                  *
  ***************************************/
+.mgb-contact-us {
+  margin: 0 10% 0 10% !important;
+}
+
+.mgb-contact-icons {
+  display: flex !important;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+  height: 90%;
+  margin-top: 2em;
+
+  .mgb-contact-icon {
+    flex: 1;
+    margin: 1em;
+  }
+}
+
 .mgb-contact-form {
   label {
     font-weight: bold;
   }
 
-  input[type="text"],
-  input[type="email"] {
-    width: 100%;
+  input[type='text'],
+  input[type='email'] {
     padding: 6px 10px;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -240,7 +296,6 @@ section:not(:last-child),
   }
 
   textarea {
-    width: 100%;
     height: 150px;
     padding: 6px 10px;
     box-sizing: border-box;
@@ -368,29 +423,29 @@ section:not(:last-child),
 *                 Banner               *
 ***************************************/
 
-.mgb-city-banner-container {
+.mgb-bellevue-banner-container {
   text-align: center;
   overflow: hidden;
   margin: 0vh 0 8vh 0;
-  border: 5px solid rgba(0, 0, 0, 0.25);
+  border: 5px solid rgba(0, 0, 0, 0.3);
   border-left: 0px;
   border-right: 0px;
 }
 
-.mgb-city-banner {
+.mgb-bellevue-banner {
   position: relative;
-  height: 80vh;
+  height: 50vh;
   background-image: url(/img/fake-carly.jpg);
   background-size: 100%;
-  min-width: 100%;
-  // background-position-y: 35%;
+  // min-width: 100%;
+  background-position-y: 25%;
   background-repeat: no-repeat;
   background-clip: content-box;
 }
 
-.mgb-city-banner:after {
+.mgb-bellevue-banner:after {
   position: absolute;
-  content: "";
+  content: '';
   display: block;
   top: 0;
   left: 0;
@@ -476,7 +531,6 @@ footer {
 }
 
 .mgb-signup-form {
-  width: 600px;
   margin-left: auto;
   margin-right: auto;
 }

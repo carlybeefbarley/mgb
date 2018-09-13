@@ -118,45 +118,83 @@
   </section>
 
   <!-- BULLETS -->
-  <section class="mgb-videos">
-    <div class="ui equal width stackable center aligned divided grid ">
-      <div class="column">
-        <a class="mgb-link" rel="noopener noreferrer" target="_blank" href="https://www.google.com/maps/place/My+Game+Builder/@47.6068715,-122.1933676,14z/data=!4m5!3m4!1s0x0:0xfaef143673494fc2!8m2!3d47.6141769!4d-122.2010494">
-          <h3 class="ui icon inverted header">
-            <i class="map icon"></i>
-            <span class="content">Map</span>
-          </h3>
-          <br>
-          <div class="ui tiny inverted statistic">
-            <div class="value">Get Directions</div>
-          </div>
-        </a>
-      </div>
+  <section class="mgb-videos" id="contact">
+    <div class="mgb-contact-us ui two column stackable center aligned grid ">
+      <div class="column eight wide">
+        <div class="mgb-signup-form">
+          <h1 class="ui inverted header huge">
+            Contact Us
+          </h1>
+          <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
+            <div class="field">
+              <label style="text-align: left;">Full Name</label>
+              <div class="two fields">
+                <div class="field">
+                  <input name="firstName" type="text" placeholder="Parent's First Name" required>
+                </div>
+                <div class="field">
+                  <input name="lastName" type="text" placeholder="Parent's Last Name" required>
+                </div>
+              </div>
 
-      <div class="column">
-        <a class="mgb-link" href="tel:425-390-4835">
-          <h3 class="ui icon inverted header">
-            <i class="phone icon"></i>
-            <span class="content">Call</span>
-          </h3>
-          <br>
-          <div class="ui tiny inverted statistic">
-            <div class="value">(425) 390-4835</div>
-          </div>
-        </a>
-      </div>
+              <div class="field">
+                <label style="text-align: left;">Contact Info</label>
+                <input name="email" type="email" placeholder="Email Address" required>
+              </div>
+              <div class="field">
+                <input name="phone" type="text" placeholder="Phone # (optional)">
+              </div>
+              <div class="field">
+                <label style="text-align: left;">Message</label>
+                <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here..."
+                  required>I would like to know more about classes with My Game Builder.</textarea>
+              </div>
+              <br>
+              <button type="submit" class="ui primary large button">
+                <i class="mail icon"></i>
+                Send
+              </button>
+              <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
 
-      <div class="column">
-        <a href="/Bellevue/#contact" class="mgb-link">
-          <h3 class="ui icon inverted header">
-            <i class="envelope icon"></i>
-            <span class="content">Email</span>
-          </h3>
-          <br>
-          <div class="ui tiny inverted statistic">
-            <div class="value">Contact via Email</div>
-        </a>
+              <!-- Enformed Setup -->
+              <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
+              <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
+              <input type="hidden" name="*honeypot" />
+              <input type="hidden" name="*reply" value="email" />
+          </form>
+        </div>
       </div>
+      <div class="column eight wide">
+        <div class="mgb-contact-icons">
+          <div class="mgb-contact-icon">
+            <a class="mgb-link" rel="noopener noreferrer" target="_blank" href="https://www.google.com/maps/place/My+Game+Builder/@47.6068715,-122.1933676,14z/data=!4m5!3m4!1s0x0:0xfaef143673494fc2!8m2!3d47.6141769!4d-122.2010494">
+              <h3 class="ui icon huge inverted header">
+                <i class="map icon"></i>
+                <span class="content">Map</span>
+              </h3>
+              <br>
+
+              <div class="ui tiny inverted statistic">
+                <div style="color: lightgray" class="value">Get Directions</div>
+              </div>
+            </a>
+
+          </div>
+          <div class="mgb-contact-icon">
+            <a class="mgb-link" href="tel:425-390-4835">
+              <h3 class="ui icon huge inverted header">
+                <i class="phone icon"></i>
+                <span class="content">Call</span>
+              </h3>
+              <br>
+              <div class="ui tiny inverted statistic">
+                <div style="color: lightgray" class="value">(425) 390-4835</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
     </div>
   </section>
 
@@ -170,7 +208,8 @@
             Grow your
             <em>real</em> skills tree
             <span class="sub header">
-              Learn all the skills you need to make and sell real games. Gain coding, design, team and business skills
+              Learn all the skills you need to make and sell real games. Gain coding, design, team and
+              business skills
               through real experiences
               with others.
             </span>
@@ -261,7 +300,8 @@
           <h2 class="ui inverted header">
             Join our online community
             <span class="sub header">
-              Join our public community of 150,000 Game Builders. Earn skill badges as you progress from beginner to
+              Join our public community of 150,000 Game Builders. Earn skill badges as you progress from
+              beginner to
               guru and continue
               learning even after class.
             </span>
@@ -278,38 +318,6 @@
     </div>
   </section>
 
-  <!-- CONTACT -->
-  <!-- <section id="contact">
-
-    <div class="ui text container ">
-      <h1 class="ui header">Contact Us</h1>
-      <form class="mgb-contact-form" action="https://enformed.io/g8yx672n" method="POST">
-        <label for="EMAIL">EMAIL</label>
-        <br>
-        <input name="email" type="email" required>
-        <br>
-        <br>
-        <label for="COMMENT">COMMENT</label>
-        <br>
-        <textarea name="comment" rows="4" cols="50" required>I would like to know more about classes with My Game Builder.</textarea>
-        <br>
-        <button type="submit" class="ui primary button">
-          <i class="mail icon"></i>
-          Send
-        </button> -->
-
-  <!-- Enformed Setup -->
-  <!-- <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
-        <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
-        <input type="hidden" name="*honeypot" />
-        <input type="hidden" name="*reply" value="email" />
-      </form>
-      <br>
-      <div class="ui labeled button fluid " tabindex="0 ">
-      </div>
-    </div>
-  </section> -->
-
   <!-- FOOTER -->
   <footer class="ui inverted vertical segment">
     <div class="ui container">
@@ -319,7 +327,8 @@
             Gain Skills
           </h4>
           <p>
-            Learn real world skills like Javascript and software design with guidance from our team. Learn by making,
+            Learn real world skills like Javascript and software design with guidance from our team. Learn
+            by making,
             learn with professionals,
             learn to build real games.
           </p>
@@ -347,7 +356,6 @@
         </div>
       </div>
 
-
       <div class="ui equal width stackable grid">
         <div class="eight wide column">
           Copyright ©2018 MyCodeBuilder Inc. All Rights Reserved.
@@ -356,7 +364,8 @@
           <div class="ui equal width grid">
             <div class="column">
               <div class="ui small inverted horizontal divided link list">
-                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms and
+                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms
+                  and
                   Conditions
                 </a>
                 <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank" rel="noopener noreferrer">Privacy

@@ -1,4 +1,4 @@
-@import "mixins";
+@import 'mixins';
 
 // Keep colors in sync with GetStarted.css .hero colors
 @mgb-gradient-1: #68256d;
@@ -47,11 +47,6 @@ section:not(:last-child),
 /***************************************
  *                Menu                 *
  ***************************************/
-.mgb-centered-logo {
-  height: 5em;
-  background-color: black;
-}
-
 .mgb-main-menu {
   // allow particle interaction through the menu
   // restore pointer events for things inside menu items
@@ -63,13 +58,13 @@ section:not(:last-child),
   // Heads up!
   // Keep in sync with NavPanel.js const logoImageStyle
   // !important to override the theme, similar to inline styles in NavPanel.js
-  // .mgb-menu-logo {
-  //   // display: block !important;
-  //   // match height of avatar image, allow width to fit
-  //   width: auto !important;
-  //   height: 5em !important;
-  //   filter: brightness(1.7) !important;
-  // }
+  .mgb-menu-logo {
+    display: block !important;
+    // match height of avatar image, allow width to fit
+    width: auto !important;
+    height: 2em !important;
+    filter: brightness(1.7) !important;
+  }
 }
 
 /***************************************
@@ -78,7 +73,7 @@ section:not(:last-child),
 .mgb-hero {
   .mgb-gradient();
   position: relative;
-  // padding-top: 60px; // space for top fixed menu
+  padding-top: 47px; // space for top fixed menu
 
   // allow particle interaction through hero
   // pointer-events: none;
@@ -207,7 +202,7 @@ section:not(:last-child),
 
 .mgb-faq-pin::after {
   position: absolute;
-  content: "";
+  content: '';
   width: 0px;
   height: 0px;
   bottom: -28px;
@@ -224,8 +219,8 @@ section:not(:last-child),
     font-weight: bold;
   }
 
-  input[type="text"],
-  input[type="email"] {
+  input[type='text'],
+  input[type='email'] {
     width: 100%;
     padding: 6px 10px;
     box-sizing: border-box;
@@ -379,18 +374,18 @@ section:not(:last-child),
 
 .mgb-city-banner {
   position: relative;
-  height: 80vh;
+  height: 55vh;
   background-image: url(/img/fake-carly.jpg);
   background-size: 100%;
-  min-width: 100%;
-  // background-position-y: 35%;
+  // min-width: 100%;
+  background-position-y: 25%;
   background-repeat: no-repeat;
   background-clip: content-box;
 }
 
 .mgb-city-banner:after {
   position: absolute;
-  content: "";
+  content: '';
   display: block;
   top: 0;
   left: 0;

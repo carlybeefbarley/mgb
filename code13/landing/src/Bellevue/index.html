@@ -31,67 +31,81 @@
   <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
   <meta name="twitter:image" content="~/app/images/mascots/team-twitter-card.png">
 
+
+
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+  <!-- jQuery library -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+  <!-- Latest compiled JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+
   <title>MGB - Bellevue</title>
+
 </head>
 
 <body>
 
-  <!-- MENU -->
-  <div>
-    <div class="mgb-centered-logo ui mgb-menu-logo">
-      <a class="item" href="/Bellevue">
-        <img class="mgb-menu-logo ui medium centered image" src="~/app/images/logos/mgb/medium/01w.png" />
-      </a>
-    </div>
+  <!-- MENU & HERO -->
 
-
-    <div class="mgb-main-menu ui inverted borderless menu">
-      <a class="item" href="/Bellevue/programs">
-        <h4>Programs</h4>
-      </a>
-      <a class="item" href="/Bellevue/about">
-        <h4>About Us</h4>
-      </a>
-      <a class="item" href="/Bellevue/faq">
-        <h4>FAQs</h4>
-      </a>
-      <a class="item" href="/Bellevue/#contact">
-        <h4>Contact</h4>
-      </a>
-
-      <div class="right menu">
-        <a class="item" href="{{ MGB_APP_URL }}bellevue">
-          <button class="ui small primary button">Visit</button>
-        </a>
+  <section class="mgb-hero">
+    <div class="mgb-city-banner-container mgb-city-banner">
+      <div class="navbar navbar-inverse navbar-fixed-top opaque-navbar mgb-main-menu ui inverted borderless menu">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navMain">
+              <span class="glyphicon glyphicon-chevron-right" style="color:white;"></span>
+            </button>
+            <a class="navbar-brand item menu-style" href="/Bellevue">
+              <img class="mgb-menu-logo ui medium centered image" src="~/app/images/logos/mgb/medium/01w.png" />
+            </a>
+          </div>
+          <div class="collapse navbar-collapse right menu" id="navMain">
+            <ul class="nav navbar-nav pull-right">
+              <li>
+                <a class="item" href="/Bellevue/programs">
+                  Programs
+                </a>
+              </li>
+              <li>
+                <a class="item" href="/Bellevue/about">
+                  About Us
+                </a>
+              </li>
+              <li>
+                <a class="item" href="/Bellevue/faq">
+                  FAQs
+                </a>
+              </li>
+              <li>
+                <a class="item" href="/Bellevue/#contact">
+                  Contact
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- HERO -->
-  <section class="mgb-hero">
-    <!-- <div id="particles-container"></div> -->
 
-    <!-- <div class="mgb-hero-caption">
-      <h1 class="ui inverted header">
-        Learn to build games in Bellevue
-      </h1>
-      <p class="mgb-lead">
-        Make and play games together, classes starting soon!
-      </p>
-    </div> -->
 
-    <div class="mgb-city-banner-container mgb-city-banner">
 
-      <!-- <div class="mgb-city-banner"></div> -->
-      <!-- <img class="mgb-city-banner" src="/img/fake-carly.jpg" alt="" /> -->
 
-      <div class="mgb-banner-header">My Game Builder
+
+
+
+    <section>
+      <div class="container mgb-banner-header">My Game Builder
         <br>
         <br>
         <h2>Bellevue</h2>
       </div>
+    </section>
 
-    </div>
 
 
 
@@ -431,6 +445,16 @@
 
   <script src="{{ MGB_LANDING_BASE_URL }}js/main.js"></script>
   <script src="//cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+
+  <script>
+    $(window).scroll(function () {
+      if ($(this).scrollTop() > 50)  /*height in pixels when the navbar becomes non opaque*/ {
+        $('.opaque-navbar').addClass('opaque');
+      } else {
+        $('.opaque-navbar').removeClass('opaque');
+      }
+    });
+  </script>
 </body>
 
 </html>

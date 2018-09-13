@@ -60,6 +60,11 @@ section:not(:last-child),
     pointer-events: all;
   }
 
+  .menu-style {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+
   // Heads up!
   // Keep in sync with NavPanel.js const logoImageStyle
   // !important to override the theme, similar to inline styles in NavPanel.js
@@ -388,16 +393,16 @@ section:not(:last-child),
   background-clip: content-box;
 }
 
-.mgb-city-banner:after {
-  position: absolute;
-  content: "";
-  display: block;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.2);
-}
+// .mgb-city-banner:after {
+//   position: absolute;
+//   content: "";
+//   display: block;
+//   top: 0;
+//   left: 0;
+//   right: 0;
+//   bottom: 0;
+//   background: rgba(0, 0, 0, 0.2);
+// }
 
 .mgb-banner-header {
   position: relative;
@@ -413,10 +418,10 @@ section:not(:last-child),
     font-size: 4rem;
     display: none;
   }
-  .mgb-city-banner-container {
-    display: none;
-    border: none;
-  }
+  // .mgb-city-banner-container {
+  //   display: none;
+  //   border: none;
+  // }
   .mgb-city-banner {
     display: none;
   }
@@ -484,4 +489,41 @@ footer {
   .mgb-signup-form {
     width: auto;
   }
+}
+
+.banner .row {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/***********************************************************************
+*  OPAQUE NAVBAR SECTION
+***********************************************************************/
+.opaque-navbar {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 60px;
+  border-bottom: 0px;
+  transition: background-color 0.5s ease 0s;
+}
+
+.opaque-navbar.opaque {
+  background-color: black;
+  height: 60px;
+  transition: background-color 0.5s ease 0s;
+}
+
+ul.dropdown-menu {
+  background-color: black;
+}
+
+@media (max-width: 992px) {
+  .opaque-navbar {
+    background-color: black;
+    height: 60px;
+    transition: background-color 0.5s ease 0s;
+  }
+}
+
+li {
+  font-size: 2.1em;
 }

@@ -47,6 +47,11 @@ section:not(:last-child),
 /***************************************
  *                Menu                 *
  ***************************************/
+.mgb-centered-logo {
+  height: 5em;
+  background-color: black;
+}
+
 .mgb-main-menu {
   // allow particle interaction through the menu
   // restore pointer events for things inside menu items
@@ -58,13 +63,13 @@ section:not(:last-child),
   // Heads up!
   // Keep in sync with NavPanel.js const logoImageStyle
   // !important to override the theme, similar to inline styles in NavPanel.js
-  .mgb-menu-logo {
-    display: block !important;
-    // match height of avatar image, allow width to fit
-    width: auto !important;
-    height: 2em !important;
-    filter: brightness(1.7) !important;
-  }
+  // .mgb-menu-logo {
+  //   // display: block !important;
+  //   // match height of avatar image, allow width to fit
+  //   width: auto !important;
+  //   height: 5em !important;
+  //   filter: brightness(1.7) !important;
+  // }
 }
 
 /***************************************
@@ -73,7 +78,7 @@ section:not(:last-child),
 .mgb-hero {
   .mgb-gradient();
   position: relative;
-  padding-top: 60px; // space for top fixed menu
+  // padding-top: 60px; // space for top fixed menu
 
   // allow particle interaction through hero
   // pointer-events: none;
@@ -374,10 +379,10 @@ section:not(:last-child),
 
 .mgb-city-banner {
   position: relative;
-  height: 40vh;
+  height: 80vh;
   background-image: url(/img/fake-carly.jpg);
-  background-size: 80%;
-  min-width: 100%
+  background-size: 100%;
+  min-width: 100%;
   // background-position-y: 35%;
   background-repeat: no-repeat;
   background-clip: content-box;
@@ -391,7 +396,7 @@ section:not(:last-child),
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.2);
+  background: rgba(0, 0, 0, 0.2);
 }
 
 .mgb-banner-header {

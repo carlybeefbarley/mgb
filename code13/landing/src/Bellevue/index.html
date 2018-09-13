@@ -160,60 +160,47 @@
   </section>
 
   <!-- TRIAL FORM -->
-  <section class="mgb-videos">
+  <section class="mgb-videos" id="contact">
     <div class="ui container">
       <div class="mgb-signup-form">
 
         <h1 class="ui inverted header huge">
           Get a free trial today
           <span class="sub header">
-            Your first month is <em>100%</em> free. Decide that you love our courses later, get started <em>today!</em>
+            Your first month is
+            <em>100%</em> free. Decide that you love our courses later, get started
+            <em>today!</em>
           </span>
         </h1>
         <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
-
           <div class="field">
             <label style="text-align: left;">Full Name</label>
-            <input name="firstName" type="text" placeholder="Parent's First Name">
-          </div>
+            <div class="two fields">
+              <div class="field">
+                <input name="firstName" type="text" placeholder="Parent's First Name">
+              </div>
+              <div class="field">
+                <input name="lastName" type="text" placeholder="Parent's Last Name">
+              </div>
+            </div>
 
-          <h1 class="ui inverted header huge">
-            Get a free trial today
-            <span class="sub header">
-              Your first month is
-              <em>100%</em> free. Decide that you love our courses later, get started
-              <em>today!</em>
-            </span>
-          </h1>
-          <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
             <div class="field">
-              <label style="text-align: left;">Full Name</label>
-              <div class="two fields">
-                <div class="field">
-                  <input name="firstName" type="text" placeholder="Parent's First Name">
-                </div>
-                <div class="field">
-                  <input name="lastName" type="text" placeholder="Parent's Last Name">
-                </div>
-              </div>
+              <label style="text-align: left;">Contact Info</label>
+              <input name="email" type="email" placeholder="Email Address">
+            </div>
+            <div class="field">
+              <input name="phone" type="text" placeholder="Phone #">
+            </div>
+            <div class="field">
+              <label style="text-align: left;">Message</label>
+              <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here...">I would like to get started with My Game Builder.</textarea>
+            </div>
 
-              <div class="field">
-                <label style="text-align: left;">Contact Info</label>
-                <input name="email" type="email" placeholder="Email Address">
-              </div>
-              <div class="field">
-                <input name="phone" type="text" placeholder="Phone #">
-              </div>
-              <div class="field">
-                <label style="text-align: left;">Message</label>
-                <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here...">I would like to get started with My Game Builder.</textarea>
-              </div>
+            <div class="ui divider"></div>
 
-              <div class="ui divider"></div>
-
-              <input type="submit" value="Sign Me Up!" tabindex="0" class="ui button primary huge">
-              <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
-          </form>
+            <input type="submit" value="Sign Me Up!" tabindex="0" class="ui button primary huge">
+            <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
+        </form>
       </div>
     </div>
   </section>
@@ -337,7 +324,7 @@
   </section>
 
   <!-- CONTACT -->
-  <section id="contact">
+  <!-- <section id="contact">
 
     <div class="ui text container ">
       <h1 class="ui header">Contact Us</h1>
@@ -354,10 +341,10 @@
         <button type="submit" class="ui primary button">
           <i class="mail icon"></i>
           Send
-        </button>
+        </button> -->
 
-        <!-- Enformed Setup -->
-        <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
+  <!-- Enformed Setup -->
+  <!-- <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
         <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
         <input type="hidden" name="*honeypot" />
         <input type="hidden" name="*reply" value="email" />
@@ -366,7 +353,7 @@
       <div class="ui labeled button fluid " tabindex="0 ">
       </div>
     </div>
-  </section>
+  </section> -->
 
   <!-- FOOTER -->
   <footer class="ui inverted vertical segment">

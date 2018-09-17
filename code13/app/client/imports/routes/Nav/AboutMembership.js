@@ -3,12 +3,12 @@ import { Segment, Header, List, Icon } from 'semantic-ui-react'
 
 const AboutMembership = () => (
   <Segment raised padded color="yellow">
-    <Header>MyGameBuilder Membership</Header>
+    <Header>My Game Builder Membership</Header>
     <p>
-      MyGameBuilder has been 100% free during Public BETA with new users everyday with tens of thousands of
+      My Game Builder has been 100% free during Public BETA with new users everyday and tens of thousands of
       assets created. We kept our site completely ad-free and will continue to do so. As we approach the end
-      of Public BETA, we will transition into memberships for users to sustain MyGameBuilder. All users,
-      current and new, will be allowed a 1-month free trial.
+      of Public BETA, we will transition into memberships for users in order to continue to maintain My Game
+      Builder. All users, current and new, will be allowed a 1-month free trial.
     </p>
   </Segment>
 )

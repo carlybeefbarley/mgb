@@ -7,7 +7,7 @@ const MembershipSegment = () => {
   return (
     <Segment style={{ background: 'transparent' }}>
       <Header as="h1" inverted>
-        Become a member today!
+        Become a member today!<span style={{ color: 'rgba(255, 255, 255, 0.75)' }}>*</span>
         <Header.Subheader>
           <small>
             <QLink to="/whats-new">What's this?</QLink>
@@ -15,10 +15,13 @@ const MembershipSegment = () => {
         </Header.Subheader>
       </Header>
       <p style={{ color: '#fff', fontSize: '1.5em' }}>
-        Your first month of MyGameBuilder membership is 100% free. By being a member you can continue to get
+        Your first month of My Game Builder membership is free. By being a member you can continue to get
         access to our constantly growing tutorials and learning resources, and create as many games and
         project as you like. Join our community and start learning, building, and playing!
       </p>
+      <h5 style={{ color: 'white' }}>
+        *My Game Builder is still 100% free during Public BETA. Free trials begin after official launch.
+      </h5>
     </Segment>
   )
 }

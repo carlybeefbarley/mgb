@@ -8,6 +8,7 @@ import { fetchAssetByUri } from '/client/imports/helpers/assetFetchers'
 import moment from 'moment'
 import { Segment, Container, Header, List, Message, Item, Grid, Icon, Label } from 'semantic-ui-react'
 import AboutHeader from './AboutHeader'
+import AboutMembership from './AboutMembership'
 
 const _releaseStateSymbols = {
   alpha: 'α',
@@ -131,6 +132,7 @@ const WhatsNewRoute = React.createClass({
     return (
       <Container>
         <AboutHeader />
+        <AboutMembership />
         <p>
           See what's coming soon in our <QLink to="/roadmap">feature roadmap</QLink>.
         </p>

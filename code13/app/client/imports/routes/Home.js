@@ -6,7 +6,7 @@ import { Divider } from 'semantic-ui-react'
 
 import HeroLayout from '/client/imports/layouts/HeroLayout'
 import HomeHeroBanner from '/client/imports/components/Home/HomeHeroBanner'
-
+import MembershipSegment from '/client/imports/components/Home/MembershipSegment'
 import ExploreSegment from '/client/imports/components/Dashboard/Explore/ExploreSegment'
 
 const HomeRoute = ({ currUser }) => {
@@ -20,6 +20,7 @@ const HomeRoute = ({ currUser }) => {
           <Divider hidden />
 
           <HomeHeroBanner username={username} userId={userId} />
+          <MembershipSegment />
 
           <Divider section />
 

@@ -1,7 +1,7 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { Link, browserHistory } from 'react-router'
+import { Link, browserHistory } from 'react-router-dom'
 import urlMaker from './urlMaker'
 import { joyrideStore } from '/client/imports/stores'
 

@@ -56,7 +56,7 @@ class HomeHeroBanner extends React.Component {
             <Grid.Column width={5} style={mascotColumnStyle}>
               <Image size="large" centered src={UX.makeMascotImgLink('team')} />
               <Header style={headerStyle} inverted>
-                <huge>My Game Builder</huge>
+                <h1>My Game Builder</h1>
                 <Header.Subheader style={subheaderStyle}>
                   <p>Make Games. Make Friends. Have Fun.</p>
                 </Header.Subheader>

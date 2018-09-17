@@ -4,7 +4,7 @@ import React from 'react'
 import { Card, Segment, Header, Divider, Menu } from 'semantic-ui-react'
 import { withTracker } from 'meteor/react-meteor-data'
 import Helmet from 'react-helmet'
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router-dom'
 import Spinner from '/client/imports/components/Nav/Spinner'
 
 import { Projects } from '/imports/schemas'

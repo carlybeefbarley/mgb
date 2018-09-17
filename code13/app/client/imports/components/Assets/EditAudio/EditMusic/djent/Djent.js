@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { routerShape } from 'react-router'
+import { routerShape } from 'react-router-dom'
 
 import BeatsController from './components/BeatsController'
 import Expandable from './components/Expandable'

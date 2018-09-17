@@ -17,7 +17,7 @@ const HomeHeroBanner = ({ userId, username }) => (
   <Grid columns="equal" verticalAlign="middle" padded>
     <Grid.Column>
       <Header as="h1" inverted>
-        <huge>My Game Builder</huge>
+        <h1>My Game Builder</h1>
         <Header.Subheader>
           <p>Make Games. Make Friends. Have Fun.</p>
           <p>

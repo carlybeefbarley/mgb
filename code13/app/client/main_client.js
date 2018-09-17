@@ -26,7 +26,8 @@ smoothScrollPolyfill.polyfill()
 
 if (Meteor.isDevelopment) {
   // Expose the React Performance Tools on the`window` object
-  window.Perf = require('react-addons-perf')
+  // window.Perf = require('react-addons-perf')
+  // deprecated in favor of browser profiling tools.
 
   // prevent nasty Meteor error catching - which breaks break on exception functionality
   Tracker.Computation.prototype._recompute = function() {

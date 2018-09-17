@@ -1,9 +1,10 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React, { Component } from 'react'
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router-dom'
 import Helmet from 'react-helmet'
 import { Button, Dropdown, Grid, Header, Icon, Message, Segment } from 'semantic-ui-react'
+import queryString from 'query-string'
 
 import registerDebugGlobal from '/client/imports/ConsoleDebugGlobals'
 import SpecialGlobals from '/imports/SpecialGlobals'
@@ -50,8 +51,10 @@ import { _NO_PROJECT_PROJNAME } from '../components/Assets/ProjectSelector'
 let G_localSettings = new ReactiveDict()
 
 // This works because <App> is the first Route in /app/client/imports/routes
-const getPagenameFromProps = props => props.routes[1].name
-const getPagepathFromProps = props => props.routes[1].path
+const getPagenameFromProps = props => 'name'
+// const getPagenameFromProps = props => props.routes[1].name
+const getPagepathFromProps = props => '/'
+// const getPagepathFromProps = props => props.routes[1].path
 
 // we need to detect if user is not logged in and to do it once
 // analytics is sent from getMeteorData()
@@ -362,7 +365,7 @@ class AppUI extends Component {
       hazUnreadChats,
       hideHeaders,
     } = this.state
-    const { query } = this.props.location
+    const query = queryString.parse(this.props.location.search)
     const isGuest = currUser ? currUser.profile.isGuest : false
     const isHocRoute = window.location.pathname === '/hour-of-code'
     const announcement = ''
@@ -484,7 +487,8 @@ class AppUI extends Component {
               currUser={currUser}
               user={user}
               location={this.props.location}
-              name={this.props.routes[1].name}
+              // name={this.props.routes[1].name}
+              name={'r'}
               params={this.props.params}
               flexPanelWidth={flexPanelWidth}
               hideHeaders={hideHeaders}
@@ -550,9 +554,13 @@ class AppUI extends Component {
 }
 
 export default _.flow(
-  withTracker(({ params, location }) => {
-    const pathUserName = params.username // This is the username (profile.name) on the url /u/xxxx/...
-    const pathUserId = params.id // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
+  withTracker(data => {
+    console.log(data)
+    const params = data.match.params
+    const location = data.location
+    // { match: { params }, location }
+    const pathUserName = params.username || null // This is the username (profile.name) on the url /u/xxxx/...
+    const pathUserId = params.id || null // LEGACY ROUTES - This is the userId on the url /user/xxxx/...
     const currUser = Meteor.user()
     const currUserId = currUser && currUser._id
     const handleForUser = pathUserName
@@ -661,6 +669,7 @@ export default _.flow(
         !projectsReady ||
         !settingsReady ||
         !skillsReady,
+      params,
     }
   }),
   withStores({

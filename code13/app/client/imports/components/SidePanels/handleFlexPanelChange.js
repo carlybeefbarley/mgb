@@ -1,4 +1,4 @@
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router-dom'
 import urlMaker from '/client/imports/routes/urlMaker'
 
 /**

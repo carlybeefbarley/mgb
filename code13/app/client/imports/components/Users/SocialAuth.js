@@ -1,18 +1,18 @@
 import _ from 'lodash'
 import PropTypes from 'prop-types'
 import React from 'react'
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router-dom'
 
 // TODO.. 1. Fix this so it works again
 // TODO.. 2. change to use   utilPushTo(this.context.urlLocation.query, ...) instead of browserHistory.push()
-export default class SocialAuth extends React.PureComponent{
+export default class SocialAuth extends React.PureComponent {
   static propTypes = {
     type: PropTypes.string,
   }
 
   static defaultProps = {
-      type: 'Join',
-    }
+    type: 'Join',
+  }
 
   render() {
     return null // disabled for now

@@ -1,5 +1,5 @@
 import _ from 'lodash'
-import PropTypes from 'prop-types'
+import propTypes from 'prop-types'
 import React from 'react'
 import { Segment, Header, List, Button } from 'semantic-ui-react'
 
@@ -64,8 +64,8 @@ const NetworkStatusMsg = ({ meteorStatus }) => {
   )
 }
 
-NetworkStatusMsg.PropTypes = {
-  meteorStatus: PropTypes.object,
+NetworkStatusMsg.propTypes = {
+  meteorStatus: propTypes.object,
 }
 
 export default NetworkStatusMsg

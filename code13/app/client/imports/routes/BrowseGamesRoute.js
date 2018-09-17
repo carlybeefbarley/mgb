@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import React from 'react'
 import Helmet from 'react-helmet'
 import { withTracker } from 'meteor/react-meteor-data'
-import { browserHistory } from 'react-router'
+import { browserHistory } from 'react-router-dom'
 import { Segment, Message } from 'semantic-ui-react'
 import Spinner from '/client/imports/components/Nav/Spinner'
 

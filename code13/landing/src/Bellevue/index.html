@@ -75,7 +75,9 @@
     </div> -->
 
     <div class="mgb-bellevue-banner-container mgb-bellevue-banner">
-      <div class="mgb-banner-header">My Game Builder<br><br>
+      <div class="mgb-banner-header">My Game Builder
+        <br>
+        <br>
         <h2>Bellevue</h2>
       </div>
 
@@ -88,10 +90,8 @@
           <i class="edit icon"></i>
           <div class="content">
             <h2>All the tools you need</h2>
-            <h3>MyGameBuilder has all the tools you need within
-              the
-              site, so students can start using MyGameBuilder and
-              learn to code games with just the browser.</h3>
+            <h3>MyGameBuilder has all the tools you need within the site, so students can start using MyGameBuilder and learn
+              to code games with just the browser.</h3>
           </div>
         </div>
 
@@ -99,8 +99,8 @@
           <i class="graduation cap icon"></i>
           <div class="content">
             <h2>A place for learning</h2>
-            <h3>With MyGameBuilder students have to access constantly growing tutorials and mentors to help with along
-              their educational journey.
+            <h3>With MyGameBuilder students have to access constantly growing tutorials and mentors to help with along their
+              educational journey.
             </h3>
           </div>
         </div>
@@ -110,8 +110,8 @@
           <i class="gamepad icon"></i>
           <div class="content">
             <h2>Hands-on fun</h2>
-            <h3>Students will constantly find new and creative ways to apply their what they learned
-              while building games, and have fun along the way.
+            <h3>Students will constantly find new and creative ways to apply their what they learned while building games, and
+              have fun along the way.
             </h3>
           </div>
         </div>
@@ -125,44 +125,69 @@
       <div class="column eight wide">
         <div class="mgb-signup-form">
           <h1 class="ui inverted header huge">
-            Contact Us
-          </h1>
+            Try a FREE one-on-one lesson </h1>
           <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
+
+
             <div class="field">
-              <label style="text-align: left;">Full Name</label>
-              <div class="two fields">
-                <div class="field">
-                  <input name="firstName" type="text" placeholder="Parent's First Name" required>
+              <input name="firstName" type="text" placeholder="Parent's First Name" required>
+            </div>
+            <div class="field">
+              <input name="lastName" type="text" placeholder="Parent's Last Name" required>
+            </div>
+
+
+            <div class="field">
+              <input name="email" type="email" placeholder="Email Address" required>
+            </div>
+            <div class="field">
+              <input name="phone" type="text" placeholder="Phone # (optional)">
+            </div>
+            <div class="field">
+
+              <div role='listbox' aria-expanded='false' class='ui selection dropdown' tabindex='0'>
+                <div class="default text" role="alert" aria-live="polite">
+                  How did you hear about us?
                 </div>
-                <div class="field">
-                  <input name="lastName" type="text" placeholder="Parent's Last Name" required>
+                <i aria-hidden="true" class="dropdown icon" />
+                <div class="menu transition">
+                  <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="true" class="selected item">
+                    <span class="text">Internet Search</span>
+                  </div>
+                  <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="false" class=" item">
+                    <span class="text">Word of mouth</span>
+                  </div>
                 </div>
               </div>
 
-              <div class="field">
-                <label style="text-align: left;">Contact Info</label>
-                <input name="email" type="email" placeholder="Email Address" required>
-              </div>
-              <div class="field">
-                <input name="phone" type="text" placeholder="Phone # (optional)">
-              </div>
-              <div class="field">
-                <label style="text-align: left;">Message</label>
-                <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here..."
-                  required>I would like to know more about classes with My Game Builder.</textarea>
-              </div>
-              <br>
-              <button type="submit" class="ui primary large button">
-                <i class="mail icon"></i>
-                Send
-              </button>
-              <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
 
-              <!-- Enformed Setup -->
-              <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
-              <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
-              <input type="hidden" name="*honeypot" />
-              <input type="hidden" name="*reply" value="email" />
+
+              <div class="customSelect">
+                <select name="referredBy">
+                  <option value="how" disabled selected>How did you hear about us?</option>
+                  <option value="advertising">Local advertising</option>
+                  <option value="wordOfMouth">Word of Mouth</option>
+                  <option value="childsSchool">My Childs' School</option>
+                  <option value="internetSearch">Internet Search</option>
+                  <option value="groupon">Groupon</option>
+                  <option value="6crickets">6crickets</option>
+                </select>
+              </div>
+
+
+            </div>
+            <br>
+            <button type="submit" class="ui primary large button">
+              <i class="mail icon"></i>
+              Send
+            </button>
+            <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
+
+            <!-- Enformed Setup -->
+            <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
+            <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
+            <input type="hidden" name="*honeypot" />
+            <input type="hidden" name="*reply" value="email" />
           </form>
         </div>
       </div>
@@ -210,9 +235,7 @@
             Grow your
             <em>real</em> skills tree
             <span class="sub header">
-              Learn all the skills you need to make and sell real games. Gain coding, design, team and
-              business skills
-              through real experiences
+              Learn all the skills you need to make and sell real games. Gain coding, design, team and business skills through real experiences
               with others.
             </span>
           </h2>
@@ -267,8 +290,7 @@
                 <i class="small plus icon"></i>Business</div>
             </div>
           </div>
-          <img style="transform: scaleX(-1)" class="mgb-alternating-mascot" src="~/app/images/mascots/flyingcat.png"
-            alt="Flying Cat">
+          <img style="transform: scaleX(-1)" class="mgb-alternating-mascot" src="~/app/images/mascots/flyingcat.png" alt="Flying Cat">
         </div>
       </div>
 
@@ -288,8 +310,7 @@
               <em>within</em> the game editors.
             </span>
           </h2>
-          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}bellevue" target="_blank" rel="noopener noreferrer">Try
-            it
+          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}bellevue" target="_blank" rel="noopener noreferrer">Try it
           </a>
         </div>
       </div>
@@ -302,9 +323,7 @@
           <h2 class="ui inverted header">
             Join our online community
             <span class="sub header">
-              Join our public community of 150,000 Game Builders. Earn skill badges as you progress from
-              beginner to
-              guru and continue
+              Join our public community of 150,000 Game Builders. Earn skill badges as you progress from beginner to guru and continue
               learning even after class.
             </span>
           </h2>
@@ -329,9 +348,7 @@
             Gain Skills
           </h4>
           <p>
-            Learn real world skills like Javascript and software design with guidance from our team. Learn
-            by making,
-            learn with professionals,
+            Learn real world skills like Javascript and software design with guidance from our team. Learn by making, learn with professionals,
             learn to build real games.
           </p>
         </div>
@@ -366,15 +383,11 @@
           <div class="ui equal width grid">
             <div class="column">
               <div class="ui small inverted horizontal divided link list">
-                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms
-                  and
-                  Conditions
+                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms and Conditions
                 </a>
-                <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank" rel="noopener noreferrer">Privacy
-                  Policy
+                <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy
                 </a>
-                <a class="item" href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know more about classes with My Game Builder">Contact
-                  Us
+                <a class="item" href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know more about classes with My Game Builder">Contact Us
                 </a>
               </div>
             </div>

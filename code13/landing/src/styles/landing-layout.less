@@ -1,4 +1,4 @@
-@import 'mixins';
+@import "mixins";
 
 // Keep colors in sync with GetStarted.css .hero colors
 @mgb-gradient-1: #68256d;
@@ -53,6 +53,11 @@ section:not(:last-child),
   pointer-events: none;
   & > * {
     pointer-events: all;
+  }
+
+  .menu-style {
+    padding-right: 15px;
+    padding-left: 15px;
   }
 
   // Heads up!
@@ -247,7 +252,7 @@ section:not(:last-child),
 
 .mgb-faq-pin::after {
   position: absolute;
-  content: '';
+  content: "";
   width: 0px;
   height: 0px;
   bottom: -28px;
@@ -282,8 +287,8 @@ section:not(:last-child),
     font-weight: bold;
   }
 
-  input[type='text'],
-  input[type='email'] {
+  input[type="text"],
+  input[type="email"] {
     padding: 6px 10px;
     box-sizing: border-box;
     border: 2px solid #ccc;
@@ -446,7 +451,7 @@ section:not(:last-child),
 
 .mgb-bellevue-banner:after {
   position: absolute;
-  content: '';
+  content: "";
   display: block;
   top: 0;
   left: 0;
@@ -469,10 +474,10 @@ section:not(:last-child),
     font-size: 4rem;
     display: none;
   }
-  .mgb-city-banner-container {
-    display: none;
-    border: none;
-  }
+  // .mgb-city-banner-container {
+  //   display: none;
+  //   border: none;
+  // }
   .mgb-city-banner {
     display: none;
   }
@@ -539,4 +544,41 @@ footer {
   .mgb-signup-form {
     width: auto;
   }
+}
+
+.banner .row {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/***********************************************************************
+*  OPAQUE NAVBAR SECTION
+***********************************************************************/
+.opaque-navbar {
+  background-color: rgba(0, 0, 0, 0.5);
+  height: 60px;
+  border-bottom: 0px;
+  transition: background-color 0.5s ease 0s;
+}
+
+.opaque-navbar.opaque {
+  background-color: black;
+  height: 60px;
+  transition: background-color 0.5s ease 0s;
+}
+
+ul.dropdown-menu {
+  background-color: black;
+}
+
+@media (max-width: 992px) {
+  .opaque-navbar {
+    background-color: black;
+    height: 60px;
+    transition: background-color 0.5s ease 0s;
+  }
+}
+
+li {
+  font-size: 2.1em;
 }

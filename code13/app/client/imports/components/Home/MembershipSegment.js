@@ -16,8 +16,8 @@ const MembershipSegment = () => {
       </Header>
       <p style={{ color: '#fff', fontSize: '1.5em' }}>
         Your first month of My Game Builder membership is free. By being a member you can continue to get
-        access to our constantly growing tutorials and learning resources, and create as many games and
-        project as you like. Join our community and start learning, building, and playing!
+        access to our continuously growing tutorials and learning resources, and create as many games and
+        projects as you'd like. Join our community and start learning, building, and playing!
       </p>
       <h5 style={{ color: 'white' }}>
         *My Game Builder is still 100% free during Public BETA. Free trials begin after official launch.

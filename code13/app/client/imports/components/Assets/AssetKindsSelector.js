@@ -1,6 +1,7 @@
 import PropTypes from 'prop-types'
 import React from 'react'
 import { AssetKinds, AssetKindKeys, safeAssetKindStringSepChar } from '/imports/schemas/assets'
+import { isUserSuperAdmin } from '/imports/schemas/roles'
 import { joyrideStore } from '/client/imports/stores'
 import { Icon, Menu } from 'semantic-ui-react'
 
@@ -8,14 +9,21 @@ import { Icon, Menu } from 'semantic-ui-react'
 
 const _iconStyle = { marginLeft: '1px', marginRight: '3px' }
 
-const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback, showActorMap }) => {
+const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback, currUser }) => {
   // Split kinds string into array for convenience
   const kindsArray = kindsActive.split(safeAssetKindStringSepChar)
 
+  const showActorMap = currUser && currUser.profile.showActorMap
+  const showTutorials = isUserSuperAdmin(currUser)
+
   // ActorMaps aren't completely disabled (can be re-enabled in settings)
+  // Tutorials should only show for SuperAdmins
   // Build the list of 'Create New Asset' Menu choices
   const choices = _.filter(AssetKindKeys, kind => {
-    return !((kind === 'actor' || kind === 'actormap') && !showActorMap)
+    return (
+      !((kind === 'actor' || kind === 'actormap') && !showActorMap) &&
+      !(kind === 'tutorial' && !showTutorials)
+    )
   }).map(k => {
     const active = k == kindsArray // map == ['map']
     const name = AssetKinds.getName(k)
@@ -49,7 +57,10 @@ const AssetKindsSelector = ({ showCompact, kindsActive, handleToggleKindCallback
     )
   })
 
-  const widths = showActorMap ? AssetKindKeys.length : AssetKindKeys.length - 2
+  var widths = AssetKindKeys.length
+  if (!showActorMap) widths -= 2
+  if (!showTutorials) widths -= 1
+
   const compactProps = showCompact
     ? {
         widths,

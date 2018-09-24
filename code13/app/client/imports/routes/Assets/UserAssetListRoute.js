@@ -324,7 +324,7 @@ const UserAssetListRoute = React.createClass({
             <AssetKindsSelector
               kindsActive={qN.kinds}
               handleToggleKindCallback={this.handleToggleKind}
-              showActorMap={currUser && currUser.profile.showActorMap}
+              currUser={currUser}
             />
           </div>
 

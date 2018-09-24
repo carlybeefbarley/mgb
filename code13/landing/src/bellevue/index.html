@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <base href="{{ MGB_LANDING_BASE_URL }}">
+  <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <link rel="icon" href="~/app/images/favicons/favicon-310.png">
+  <link rel="stylesheet" href="{{ MGB_LANDING_BASE_URL }}styles/main.css">
+  <link rel="stylesheet" href="~/merged-stylesheets.css">
+
+  <meta property="og:site_name" content="MyGameBuilder Bellevue">
+  <meta property="og:url" content="https://build.games">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="MyGameBuilder Bellevue">
+  <meta property="og:description" content="Learn to build games in your browser. Make and play games together while learning real skills.">
+  <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
+  <meta property="og:image" content="~/app/images/mascots/team-twitter-card.png">
+  <meta property="og:image:type" content="image/png">
+  <meta property="og:image:width" content="698">
+  <meta property="og:image:height" content="366">
+  <meta property="og:image:alt" content="MyGameBuilder mascot team">
+  <meta property="og:locale" content="en_US">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:site" content="@my_game_builder">
+  <meta name="twitter:creator" content="@stanchion">
+  <meta name="twitter:title" content="My Game Builder">
+  <meta name="twitter:description" content="Build games. Learn from friends. Have fun.">
+  <!-- Heads Up! Asset paths are converted to absolute urls by gulp-rev-all -->
+  <meta name="twitter:image" content="~/app/images/mascots/team-twitter-card.png">
+
+  <title>MGB - Bellevue</title>
+</head>
+
+<body>
+
+  <!-- MENU -->
+  <div class="mgb-main-menu ui inverted borderless top fixed menu">
+    <a class="item" href="/bellevue">
+      <img class="mgb-menu-logo ui small image" src="~/app/images/logos/mgb/medium/01w.png" />
+    </a>
+    <a class="item" href="/bellevue/programs">
+      <h4>Programs</h4>
+    </a>
+    <a class="item" href="/bellevue/about">
+      <h4>About</h4>
+    </a>
+    <a class="item" href="/bellevue/faq">
+      <h4>FAQ</h4>
+    </a>
+    <a class="item" href="/bellevue/#contact">
+      <h4>Contact</h4>
+    </a>
+
+    <div class="right menu">
+      <a class="item" href="{{ MGB_APP_URL }}">
+        <button class="ui small primary button">Visit</button>
+      </a>
+    </div>
+  </div>
+
+  <!-- HERO -->
+  <section class="mgb-bellevue-main">
+    <!-- <div id="particles-container"></div> -->
+
+    <!-- <div class="mgb-hero-caption">
+      <h1 class="ui inverted header">
+        Learn to build games in Bellevue
+      </h1>
+      <p class="mgb-lead">
+        Make and play games together, classes starting soon!
+      </p>
+    </div> -->
+
+    <div class="mgb-bellevue-banner-container mgb-bellevue-banner">
+      <div class="mgb-banner-header">My Game Builder<br><br>
+        <h2>Bellevue</h2>
+      </div>
+
+    </div>
+
+    <!-- INFO -->
+    <div class="ui container">
+      <div class="mgb-info-container">
+        <div class="mgb-info-content inverted ui icon header">
+          <i class="edit icon"></i>
+          <div class="content">
+            <h2>All the tools you need</h2>
+            <h3>My Game Builder has all the tools you need within
+              the
+              site, so students can start learning to code games with just the browser.</h3>
+          </div>
+        </div>
+
+        <div class="mgb-info-content inverted ui icon header">
+          <i class="graduation cap icon"></i>
+          <div class="content">
+            <h2>A place for learning</h2>
+            <h3>With My Game Builder students have to access constantly growing tutorials and mentors to help with
+              along
+              their educational journey.
+            </h3>
+          </div>
+        </div>
+
+
+        <div class="mgb-info-content inverted ui icon header">
+          <i class="gamepad icon"></i>
+          <div class="content">
+            <h2>Hands-on fun</h2>
+            <h3>Students will constantly find new and creative ways to apply what they learned
+              while building games and have fun throughout the whole process.
+            </h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- BULLETS -->
+  <section class="mgb-videos" id="contact">
+    <div class="mgb-contact-us ui two column stackable center aligned grid ">
+      <div class="column eight wide">
+        <div class="mgb-signup-form">
+          <h1 class="ui inverted header huge">
+            Contact Us
+          </h1>
+          <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
+            <div class="field">
+              <label style="text-align: left;">Full Name</label>
+              <div class="two fields">
+                <div class="field">
+                  <input name="firstName" type="text" placeholder="Parent's First Name" required>
+                </div>
+                <div class="field">
+                  <input name="lastName" type="text" placeholder="Parent's Last Name" required>
+                </div>
+              </div>
+
+              <div class="field">
+                <label style="text-align: left;">Contact Info</label>
+                <input name="email" type="email" placeholder="Email Address" required>
+              </div>
+              <div class="field">
+                <input name="phone" type="text" placeholder="Phone # (optional)">
+              </div>
+              <div class="field">
+                <label style="text-align: left;">Message</label>
+                <textarea id="signupMessage" name="comment" form="signupForm" placeholder="Enter a short message here..."
+                  required>I would like to know more about classes with My Game Builder.</textarea>
+              </div>
+              <br>
+              <button type="submit" class="ui primary large button">
+                <i class="mail icon"></i>
+                Send
+              </button>
+              <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
+
+              <!-- Enformed Setup -->
+              <input type="hidden" name="*redirect" value="https://build.games/bellevue/email-confirmation" />
+              <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
+              <input type="hidden" name="*honeypot" />
+              <input type="hidden" name="*reply" value="email" />
+          </form>
+        </div>
+      </div>
+      <div class="column eight wide">
+        <div class="mgb-contact-icons">
+          <div class="mgb-contact-icon">
+            <a class="mgb-link" rel="noopener noreferrer" target="_blank" href="https://www.google.com/maps/place/My+Game+Builder/@47.6068715,-122.1933676,14z/data=!4m5!3m4!1s0x0:0xfaef143673494fc2!8m2!3d47.6141769!4d-122.2010494">
+              <h3 class="ui icon huge inverted header">
+                <i class="map icon"></i>
+                <span class="content">Map</span>
+              </h3>
+              <br>
+
+              <div class="ui tiny inverted statistic">
+                <div style="color: lightgray" class="value">Get Directions</div>
+              </div>
+            </a>
+
+          </div>
+          <div class="mgb-contact-icon">
+            <a class="mgb-link" href="tel:425-390-4835">
+              <h3 class="ui icon huge inverted header">
+                <i class="phone icon"></i>
+                <span class="content">Call</span>
+              </h3>
+              <br>
+              <div class="ui tiny inverted statistic">
+                <div style="color: lightgray" class="value">(425) 390-4835</div>
+              </div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+    </div>
+  </section>
+
+  <!-- ALTERNATING -->
+  <section class="mgb-alternating">
+    <div class="ui container">
+      <!-- SKILLS -->
+      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
+        <div class="seven wide computer six wide tablet column">
+          <h2 class="ui inverted header">
+            Grow your
+            <em>real</em> skills tree
+            <span class="sub header">
+              Learn all the skills you need to make and sell real games. Gain coding, design, team and
+              business skills
+              through real experiences
+              with others.
+            </span>
+          </h2>
+          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank" rel="noopener noreferrer">
+            Start Learning
+          </a>
+        </div>
+        <div class="nine wide computer ten wide tablet column">
+          <div class="mgb-mock-skillsmap mgb-alternating-media">
+            <div class="bar get-started">
+              <div class="label">
+                <i class="small plus icon"></i>Get Started</div>
+            </div>
+            <div class="bar code">
+              <div class="label">
+                <i class="small plus icon"></i>Code</div>
+            </div>
+            <div class="bar art">
+              <div class="label">
+                <i class="small plus icon"></i>Art</div>
+            </div>
+            <div class="bar design">
+              <div class="label">
+                <i class="small plus icon"></i>Design</div>
+            </div>
+            <div class="bar audio">
+              <div class="label">
+                <i class="small plus icon"></i>Audio</div>
+            </div>
+            <div class="bar analytics">
+              <div class="label">
+                <i class="small plus icon"></i>Analytics</div>
+            </div>
+            <div class="bar writing">
+              <div class="label">
+                <i class="small plus icon"></i>Writing</div>
+            </div>
+            <div class="bar marketing">
+              <div class="label">
+                <i class="small plus icon"></i>Marketing</div>
+            </div>
+            <div class="bar community">
+              <div class="label">
+                <i class="small plus icon"></i>Community</div>
+            </div>
+            <div class="bar legal">
+              <div class="label">
+                <i class="small plus icon"></i>Legal</div>
+            </div>
+            <div class="bar business">
+              <div class="label">
+                <i class="small plus icon"></i>Business</div>
+            </div>
+          </div>
+          <img style="transform: scaleX(-1)" class="mgb-alternating-mascot" src="~/app/images/mascots/flyingcat.png"
+            alt="Flying Cat">
+        </div>
+      </div>
+
+      <div class="ui section divider"></div>
+
+      <!-- TUTORIALS -->
+      <div class="ui middle aligned equal width stackable grid">
+        <div class="nine wide computer ten wide tablet column">
+          <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png">
+          <img class="mgb-alternating-mascot" src="~/app/images/mascots/penguin.png" alt="Penguin">
+        </div>
+        <div class="seven wide computer six wide tablet column">
+          <h2 class="ui inverted header">
+            One-on-one learning
+            <span class="sub header">
+              Step-by-step programming/art/design tutorials & help systems
+              <em>within</em> the game editors.
+            </span>
+          </h2>
+          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank" rel="noopener noreferrer">Try
+            it
+          </a>
+        </div>
+      </div>
+
+      <div class="ui section divider"></div>
+
+      <!-- BADGES -->
+      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
+        <div class="seven wide computer six wide tablet column">
+          <h2 class="ui inverted header">
+            Join our online community
+            <span class="sub header">
+              Join our public community of 150,000 Game Builders. Earn skill badges as you progress from
+              beginner to
+              guru and continue
+              learning even after class.
+            </span>
+          </h2>
+          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}learn/get-started" target="_blank" rel="noopener noreferrer">
+            Earn Badges
+          </a>
+        </div>
+        <div class="nine wide computer ten wide tablet column">
+          <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/profile.png">
+          <img class="mgb-alternating-mascot" src="~/app/images/mascots/whale.png" alt="Whale">
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer class="ui inverted vertical segment">
+    <div class="ui container">
+      <div class="ui equal width stackable grid">
+        <div class="eight wide column">
+          <h4 class="ui inverted header">
+            Gain Skills
+          </h4>
+          <p>
+            Learn real world skills like Javascript and software design with guidance from our team. Learn
+            by making,
+            learn with professionals,
+            learn to build real games.
+          </p>
+        </div>
+        <div class="column">
+          <h4 class="ui inverted header">Make Games</h4>
+          <div class="ui inverted list">
+            <div class="item">Make Art, Maps & Audio</div>
+            <div class="item">Code the game you want</div>
+          </div>
+        </div>
+        <div class="column">
+          <h4 class="ui inverted header">Make Friends</h4>
+          <div class="ui inverted list">
+            <div class="item">Help each other out</div>
+            <div class="item">Work in teams</div>
+          </div>
+        </div>
+        <div class="column">
+          <h4 class="ui inverted header">Have Fun</h4>
+          <div class="ui inverted list">
+            <div class="item">Play games</div>
+            <div class="item">Learn the fun way</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ui equal width stackable grid">
+        <div class="eight wide column">
+          Copyright ©2018 MyCodeBuilder Inc. All Rights Reserved.
+        </div>
+        <div class="column">
+          <div class="ui equal width grid">
+            <div class="column">
+              <div class="ui small inverted horizontal divided link list">
+                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms
+                  and
+                  Conditions
+                </a>
+                <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank" rel="noopener noreferrer">Privacy
+                  Policy
+                </a>
+                <a class="item" href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know more about classes with My Game Builder">Contact
+                  Us
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125894856-1"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'UA-125894856-1');
+  </script>
+</body>
+
+</html>

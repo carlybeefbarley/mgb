@@ -40,11 +40,6 @@ const RenderRoadmap = () => (
       />
       <List.Item
         icon={{ color: 'green', name: 'plus' }}
-        header="Improve ActorMap Game Engine"
-        description="Several bug fixes and improvements will be made to the ActorMap Game Engine."
-      />
-      <List.Item
-        icon={{ color: 'green', name: 'plus' }}
         header="Squelch Spam and Bots"
         description="Improve spam and bot prevention and removal mechanisms."
       />

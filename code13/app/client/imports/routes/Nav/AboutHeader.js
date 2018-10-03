@@ -7,7 +7,7 @@ const UserLink = ({ u }) => <QLink to={`/u/${u}`}>@{u}</QLink>
 const AboutHeader = () => (
   <Segment raised padded color="yellow">
     <Header>
-      MyGameBuilder is now in public BETA
+      MyGameBuilder is in public BETA
       <br />
       <Header.Subheader>
         Actively developed by <UserLink u="dgolds" />

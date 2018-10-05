@@ -9,6 +9,7 @@ import Home from './Home'
 import HourOfCode from './HourOfCode/HourOfCodeRoute'
 import Import from './Import'
 import ForumRoute from './Forum'
+import PaymentRoute from './PaymentRoute'
 import PlayGameRoute from './PlayGameRoute'
 import BrowseGamesRoute from './BrowseGamesRoute'
 import DashboardRoute from './Dashboard/DashboardRoute'
@@ -65,6 +66,8 @@ export function clientStartup() {
     <Router history={browserHistory}>
       <Route component={App}>
         <Route path="/u/:username/play/:assetId" component={PlayGameRoute} name="Play Game" />
+
+        <Route path="/payment" component={PaymentRoute} name="Payment" />
 
         <Route path="/" component={Home} />
         <Redirect from="/whatsnew" to="/whats-new" />

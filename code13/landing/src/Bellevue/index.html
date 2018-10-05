@@ -7,6 +7,7 @@
   <meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="icon" href="~/app/images/favicons/favicon-310.png">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
   <link rel="stylesheet" href="{{ MGB_LANDING_BASE_URL }}styles/main.css">
   <link rel="stylesheet" href="~/merged-stylesheets.css">
 
@@ -88,7 +89,7 @@
       <div class="row">
         <div class="six wide column">
           <h1 class="ui inverted header huge">Try a FREE one-on-one lesson </h1>
-          <form class="ui form">
+          <form class="ui form" action="https://enformed.io/g8yx672n" method="POST" id="signupForm">
             <div class="field">
               <div class="ui input">
                 <input type="text" placeholder="Parent's first name" />
@@ -114,42 +115,83 @@
                 <input type="text" placeholder="Phone # (optional)" />
               </div>
             </div>
-            <div class="field">
-              <div role="listbox" aria-expanded="false" class="ui selection dropdown" tabindex="0">
+
+
+            <!-- **********DROPDOWN FOR HOW USER FOUND US.  CUSTOM SELECT DIV DROPDOWN DOESN'T
+            MATCH STYLE AND I THINK THIS LISTBOX REQUIRES A SCRIPT...LOOKING INTO IT******** -->
+
+            <!-- <div class="field">
+              <div role="listbox" aria-expanded="true" class="ui selection dropdown" tabindex="0">
                 <div class="default text" role="alert" aria-live="polite">
-                  How did you hear about us?s
+                  How did you hear about us?
                 </div>
                 <i aria-hidden="true" class="dropdown icon" />
                 <div class="menu transition">
                   <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="true" class="selected item">
                     <span class="text">Word of mouth</span>
                   </div>
+                  <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="false" class="selected item">
+                    <span class="text">Search engine</span>
+                  </div>
                 </div>
               </div>
+            </div> -->
+
+
+
+            <!--surround the select box within a "custom-select" DIV element.
+Remember to set the width:-->
+            <div class="custom-select">
+              <select>
+
+                <option value="0">How did you hear about us?</option>
+
+                <option value="1">Local advertising</option>
+                <option value="2">Word of mouth</option>
+                <option value="3">My child's school</option>
+                <option value="4">Internet search</option>
+                <option value="5">Groupon</option>
+                <option value="6">6crickets</option>
+              </select>
             </div>
+            <br>
+            <button type="submit" class="ui primary large button" style="text-align: center;
+              <i class=" mail icon "></i>
+              Send
+            </button>
+            <h5 class="ui header inverted ">We promise to never spam you or sell your information.</h5>
 
-
-          </form>
+            <input type="hidden " name="*redirect " value="https://build.games/Bellevue/email-confirmation " />
+            <input type="hidden " name="*default_email " value="carly@mycodebuilder.com " />
+            <input type="hidden " name="*honeypot " />
+            <input type="hidden " name="*reply " value="email " />
         </div>
+        </form>
 
-        <div class="ten wide column">
+
+
+
+
+
+
+        <div class="ten wide column ">
           <h1>fvlsdjflsdkfjs</h1>
 
         </div>
 
-        <!-- <div class="mgb-info-container">
-        <div class="mgb-info-content inverted ui icon header">
-          <i class="edit icon"></i>
-          <div class="content">
+        <!-- <div class="mgb-info-container ">
+        <div class="mgb-info-content inverted ui icon header ">
+          <i class="edit icon "></i>
+          <div class="content ">
             <h2>All the tools you need</h2>
             <h3>MyGameBuilder has all the tools you need within the site, so students can start using MyGameBuilder and learn
               to code games with just the browser.</h3>
           </div>
         </div>
 
-        <div class="mgb-info-content inverted ui icon header">
-          <i class="graduation cap icon"></i>
-          <div class="content">
+        <div class="mgb-info-content inverted ui icon header ">
+          <i class="graduation cap icon "></i>
+          <div class="content ">
             <h2>A place for learning</h2>
             <h3>With MyGameBuilder students have to access constantly growing tutorials and mentors to help with along their
               educational journey.
@@ -158,245 +200,241 @@
         </div>
 
 
-        <div class="mgb-info-content inverted ui icon header">
-          <i class="gamepad icon"></i>
-          <div class="content">
+        <div class="mgb-info-content inverted ui icon header ">
+          <i class="gamepad icon "></i>
+          <div class="content ">
             <h2>Hands-on fun</h2>
             <h3>Students will constantly find new and creative ways to apply their what they learned while building games, and
               have fun along the way.
             </h3>
           </div>
-        </div>
-      </div> -->
+        </div> -->
+
+
+
       </div>
+    </div>
   </section>
 
   <!-- BULLETS -->
-  <section class="mgb-videos" id="contact">
+  <!-- <section class="mgb-videos " id="contact ">
     <div class="mgb-contact-us ui two column stackable center aligned grid ">
-      <div class="column eight wide">
-        <div class="mgb-signup-form">
-          <h1 class="ui inverted header huge">
+      <div class="column eight wide ">
+        <div class="mgb-signup-form ">
+          <h1 class="ui inverted header huge ">
             Try a FREE one-on-one lesson </h1>
-          <form action="https://enformed.io/g8yx672n" method="POST" class="ui form inverted" id="signupForm">
+          <form action="https://enformed.io/g8yx672n " method="POST " class="ui form inverted " id="signupForm ">
 
 
-            <div class="field">
-              <input name="firstName" type="text" placeholder="Parent's First Name" required>
+            <div class="field ">
+              <input name="firstName " type="text " placeholder="Parent 's First Name" required>
             </div>
             <div class="field">
-              <input name="lastName" type="text" placeholder="Parent's Last Name" required>
+              <input name="lastName" type="text" placeholder="Parent's Last Name " required>
             </div>
 
 
-            <div class="field">
-              <input name="email" type="email" placeholder="Email Address" required>
+            <div class="field ">
+              <input name="email " type="email " placeholder="Email Address " required>
             </div>
-            <div class="field">
-              <input name="phone" type="text" placeholder="Phone # (optional)">
+            <div class="field ">
+              <input name="phone " type="text " placeholder="Phone # (optional) ">
             </div>
-            <div class="field">
+            <div class="field ">
 
               <div role='listbox' aria-expanded='false' class='ui selection dropdown' tabindex='0'>
-                <div class="default text" role="alert" aria-live="polite">
+                <div class="default text " role="alert " aria-live="polite ">
                   How did you hear about us?
                 </div>
-                <i aria-hidden="true" class="dropdown icon" />
-                <div class="menu transition">
-                  <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="true" class="selected item">
-                    <span class="text">Internet Search</span>
+                <i aria-hidden="true " class="dropdown icon " />
+                <div class="menu transition ">
+                  <div style="pointer-events:all " role="option " aria-checked="false " aria-selected="true " class="selected
+              item ">
+                    <span class="text ">Internet Search</span>
                   </div>
-                  <div style="pointer-events:all" role="option" aria-checked="false" aria-selected="false" class=" item">
-                    <span class="text">Word of mouth</span>
+                  <div style="pointer-events:all " role="option " aria-checked="false " aria-selected="false " class="
+              item ">
+                    <span class="text ">Word of mouth</span>
                   </div>
                 </div>
-              </div>
-
-
-
-              <div class="customSelect">
-                <select name="referredBy">
-                  <option value="how" disabled selected>How did you hear about us?</option>
-                  <option value="advertising">Local advertising</option>
-                  <option value="wordOfMouth">Word of Mouth</option>
-                  <option value="childsSchool">My Childs' School</option>
-                  <option value="internetSearch">Internet Search</option>
-                  <option value="groupon">Groupon</option>
-                  <option value="6crickets">6crickets</option>
-                </select>
               </div>
 
 
             </div>
             <br>
-            <button type="submit" class="ui primary large button">
-              <i class="mail icon"></i>
+            <button type="submit " class="ui primary large button ">
+              <i class="mail icon "></i>
               Send
             </button>
-            <h5 class="ui header inverted">We promise to never spam you or sell your information.</h5>
+            <h5 class="ui header inverted ">We promise to never spam you or sell your information.</h5>
 
-            <!-- Enformed Setup -->
-            <input type="hidden" name="*redirect" value="https://build.games/Bellevue/email-confirmation" />
-            <input type="hidden" name="*default_email" value="carly@mycodebuilder.com" />
-            <input type="hidden" name="*honeypot" />
-            <input type="hidden" name="*reply" value="email" />
-          </form>
-        </div>
+           Enformed Setup
+
+          
+  <input type="hidden " name="*redirect " value="https://build.games/Bellevue/email-confirmation " />
+  <input type="hidden " name="*default_email " value="carly@mycodebuilder.com " />
+  <input type="hidden " name="*honeypot " />
+  <input type="hidden " name="*reply " value="email " />
+  </form>
+  </div>
+  </div>
+
+-->
+  <div class="column eight wide ">
+    <div class="mgb-contact-icons ">
+      <div class="mgb-contact-icon ">
+        <a class="mgb-link " rel="noopener noreferrer " target="_blank " href="https://www.google.com/maps/place/My+Game+Builder/@47.6068715,-122.1933676,14z/data=!4m5!3m4!1s0x0:0xfaef143673494fc2!8m2!3d47.6141769!4d-122.2010494 ">
+          <h3 class="ui icon huge inverted header ">
+            <i class="map icon "></i>
+            <span class="content ">Map</span>
+          </h3>
+          <br>
+
+          <div class="ui tiny inverted statistic ">
+            <div style="color: lightgray " class="value ">Get Directions</div>
+          </div>
+        </a>
+
       </div>
-      <div class="column eight wide">
-        <div class="mgb-contact-icons">
-          <div class="mgb-contact-icon">
-            <a class="mgb-link" rel="noopener noreferrer" target="_blank" href="https://www.google.com/maps/place/My+Game+Builder/@47.6068715,-122.1933676,14z/data=!4m5!3m4!1s0x0:0xfaef143673494fc2!8m2!3d47.6141769!4d-122.2010494">
-              <h3 class="ui icon huge inverted header">
-                <i class="map icon"></i>
-                <span class="content">Map</span>
-              </h3>
-              <br>
-
-              <div class="ui tiny inverted statistic">
-                <div style="color: lightgray" class="value">Get Directions</div>
-              </div>
-            </a>
-
+      <div class="mgb-contact-icon ">
+        <a class="mgb-link " href="tel:425-390-4835 ">
+          <h3 class="ui icon huge inverted header ">
+            <i class="phone icon "></i>
+            <span class="content ">Call</span>
+          </h3>
+          <br>
+          <div class="ui tiny inverted statistic ">
+            <div style="color: lightgray " class="value ">(425) 390-4835</div>
           </div>
-          <div class="mgb-contact-icon">
-            <a class="mgb-link" href="tel:425-390-4835">
-              <h3 class="ui icon huge inverted header">
-                <i class="phone icon"></i>
-                <span class="content">Call</span>
-              </h3>
-              <br>
-              <div class="ui tiny inverted statistic">
-                <div style="color: lightgray" class="value">(425) 390-4835</div>
-              </div>
-            </a>
-          </div>
-        </div>
+        </a>
       </div>
     </div>
-    </div>
-  </section>
+  </div>
+  </div>
+  </div>
+  </section> -->
 
   <!-- ALTERNATING -->
-  <section class="mgb-alternating">
-    <div class="ui container">
+  <section class="mgb-alternating ">
+    <div class="ui container ">
       <!-- SKILLS -->
-      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
-        <div class="seven wide computer six wide tablet column">
-          <h2 class="ui inverted header">
+      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right ">
+        <div class="seven wide computer six wide tablet column ">
+          <h2 class="ui inverted header ">
             Grow your
             <em>real</em> skills tree
-            <span class="sub header">
+            <span class="sub header ">
               Learn all the skills you need to make and sell real games. Gain coding, design, team and business skills through real experiences
               with others.
             </span>
           </h2>
-          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}bellevue" target="_blank" rel="noopener noreferrer">
+          <a class="ui big primary fluid button " href="{{ MGB_APP_URL }}bellevue " target="_blank " rel="noopener noreferrer ">
             Start Learning
           </a>
         </div>
-        <div class="nine wide computer ten wide tablet column">
-          <div class="mgb-mock-skillsmap mgb-alternating-media">
-            <div class="bar get-started">
-              <div class="label">
-                <i class="small plus icon"></i>Get Started</div>
+        <div class="nine wide computer ten wide tablet column ">
+          <div class="mgb-mock-skillsmap mgb-alternating-media ">
+            <div class="bar get-started ">
+              <div class="label ">
+                <i class="small plus icon "></i>Get Started</div>
             </div>
-            <div class="bar code">
-              <div class="label">
-                <i class="small plus icon"></i>Code</div>
+            <div class="bar code ">
+              <div class="label ">
+                <i class="small plus icon "></i>Code</div>
             </div>
-            <div class="bar art">
-              <div class="label">
-                <i class="small plus icon"></i>Art</div>
+            <div class="bar art ">
+              <div class="label ">
+                <i class="small plus icon "></i>Art</div>
             </div>
-            <div class="bar design">
-              <div class="label">
-                <i class="small plus icon"></i>Design</div>
+            <div class="bar design ">
+              <div class="label ">
+                <i class="small plus icon "></i>Design</div>
             </div>
-            <div class="bar audio">
-              <div class="label">
-                <i class="small plus icon"></i>Audio</div>
+            <div class="bar audio ">
+              <div class="label ">
+                <i class="small plus icon "></i>Audio</div>
             </div>
-            <div class="bar analytics">
-              <div class="label">
-                <i class="small plus icon"></i>Analytics</div>
+            <div class="bar analytics ">
+              <div class="label ">
+                <i class="small plus icon "></i>Analytics</div>
             </div>
-            <div class="bar writing">
-              <div class="label">
-                <i class="small plus icon"></i>Writing</div>
+            <div class="bar writing ">
+              <div class="label ">
+                <i class="small plus icon "></i>Writing</div>
             </div>
-            <div class="bar marketing">
-              <div class="label">
-                <i class="small plus icon"></i>Marketing</div>
+            <div class="bar marketing ">
+              <div class="label ">
+                <i class="small plus icon "></i>Marketing</div>
             </div>
-            <div class="bar community">
-              <div class="label">
-                <i class="small plus icon"></i>Community</div>
+            <div class="bar community ">
+              <div class="label ">
+                <i class="small plus icon "></i>Community</div>
             </div>
-            <div class="bar legal">
-              <div class="label">
-                <i class="small plus icon"></i>Legal</div>
+            <div class="bar legal ">
+              <div class="label ">
+                <i class="small plus icon "></i>Legal</div>
             </div>
-            <div class="bar business">
-              <div class="label">
-                <i class="small plus icon"></i>Business</div>
+            <div class="bar business ">
+              <div class="label ">
+                <i class="small plus icon "></i>Business</div>
             </div>
           </div>
-          <img style="transform: scaleX(-1)" class="mgb-alternating-mascot" src="~/app/images/mascots/flyingcat.png" alt="Flying Cat">
+          <img style="transform: scaleX(-1) " class="mgb-alternating-mascot " src="~/app/images/mascots/flyingcat.png
+              " alt="Flying Cat ">
         </div>
       </div>
 
-      <div class="ui section divider"></div>
+      <div class="ui section divider "></div>
 
       <!-- TUTORIALS -->
-      <div class="ui middle aligned equal width stackable grid">
-        <div class="nine wide computer ten wide tablet column">
-          <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png">
-          <img class="mgb-alternating-mascot" src="~/app/images/mascots/penguin.png" alt="Penguin">
+      <div class="ui middle aligned equal width stackable grid ">
+        <div class="nine wide computer ten wide tablet column ">
+          <img class="mgb-alternating-media ui image " src="{{ MGB_LANDING_BASE_URL }}img/tutorials_1200x720.png ">
+          <img class="mgb-alternating-mascot " src="~/app/images/mascots/penguin.png " alt="Penguin ">
         </div>
-        <div class="seven wide computer six wide tablet column">
-          <h2 class="ui inverted header">
+        <div class="seven wide computer six wide tablet column ">
+          <h2 class="ui inverted header ">
             One-on-one learning
-            <span class="sub header">
+            <span class="sub header ">
               Step-by-step programming/art/design tutorials & help systems
               <em>within</em> the game editors.
             </span>
           </h2>
-          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}bellevue" target="_blank" rel="noopener noreferrer">Try it
+          <a class="ui big primary fluid button " href="{{ MGB_APP_URL }}bellevue " target="_blank " rel="noopener noreferrer ">Try it
           </a>
         </div>
       </div>
 
-      <div class="ui section divider"></div>
+      <div class="ui section divider "></div>
 
       <!-- BADGES -->
-      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right">
-        <div class="seven wide computer six wide tablet column">
-          <h2 class="ui inverted header">
+      <div class="ui middle aligned equal width stackable mobile vertically reversed grid mgb-alternate-right ">
+        <div class="seven wide computer six wide tablet column ">
+          <h2 class="ui inverted header ">
             Join our online community
-            <span class="sub header">
+            <span class="sub header ">
               Join our public community of 150,000 Game Builders. Earn skill badges as you progress from beginner to guru and continue
               learning even after class.
             </span>
           </h2>
-          <a class="ui big primary fluid button" href="{{ MGB_APP_URL }}bellevue" target="_blank" rel="noopener noreferrer">
+          <a class="ui big primary fluid button " href="{{ MGB_APP_URL }}bellevue " target="_blank " rel="noopener noreferrer ">
             Earn Badges
           </a>
         </div>
-        <div class="nine wide computer ten wide tablet column">
-          <img class="mgb-alternating-media ui image" src="{{ MGB_LANDING_BASE_URL }}img/profile.png">
-          <img class="mgb-alternating-mascot" src="~/app/images/mascots/whale.png" alt="Whale">
+        <div class="nine wide computer ten wide tablet column ">
+          <img class="mgb-alternating-media ui image " src="{{ MGB_LANDING_BASE_URL }}img/profile.png ">
+          <img class="mgb-alternating-mascot " src="~/app/images/mascots/whale.png " alt="Whale ">
         </div>
       </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer class="ui inverted vertical segment">
-    <div class="ui container">
-      <div class="ui equal width stackable grid">
-        <div class="eight wide column">
-          <h4 class="ui inverted header">
+  <footer class="ui inverted vertical segment ">
+    <div class="ui container ">
+      <div class="ui equal width stackable grid ">
+        <div class="eight wide column ">
+          <h4 class="ui inverted header ">
             Gain Skills
           </h4>
           <p>
@@ -404,42 +442,43 @@
             learn to build real games.
           </p>
         </div>
-        <div class="column">
-          <h4 class="ui inverted header">Make Games</h4>
-          <div class="ui inverted list">
-            <div class="item">Make Art, Maps & Audio</div>
-            <div class="item">Code the game you want</div>
+        <div class="column ">
+          <h4 class="ui inverted header ">Make Games</h4>
+          <div class="ui inverted list ">
+            <div class="item ">Make Art, Maps & Audio</div>
+            <div class="item ">Code the game you want</div>
           </div>
         </div>
-        <div class="column">
-          <h4 class="ui inverted header">Make Friends</h4>
-          <div class="ui inverted list">
-            <div class="item">Help each other out</div>
-            <div class="item">Work in teams</div>
+        <div class="column ">
+          <h4 class="ui inverted header ">Make Friends</h4>
+          <div class="ui inverted list ">
+            <div class="item ">Help each other out</div>
+            <div class="item ">Work in teams</div>
           </div>
         </div>
-        <div class="column">
-          <h4 class="ui inverted header">Have Fun</h4>
-          <div class="ui inverted list">
-            <div class="item">Play games</div>
-            <div class="item">Learn the fun way</div>
+        <div class="column ">
+          <h4 class="ui inverted header ">Have Fun</h4>
+          <div class="ui inverted list ">
+            <div class="item ">Play games</div>
+            <div class="item ">Learn the fun way</div>
           </div>
         </div>
       </div>
 
-      <div class="ui equal width stackable grid">
-        <div class="eight wide column">
+      <div class="ui equal width stackable grid ">
+        <div class="eight wide column ">
           Copyright ©2018 MyCodeBuilder Inc. All Rights Reserved.
         </div>
-        <div class="column">
-          <div class="ui equal width grid">
-            <div class="column">
-              <div class="ui small inverted horizontal divided link list">
-                <a class="item" href="{{ MGB_APP_URL }}legal/tos" target="_blank" rel="noopener noreferrer">Terms and Conditions
+        <div class="column ">
+          <div class="ui equal width grid ">
+            <div class="column ">
+              <div class="ui small inverted horizontal divided link list ">
+                <a class="item " href="{{ MGB_APP_URL }}legal/tos " target="_blank " rel="noopener noreferrer ">Terms and Conditions
                 </a>
-                <a class="item" href="{{ MGB_APP_URL }}legal/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy
+                <a class="item " href="{{ MGB_APP_URL }}legal/privacy " target="_blank " rel="noopener noreferrer ">Privacy Policy
                 </a>
-                <a class="item" href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know more about classes with My Game Builder">Contact Us
+                <a class="item " href="mailto:carly@mygamebuilder.com?subject=September Classes&body=I would like to know
+              more about classes with My Game Builder ">Contact Us
                 </a>
               </div>
             </div>
@@ -449,16 +488,91 @@
     </div>
   </footer>
 
-  <script src="{{ MGB_LANDING_BASE_URL }}js/main.js"></script>
-  <script src="//cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script src="{{ MGB_LANDING_BASE_URL }}js/main.js "></script>
+  <script src="//cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js "></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125894856-1"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-125894856-1 "></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag() { dataLayer.push(arguments); }
     gtag('js', new Date());
 
     gtag('config', 'UA-125894856-1');
+  </script>
+
+  <script>
+    var x, i, j, selElmnt, a, b, c;
+    /*look for any elements with the class "custom-select ":*/
+    x = document.getElementsByClassName("custom-select ");
+    for (i = 0; i < x.length; i++) {
+      selElmnt = x[i].getElementsByTagName("select ")[0];
+      /*for each element, create a new DIV that will act as the selected item:*/
+      a = document.createElement("DIV ");
+      a.setAttribute("class ", "select-selected ");
+      a.innerHTML = selElmnt.options[selElmnt.selectedIndex].innerHTML;
+      x[i].appendChild(a);
+      /*for each element, create a new DIV that will contain the option list:*/
+      b = document.createElement("DIV ");
+      b.setAttribute("class ", "select-items select-hide ");
+      for (j = 1; j < selElmnt.length; j++) {
+        /*for each option in the original select element,
+        create a new DIV that will act as an option item:*/
+        c = document.createElement("DIV ");
+        c.innerHTML = selElmnt.options[j].innerHTML;
+        c.addEventListener("click ", function (e) {
+          /*when an item is clicked, update the original select box,
+          and the selected item:*/
+          var y, i, k, s, h;
+          s = this.parentNode.parentNode.getElementsByTagName("select ")[0];
+          h = this.parentNode.previousSibling;
+          for (i = 0; i < s.length; i++) {
+            if (s.options[i].innerHTML == this.innerHTML) {
+              s.selectedIndex = i;
+              h.innerHTML = this.innerHTML;
+              y = this.parentNode.getElementsByClassName("same-as-selected ");
+              for (k = 0; k < y.length; k++) {
+                y[k].removeAttribute("class ");
+              }
+              this.setAttribute("class ", "same-as-selected ");
+              break;
+            }
+          }
+          h.click();
+        });
+        b.appendChild(c);
+      }
+      x[i].appendChild(b);
+      a.addEventListener("click ", function (e) {
+        /*when the select box is clicked, close any other select boxes,
+        and open/close the current select box:*/
+        e.stopPropagation();
+        closeAllSelect(this);
+        this.nextSibling.classList.toggle("select-hide ");
+        this.classList.toggle("select-arrow-active ");
+      });
+    }
+    function closeAllSelect(elmnt) {
+      /*a function that will close all select boxes in the document,
+      except the current select box:*/
+      var x, y, i, arrNo = [];
+      x = document.getElementsByClassName("select-items ");
+      y = document.getElementsByClassName("select-selected ");
+      for (i = 0; i < y.length; i++) {
+        if (elmnt == y[i]) {
+          arrNo.push(i)
+        } else {
+          y[i].classList.remove("select-arrow-active ");
+        }
+      }
+      for (i = 0; i < x.length; i++) {
+        if (arrNo.indexOf(i)) {
+          x[i].classList.add("select-hide ");
+        }
+      }
+    }
+    /*if the user clicks anywhere outside the select box,
+    then close all select boxes:*/
+    document.addEventListener("click ", closeAllSelect);
   </script>
 
 </body>
